@@ -28,7 +28,7 @@ enum ParseTreeNodeType {BASE,TRANSLATION_BLOCK};
 int evaulate(PARSE_TREE);
 PARSE_TREE create_node(char *, int, PARSE_TREE *);
 PARSE_TREE create_tnode(char *, char *);
-void print_node(PARSE_TREE);
+void print_node(PARSE_TREE a,PARSE_TREE b);
 void print_file(PARSE_TREE);
 struct symTabNode{
 	char identifier[IDLENGTH];
@@ -92,11 +92,9 @@ primary_expression
 		$$ = create_node("primary_expression", 1, arr);
 	}
 	| '(' expression ')'{
-		PARSE_TREE arr[4];
-		arr[0] = create_tnode("(", "(");
-		arr[1] = $2;
-		arr[2] = create_tnode(")", ")");
-		$$ = create_node("primary_expression", 3, arr);
+		PARSE_TREE arr[2];
+		arr[0] = $2;
+		$$ = create_node("primary_expression", 1, arr);
 	}
 	| generic_selection{
 		PARSE_TREE arr[2];
@@ -146,14 +144,11 @@ string
 
 generic_selection
 	: GENERIC '(' assignment_expression ',' generic_assoc_list ')'{
-		PARSE_TREE arr[7];
+		PARSE_TREE arr[4];
 		arr[0] = create_tnode("GENERIC", $1);
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
-		arr[3]= create_tnode(",", ",");;
-		arr[4]= $5;
-		arr[5]= create_tnode(")", ")");;
-		$$ = create_node("generic_selection", 6, arr);
+		arr[1] = $3;
+		arr[2]= $5;
+		$$ = create_node("generic_selection", 3, arr);
 	}
 	;
 
@@ -166,9 +161,8 @@ generic_assoc_list
 	| generic_assoc_list ',' generic_association{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode(",", ",");
-		arr[2] = $3;
-		$$ = create_node("generic_assoc_list", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("generic_assoc_list", 2, arr);
 	}
 	;
 
@@ -204,19 +198,15 @@ postfix_expression
 		$$ = create_node("postfix_expression", 4, arr);
 	}
 	| postfix_expression '(' ')'{
-		PARSE_TREE arr[4];
+		PARSE_TREE arr[2];
 		arr[0] = $1;
-		arr[1] = create_tnode("(", "(");
-		arr[2] = create_tnode(")", ")");
-		$$ = create_node("postfix_expression", 3, arr);
+		$$ = create_node("postfix_expression", 1, arr);
 	}
 	| postfix_expression '(' argument_expression_list ')'{
-		PARSE_TREE arr[5];
+		PARSE_TREE arr[3];
 		arr[0] = $1;
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
-		arr[3] = create_tnode(")", ")");
-		$$ = create_node("postfix_expression", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("postfix_expression", 2, arr);
 	}
 	| postfix_expression '.' IDENTIFIER{
 		PARSE_TREE arr[4];
@@ -235,35 +225,26 @@ postfix_expression
 	| postfix_expression INC_OP{
 		PARSE_TREE arr[3];
 		arr[0]=$1;
-		arr[1] = create_tnode("INC_OP", $2);
+		arr[1] = create_tnode("++", $2);
 		$$ = create_node("postfix_expression", 2, arr);
 	}
 	| postfix_expression DEC_OP{
 		PARSE_TREE arr[3];
 		arr[0]=$1;
-		arr[1] = create_tnode("DEC_OP", $2);
+		arr[1] = create_tnode("--", $2);
 		$$ = create_node("postfix_expression", 2, arr);
 	}
 	| '(' type_name ')' '{' initializer_list '}'{
-		PARSE_TREE arr[7];
-		arr[0] = create_tnode("(", "(");
-		arr[1] = $2;
-		arr[2] = create_tnode(")", ")");
-		arr[3] = create_tnode("{", "{");
-		arr[4] = $5;
-		arr[5] = create_tnode("}", "}");
-		$$ = create_node("postfix_expression", 6, arr);
+		PARSE_TREE arr[3];
+		arr[0] = $2;
+		arr[1] = $5;
+		$$ = create_node("postfix_expression", 2, arr);
 	}
 	| '(' type_name ')' '{' initializer_list ',' '}'{
-		PARSE_TREE arr[8];
-		arr[0] = create_tnode("(", "(");
-		arr[1] = $2;
-		arr[2] = create_tnode(")", ")");
-		arr[3] = create_tnode("{", "{");
-		arr[4] = $5;
-		arr[5] = create_tnode(",", ",");
-		arr[6] = create_tnode("}", "}");
-		$$ = create_node("postfix_expression", 7, arr);
+		PARSE_TREE arr[3];
+		arr[0] = $2;
+		arr[1] = $5;
+		$$ = create_node("postfix_expression", 2, arr);
 	}
 	;
 
@@ -276,9 +257,8 @@ argument_expression_list
 	| argument_expression_list ',' assignment_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode(",", ",");
-		arr[2] = $3 ;
-		$$ = create_node("argument_expression_list", 3, arr);
+		arr[1] = $3 ;
+		$$ = create_node("argument_expression_list", 2, arr);
 	}
 	;
 
@@ -291,13 +271,13 @@ unary_expression
 	| INC_OP unary_expression{
 		PARSE_TREE arr[3];
 		arr[1]=$2;
-		arr[0] = create_tnode("INC_OP", $1);
+		arr[0] = create_tnode("++", $1);
 		$$ = create_node("unary_expression", 2, arr);
 	}
 	| DEC_OP unary_expression{
 		PARSE_TREE arr[3];
 		arr[1]=$2;
-		arr[0] = create_tnode("DEC_OP", $1);
+		arr[0] = create_tnode("--", $1);
 		$$ = create_node("unary_expression", 2, arr);
 	}
 	| unary_operator cast_expression{
@@ -315,18 +295,14 @@ unary_expression
 	| SIZEOF '(' type_name ')'{
 		PARSE_TREE arr[5];
 		arr[0] = create_tnode("SIZEOF", $1);
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
-		arr[3] = create_tnode(")", ")");
-		$$ = create_node("unary_expression", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("unary_expression", 2, arr);
 	}
 	| ALIGNOF '(' type_name ')'{
 		PARSE_TREE arr[5];
 		arr[0] = create_tnode("ALIGNOF", $1);
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
-		arr[3] = create_tnode(")", ")");
-		$$ = create_node("unary_expression", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("unary_expression", 2, arr);
 	}
 	;
 
@@ -371,11 +347,9 @@ cast_expression
 	}
 	| '(' type_name ')' cast_expression{
 		PARSE_TREE arr[5];
-		arr[0] = create_tnode("(", "(");
-		arr[1] = $2;
-		arr[2] = create_tnode(")", ")");
-		arr[3] = $4;
-		$$ = create_node("cast_expression", 4, arr);
+		arr[0] = $2;
+		arr[1] = $4;
+		$$ = create_node("cast_expression", 2, arr);
 	}
 	;
 
@@ -388,23 +362,20 @@ multiplicative_expression
 	| multiplicative_expression '*' cast_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("*", "*");
-		arr[2] = $3;
-		$$ = create_node("multiplicative_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("*", 2, arr);
 	}
 	| multiplicative_expression '/' cast_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("/", "/");
-		arr[2] = $3;
-		$$ = create_node("multiplicative_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("/", 2, arr);
 	}
 	| multiplicative_expression '%' cast_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("%", "%");
-		arr[2] = $3;
-		$$ = create_node("multiplicative_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("%", 2, arr);
 	}
 	;
 
@@ -417,16 +388,14 @@ additive_expression
 	| additive_expression '+' multiplicative_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("+", "+");
-		arr[2] = $3;
-		$$ = create_node("additive_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("+", 2, arr);
 	}
 	| additive_expression '-' multiplicative_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("-", "-");
-		arr[2] = $3;
-		$$ = create_node("additive_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("-", 2, arr);
 	}
 	;
 
@@ -439,16 +408,14 @@ shift_expression
 	| shift_expression LEFT_OP additive_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("LEFT_OP", $2);
-		arr[2] = $3;
-		$$ = create_node("shift_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("<<", 2, arr);
 	}
 	| shift_expression RIGHT_OP additive_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("RIGHT_OP", $2);
-		arr[2] = $3;
-		$$ = create_node("shift_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node(">>", 2, arr);
 	}
 	;
 
@@ -461,30 +428,26 @@ relational_expression
 	| relational_expression '<' shift_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("<", "<");
-		arr[2] = $3;
-		$$ = create_node("relational_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("<", 2, arr);
 	}
 	| relational_expression '>' shift_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode(">", ">");
-		arr[2] = $3;
-		$$ = create_node("relational_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node(">", 2, arr);
 	}
 	| relational_expression LE_OP shift_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("LE_OP", $2);
-		arr[2] = $3;
-		$$ = create_node("relational_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("<=", 2, arr);
 	}
 	| relational_expression GE_OP shift_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("GE_OP", $2);
-		arr[2] = $3;
-		$$ = create_node("relational_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node(">=", 2, arr);
 	}
 	;
 
@@ -497,16 +460,14 @@ equality_expression
 	| equality_expression EQ_OP relational_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("EQ_OP", $2);
-		arr[2] = $3;
-		$$ = create_node("equality_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("==", 2, arr);
 	}
 	| equality_expression NE_OP relational_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("NE_OP", $2);
 		arr[2] = $3;
-		$$ = create_node("equality_expression", 3, arr);
+		$$ = create_node("!=", 2, arr);
 	}
 	;
 
@@ -519,9 +480,8 @@ and_expression
 	| and_expression '&' equality_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("&", "&");
-		arr[2] = $3;
-		$$ = create_node("and_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("&", 3, arr);
 	}
 	;
 
@@ -534,9 +494,8 @@ exclusive_or_expression
 	| exclusive_or_expression '^' and_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("^", "^");
-		arr[2] = $3;
-		$$ = create_node("exclusive_or_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("^", 2, arr);
 	}
 	;
 
@@ -549,9 +508,8 @@ inclusive_or_expression
 	| inclusive_or_expression '|' exclusive_or_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("|", "|");
-		arr[2] = $3;
-		$$ = create_node("inclusive_or_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("|", 2, arr);
 	}
 	;
 
@@ -564,9 +522,8 @@ logical_and_expression
 	| logical_and_expression AND_OP inclusive_or_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("AND_OP", $2);
-		arr[2] = $3;
-		$$ = create_node("logical_and_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("&&", 2, arr);
 	}
 	;
 
@@ -579,9 +536,8 @@ logical_or_expression
 	| logical_or_expression OR_OP logical_and_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode("OR_OP", $2);
-		arr[2] = $3;
-		$$ = create_node("logical_or_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("||", 2, arr);
 	}
 	;
 
@@ -611,9 +567,8 @@ assignment_expression
 	| unary_expression assignment_operator assignment_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = $2;
-		arr[2] = $3;
-		$$ = create_node("assignment_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node($2->name, 2, arr);
 	}
 	;
 
@@ -621,57 +576,57 @@ assignment_operator
 	: '='{
 		PARSE_TREE arr[2];
 		arr[0]= create_tnode("=", "=");
-		$$ = create_node("assignment_operator", 1, arr);
+		$$ = create_node("=", 1, arr);
 	}
 	| MUL_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("MUL_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("*=", $1);
+		$$ = create_node("*=", 1, arr);
 	}
 	| DIV_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("DIV_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("/=", $1);
+		$$ = create_node("/=", 1, arr);
 	}
 	| MOD_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("MOD_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("%=", $1);
+		$$ = create_node("%=", 1, arr);
 	}
 	| ADD_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("ADD_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("+=", $1);
+		$$ = create_node("+=", 1, arr);
 	}
 	| SUB_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("SUB_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("-=", $1);
+		$$ = create_node("-=", 1, arr);
 	}
 	| LEFT_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("LEFT_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("<<=", $1);
+		$$ = create_node("<<=", 1, arr);
 	}
 	| RIGHT_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("RIGHT_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode(">>=", $1);
+		$$ = create_node(">>=", 1, arr);
 	}
 	| AND_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("AND_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("&=", $1);
+		$$ = create_node("&=", 1, arr);
 	}
 	| XOR_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("XOR_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("^=", $1);
+		$$ = create_node("^=", 1, arr);
 	}
 	| OR_ASSIGN{
 		PARSE_TREE arr[2];
-		arr[0]= create_tnode("OR_ASSIGN", $1);
-		$$ = create_node("assignment_operator", 1, arr);
+		arr[0]= create_tnode("|=", $1);
+		$$ = create_node("|=", 1, arr);
 	}
 	;
 
@@ -684,9 +639,8 @@ expression
 	| expression ',' assignment_expression{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode(",", ",");
-		arr[2] = $3;
-		$$ = create_node("assignment_expression", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("assignment_expression", 2, arr);
 	}
 	;
 
@@ -702,15 +656,13 @@ declaration
 	: declaration_specifiers ';'{
 		PARSE_TREE arr[3];
 		arr[0] = $1;
-		arr[1] = create_tnode(";", ";");
-		$$ = create_node("declaration", 2, arr);
+		$$ = create_node("declaration", 1, arr);
 	}
 	| declaration_specifiers init_declarator_list ';'{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
 		arr[1] = $2;
-		arr[2] = create_tnode(";", ";");
-		$$ = create_node("declaration", 3, arr);
+		$$ = create_node("declaration", 2, arr);
 	}
 	| static_assert_declaration{
 		PARSE_TREE arr[2];
@@ -786,9 +738,8 @@ init_declarator_list
 	| init_declarator_list ',' init_declarator{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode(",", ",");
-		arr[2] = $3;
-		$$ = create_node("init_declarator_list", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("init_declarator_list", 2, arr);
 	}
 	;
 
@@ -927,19 +878,15 @@ struct_or_union_specifier
 	: struct_or_union '{' struct_declaration_list '}'{
 		PARSE_TREE arr[5];
 		arr[0] = $1;
-		arr[1] = create_tnode("{", "{");
-		arr[2] = $3;
-		arr[3] = create_tnode("}", "}");
-		$$ = create_node("struct_or_union_specifier", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("struct_or_union_specifier", 2, arr);
 	}
 	| struct_or_union IDENTIFIER '{' struct_declaration_list '}'{
 		PARSE_TREE arr[6];
 		arr[0] = $1;
 		arr[1] = create_tnode("IDENTIFIER", $2);
-		arr[2] = create_tnode("{", "{");
-		arr[3] = $4;
-		arr[4] = create_tnode("}", "}");
-		$$ = create_node("struct_or_union_specifier", 5, arr);
+		arr[2] = $4;
+		$$ = create_node("struct_or_union_specifier", 3, arr);
 	}
 	| struct_or_union IDENTIFIER{
 		PARSE_TREE arr[3];
@@ -979,15 +926,13 @@ struct_declaration
 	: specifier_qualifier_list ';'{
 		PARSE_TREE arr[3];
 		arr[0]=$1;
-		arr[1]=create_tnode(";", ";");
-		$$ = create_node("struct_declaration", 2, arr);
+		$$ = create_node("struct_declaration", 1, arr);
 	}
 	| specifier_qualifier_list struct_declarator_list ';'{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
 		arr[1] = $2;
- 		arr[2]=create_tnode(";", ";");
-		$$ = create_node("struct_declaration", 3, arr);
+		$$ = create_node("struct_declaration", 2, arr);
 	}
 	| static_assert_declaration{
 		PARSE_TREE arr[2];
@@ -1028,9 +973,8 @@ struct_declarator_list
 	| struct_declarator_list ',' struct_declarator{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[2] = $3;
- 		arr[1]=create_tnode(",", ",");
-		$$ = create_node("struct_declarator_list", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("struct_declarator_list", 2, arr);
 	}
 	;
 
@@ -1059,38 +1003,28 @@ enum_specifier
 	: ENUM '{' enumerator_list '}'{
 		PARSE_TREE arr[5];
 		arr[0] = create_tnode("ENUM", $1);
-		arr[1] = create_tnode("{", "{");
-		arr[2] = $3;
-		arr[3] = create_tnode("}", "}");
-		$$ = create_node("enum_specifier", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("enum_specifier", 2, arr);
 	}
 	| ENUM '{' enumerator_list ',' '}'{
 		PARSE_TREE arr[6];
 		arr[0] = create_tnode("ENUM", $1);
-		arr[1] = create_tnode("{", "{");
-		arr[2] = $3;
-		arr[3] = create_tnode(",", ",");
-		arr[4] = create_tnode("}", "}");
-		$$ = create_node("enum_specifier", 5, arr);
+		arr[1] = $3;
+		$$ = create_node("enum_specifier", 2, arr);
 	}
 	| ENUM IDENTIFIER '{' enumerator_list '}'{
 		PARSE_TREE arr[6];
 		arr[0] = create_tnode("ENUM", $1);
 		arr[1] = create_tnode("IDENTIFIER", $2);
-		arr[2] = create_tnode("{", "{");
-		arr[3] = $4;
-		arr[4] = create_tnode("}", "}");
-		$$ = create_node("enum_specifier", 5, arr);
+		arr[2] = $4;
+		$$ = create_node("enum_specifier", 3, arr);
 	}
 	| ENUM IDENTIFIER '{' enumerator_list ',' '}'{
 		PARSE_TREE arr[7];
 		arr[0] = create_tnode("ENUM", $1);
 		arr[1] = create_tnode("IDENTIFIER", $2);
-		arr[2] = create_tnode("{", "{");
-		arr[3] = $4;
-		arr[4] = create_tnode(",", ",");
-		arr[5] = create_tnode("}", "}");
-		$$ = create_node("enum_specifier", 6, arr);
+		arr[2] = $4;
+		$$ = create_node("enum_specifier", 3, arr);
 	}
 	| ENUM IDENTIFIER{
 		PARSE_TREE arr[3];
@@ -1109,9 +1043,8 @@ enumerator_list
 	| enumerator_list ',' enumerator{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[2] = $3;
- 		arr[1]=create_tnode(",", ",");
-		$$ = create_node("enumerator_list", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("enumerator_list", 2, arr);
 	}
 	;
 
@@ -1134,10 +1067,8 @@ atomic_type_specifier
 	: ATOMIC '(' type_name ')'{
 		PARSE_TREE arr[5];
 		arr[0] = create_tnode("ATOMIC", $1);
-		arr[1] = create_tnode("(", "(");
 		arr[2] = $3;
-		arr[3] = create_tnode(")", ")");
-		$$ = create_node("atomic_type_specifier", 4, arr);
+		$$ = create_node("atomic_type_specifier", 2, arr);
 	}
 	;
 
@@ -1181,18 +1112,14 @@ alignment_specifier
 	: ALIGNAS '(' type_name ')'{
 		PARSE_TREE arr[5];
 		arr[0] = create_tnode("ALIGNAS", $1);
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
-		arr[3] = create_tnode(")", ")");
-		$$ = create_node("alignment_specifier", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("alignment_specifier", 2, arr);
 	}
 	| ALIGNAS '(' constant_expression ')'{
 		PARSE_TREE arr[5];
 		arr[0] = create_tnode("ALIGNAS", $1);
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
-		arr[3] = create_tnode(")", ")");
-		$$ = create_node("alignment_specifier", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("alignment_specifier", 2, arr);
 	}
 	;
 
@@ -1218,10 +1145,8 @@ direct_declarator
 	}
 	| '(' declarator ')'{
 		PARSE_TREE arr[4];
-		arr[0] = create_tnode("(", "(");
-		arr[1] = $2;
- 		arr[2]=create_tnode(")", ")");
-		$$ = create_node("direct_declarator", 3, arr);
+		arr[0] = $2;
+		$$ = create_node("direct_declarator", 1, arr);
 	}
 	| direct_declarator '[' ']'{
 		PARSE_TREE arr[4];
@@ -1304,25 +1229,19 @@ direct_declarator
 	| direct_declarator '(' parameter_type_list ')'{
 		PARSE_TREE arr[5];
 		arr[0] = $1;
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
- 		arr[3] = create_tnode(")", ")");
-		$$ = create_node("direct_declarator", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("direct_declarator", 2, arr);
 	}
 	| direct_declarator '(' ')'{
 		PARSE_TREE arr[4];
-		arr[1] = create_tnode("(", "(");
 		arr[0] = $1;
- 		arr[2]=create_tnode(")", ")");
-		$$ = create_node("direct_declarator", 3, arr);
+		$$ = create_node("direct_declarator", 1, arr);
 	}
 	| direct_declarator '(' identifier_list ')'{
 		PARSE_TREE arr[5];
 		arr[0] = $1;
-		arr[1] = create_tnode("(", "(");
-		arr[2] = $3;
- 		arr[3] = create_tnode(")", ")");
-		$$ = create_node("direct_declarator", 4, arr);
+		arr[1] = $3;
+		$$ = create_node("direct_declarator", 2, arr);
 	}
 	;
 
@@ -1371,10 +1290,9 @@ type_qualifier_list
 parameter_type_list
 	: parameter_list ',' ELLIPSIS{
 		PARSE_TREE arr[4];
-		arr[1] = create_tnode(",", ",");
 		arr[0] = $1;
-		arr[2] = create_tnode("ELLIPSIS", $3);
-		$$ = create_node("parameter_type_list", 3, arr);
+		arr[1] = create_tnode("ELLIPSIS", $3);
+		$$ = create_node("parameter_type_list", 2, arr);
 	}
 	| parameter_list{
 		PARSE_TREE arr[2];
@@ -1391,10 +1309,9 @@ parameter_list
 	}
 	| parameter_list ',' parameter_declaration{
 		PARSE_TREE arr[4];
-		arr[1] = create_tnode(",", ",");
 		arr[0] = $1;
-		arr[2] = $3;
-		$$ = create_node("parameter_list", 3, arr);
+		arr[1] = $3;
+		$$ = create_node("parameter_list", 2, arr);
 	}
 	;
 
@@ -1427,9 +1344,8 @@ identifier_list
 	| identifier_list ',' IDENTIFIER{
 		PARSE_TREE arr[4];
 		arr[0] = $1;
-		arr[1] = create_tnode(",", ",");
-		arr[2] = create_tnode("IDENTIFIER", $3);
-		$$ = create_node("identifier_list", 3, arr);
+		arr[1] = create_tnode("IDENTIFIER", $3);
+		$$ = create_node("identifier_list", 2, arr);
 	}
 	;
 
@@ -1469,10 +1385,8 @@ abstract_declarator
 direct_abstract_declarator
 	: '(' abstract_declarator ')'{
   	PARSE_TREE arr[4];
-    arr[0]=create_tnode("(","(");
     arr[1]=$2;
-    arr[2]=create_tnode(")",")");
-		$$ = create_node("direct_abstract_declarator", 3, arr);
+		$$ = create_node("direct_abstract_declarator", 1, arr);
 	}
 	| '[' ']'{
   	PARSE_TREE arr[3];
@@ -1606,49 +1520,36 @@ direct_abstract_declarator
 	}
 	| '(' ')'{
   	PARSE_TREE arr[3];
-    arr[0]=create_tnode("(","(");
-    arr[1]=create_tnode(")",")");
-		$$ = create_node("direct_abstract_declarator", 2, arr);
+		$$ = create_node("direct_abstract_declarator", 0, arr);
 	}
 	| '(' parameter_type_list ')'{
   	PARSE_TREE arr[4];
-    arr[0]=create_tnode("(","(");
-    arr[1]=$2;
-    arr[2]=create_tnode(")",")");
-		$$ = create_node("direct_abstract_declarator", 3, arr);
+    arr[0]=$2;
+		$$ = create_node("direct_abstract_declarator", 1, arr);
 	}
 	| direct_abstract_declarator '(' ')'{
   	PARSE_TREE arr[4];
   	arr[0]=$1;
-    arr[1]=create_tnode("(","(");
-    arr[2]=create_tnode(")",")");
-		$$ = create_node("direct_abstract_declarator", 3, arr);
+		$$ = create_node("direct_abstract_declarator", 1, arr);
 	}
 	| direct_abstract_declarator '(' parameter_type_list ')'{
   	PARSE_TREE arr[5];
   	arr[0]=$1;
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=create_tnode(")",")");
-		$$ = create_node("direct_abstract_declarator", 4, arr);
+    arr[1]=$3;
+		$$ = create_node("direct_abstract_declarator", 2, arr);
 	}
 	;
 
 initializer
 	: '{' initializer_list '}'{
   	PARSE_TREE arr[4];
-    arr[0]=create_tnode("{","{");
-    arr[1]=$2;
-    arr[2]=create_tnode("}","}");
-		$$ = create_node("initializer", 3, arr);
+    arr[0]=$2;
+		$$ = create_node("initializer", 1, arr);
 	}
 	| '{' initializer_list ',' '}'{
   	PARSE_TREE arr[5];
-    arr[0]=create_tnode("{","{");
-    arr[1]=$2;
-    arr[2]=create_tnode(",",",");
-    arr[3]=create_tnode("}","}");
-		$$ = create_node("initializer", 4, arr);
+    arr[0]=$2;
+		$$ = create_node("initializer", 1, arr);
 	}
 	| assignment_expression{
   	PARSE_TREE arr[2];
@@ -1673,16 +1574,14 @@ initializer_list
 	| initializer_list ',' designation initializer{
   	PARSE_TREE arr[4];
     arr[0]=$1;
-    arr[1]=create_tnode(",",",");
-    arr[2]=$3;
-		$$ = create_node("initializer_list", 3, arr);
+    arr[1]=$3;
+		$$ = create_node("initializer_list", 2, arr);
 	}
 	| initializer_list ',' initializer{
   	PARSE_TREE arr[4];
     arr[0]=$1;
-    arr[1]=create_tnode(",",",");
-    arr[2]=$3;
-		$$ = create_node("initializer_list", 3, arr);
+    arr[1]=$3;
+		$$ = create_node("initializer_list", 2, arr);
 	}
 	;
 
@@ -1729,13 +1628,9 @@ static_assert_declaration
 	: STATIC_ASSERT '(' constant_expression ',' STRING_LITERAL ')' ';'{
   	PARSE_TREE arr[8];
 		arr[0]=create_tnode("STATIC_ASSERT",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=create_tnode(",",",");
-    arr[4]=create_tnode("STRING_LITERAL",$5);
-    arr[5]=create_tnode(")",")");
-    arr[6]=create_tnode(";",";");
-		$$ = create_node("static_assert_declaration", 7, arr);
+    arr[1]=$3;
+    arr[2]=create_tnode("STRING_LITERAL",$5);
+		$$ = create_node("static_assert_declaration", 3, arr);
 	}
 	;
 
@@ -1800,16 +1695,12 @@ labeled_statement
 compound_statement
 	: '{' '}'{
   	PARSE_TREE arr[3];
-    arr[0]=create_tnode("{","{");
-    arr[1]=create_tnode("}","}");
-		$$ = create_node("compound_statement", 2, arr);
+		$$ = create_node("compound_statement", 0, arr);
 	}
 	| '{'  block_item_list '}'{
   	PARSE_TREE arr[4];
-    arr[0]=create_tnode("{","{");
-    arr[1]=$2;
-    arr[2]=create_tnode("}","}");
-		$$ = create_node("compound_statement", 3, arr);
+    arr[0]=$2;
+		$$ = create_node("compound_statement", 1, arr);
 	}
 	;
 
@@ -1843,14 +1734,12 @@ block_item
 expression_statement
 	: ';'{
   	PARSE_TREE arr[2];
-		arr[0]=create_tnode(";",";");
-		$$ = create_node("expression_statement", 1, arr);
+		$$ = create_node("expression_statement", 0, arr);
 	}
 	| expression ';'{
   	PARSE_TREE arr[3];
     arr[0]=$1;
-		arr[1]=create_tnode(";",";");
-		$$ = create_node("expression_statement", 2, arr);
+		$$ = create_node("expression_statement", 1, arr);
 	}
 	;
 
@@ -1858,31 +1747,25 @@ selection_statement
 	: IF '(' expression ')' statement ELSE statement{
   	PARSE_TREE arr[8];
 		arr[0]=create_tnode("IF",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=create_tnode(")",")");
-    arr[4]=$5;
-    arr[5]=create_tnode("ELSE",$6);
-    arr[6]=$7;
-		$$ = create_node("selection_statement", 7, arr);
+    arr[1]=$3;
+    arr[2]=$5;
+    arr[3]=create_tnode("ELSE",$6);
+    arr[4]=$7;
+		$$ = create_node("selection_statement", 5, arr);
 	}
 	| IF '(' expression ')' statement{
   	PARSE_TREE arr[6];
 		arr[0]=create_tnode("IF",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=create_tnode(")",")");
-    arr[4]=$5;
-		$$ = create_node("selection_statement", 5, arr);
+    arr[1]=$3;
+    arr[2]=$5;
+		$$ = create_node("selection_statement", 3, arr);
 	}
 	| SWITCH '(' expression ')' statement{
   	PARSE_TREE arr[6];
 		arr[0]=create_tnode("SWITCH",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=create_tnode(")",")");
-    arr[4]=$5;
-		$$ = create_node("selection_statement", 5, arr);
+    arr[1]=$3;
+    arr[2]=$5;
+		$$ = create_node("selection_statement", 3, arr);
 	}
 	;
 
@@ -1890,64 +1773,51 @@ iteration_statement
 	: WHILE '(' expression ')' statement{
 		PARSE_TREE arr[6];
 		arr[0]=create_tnode("WHILE",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=create_tnode(")",")");
-    arr[4]=$5;
-		$$ = create_node("iteration_statement", 5, arr);
+    arr[1]=$3;
+    arr[2]=$5;
+		$$ = create_node("iteration_statement", 3, arr);
 	}
 	| DO statement WHILE '(' expression ')' ';'{
 		PARSE_TREE arr[8];
 		arr[0]=create_tnode("DO",$1);
     arr[1]=$2;
     arr[2]=create_tnode("WHILE",$3);
-    arr[3]=create_tnode("(","(");
-    arr[4]=$5;
-    arr[5]=create_tnode(")",")");
-    arr[6]=create_tnode(";",";");
-		$$ = create_node("iteration_statement", 7, arr);
+    arr[3]=$5;
+		$$ = create_node("iteration_statement", 4, arr);
 	}
 	| FOR '(' expression_statement expression_statement ')' statement{
 		PARSE_TREE arr[7];
 		arr[0]=create_tnode("FOR",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=$4;
-    arr[4]=create_tnode(")",")");
-    arr[5]=$6;
-		$$ = create_node("iteration_statement", 6, arr);
+    arr[1]=$3;
+    arr[2]=$4;
+    arr[3]=$6;
+		$$ = create_node("iteration_statement", 4, arr);
 	}
 	| FOR '(' expression_statement expression_statement expression ')' statement{
   	PARSE_TREE arr[8];
 		arr[0]=create_tnode("FOR",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=$4;
-    arr[4]=$5;
-    arr[5]=create_tnode(")",")");
-    arr[6]=$7;
-		$$ = create_node("iteration_statement", 7, arr);
+    arr[1]=$3;
+    arr[2]=$4;
+    arr[3]=$5;
+    arr[4]=$7;
+		$$ = create_node("iteration_statement", 5, arr);
 	}
 	| FOR '(' declaration expression_statement ')' statement{
   	PARSE_TREE arr[7];
 		arr[0]=create_tnode("FOR",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=$4;
-    arr[4]=create_tnode(")",")");
-    arr[5]=$6;
-		$$ = create_node("iteration_statement", 6, arr);
+    arr[1]=$3;
+    arr[2]=$4;
+    arr[3]=$6;
+		$$ = create_node("iteration_statement", 4, arr);
 	}
 	| FOR '(' declaration expression_statement expression ')' statement{
   	PARSE_TREE arr[8];
 		arr[0]=create_tnode("FOR",$1);
-    arr[1]=create_tnode("(","(");
-    arr[2]=$3;
-    arr[3]=$4;
-    arr[4]=$5;
-    arr[5]=create_tnode(")",")");
-    arr[6]=$7;
-		$$ = create_node("iteration_statement", 7, arr);
+    arr[1]=$3;
+    arr[2]=$4;
+    arr[3]=$5;
+    arr[4]=$7;
+		$$ = create_node("iteration_statement", 5, arr);
 	}
 	;
 
@@ -1956,33 +1826,28 @@ jump_statement
 		PARSE_TREE arr[4];
 		arr[0]=create_tnode("GOTO",$1);
     arr[1]=create_tnode("IDENTIFIER",$2);
-    arr[2]=create_tnode(";",";");
-		$$ = create_node("jump_statement", 3, arr);
+		$$ = create_node("jump_statement", 2, arr);
 	}
 	| CONTINUE ';'{
 		PARSE_TREE arr[3];
 		arr[0]=create_tnode("CONTINUE",$1);
-    arr[1]=create_tnode(";",";");
-		$$ = create_node("jump_statement", 2, arr);
+		$$ = create_node("jump_statement", 1, arr);
 	}
 	| BREAK ';'{
 		PARSE_TREE arr[3];
 		arr[0]=create_tnode("BREAK",$1);
-    arr[1]=create_tnode(";",";");
-		$$ = create_node("jump_statement", 2, arr);
+		$$ = create_node("jump_statement", 1, arr);
 	}
 	| RETURN ';'{
 		PARSE_TREE arr[3];
 		arr[0]=create_tnode("RETURN",$1);
-    arr[1]=create_tnode(";",";");
-		$$ = create_node("jump_statement", 2, arr);
+		$$ = create_node("jump_statement", 1, arr);
 	}
 	| RETURN expression ';'{
 		PARSE_TREE arr[4];
 		arr[0]=create_tnode("RETURN",$1);
     arr[1]=$2;
-    arr[2]=create_tnode(";",";");
-		$$ = create_node("jump_statement", 3, arr);
+		$$ = create_node("jump_statement", 2, arr);
 	}
 	;
 
@@ -2066,28 +1931,29 @@ void print_file(PARSE_TREE tree){
 	fp=fopen("final.txt","w");
 	fprintf(fp,"graph milestone{\n");
 	
-	print_node(tree);
+	print_node(tree,tree);
 	fprintf(fp,"}");
 }
 
-void print_node(PARSE_TREE tree){
+void print_node(PARSE_TREE tree, PARSE_TREE pa){
 	int temp=0;
 	int noc=tree->no_of_child,i;
 	
 	
 	if(tree->typ==1){
-		if(tree->name == tree->ac_name){
-			return;
-		}
-		else 
-		fprintf(fp," \"%s_%d\" -- \"%s\";\n",tree->name,tree->uid,tree->ac_name);
+		fprintf(fp," \"%s_%d\" -- \"%s_%d\";\n",pa->name,pa->uid,tree->ac_name,tree->uid);
 		return;
 	}
 	
 	printf("%d\n\n\n\n\n\n",noc);
-	for(i=0;i<noc;i++){
-		fprintf(fp,"\"%s_%d\" -- \"%s_%d\";\n",tree->name,tree->uid,(tree->child[i])->name,(tree->child[i])->uid);
+	if(noc==1){
+		print_node(tree->child[0],pa);
+		return;
 	}
+	fprintf(fp,"\"%s_%d\" -- \"%s_%d\";\n",pa->name,pa->uid,tree->name,tree->uid);
+	/*for(i=0;i<noc;i++){
+		fprintf(fp,"\"%s_%d\" -- \"%s_%d\";\n",tree->name,tree->uid,(tree->child[i])->name,(tree->child[i])->uid);
+	}*/
 	
 
 	/*
@@ -2105,7 +1971,7 @@ void print_node(PARSE_TREE tree){
 	//printf("tree name %s\n\n\n\n\n",tree->name);
 	for(i=0;i<noc;i++){
 		//printf("tree name %s\n uid = %d \n\n\n\n",((tree->child[i])->child[0])->name,tree->child[i]->no_of_child);
-		print_node((tree->child)[i]);
+		print_node((tree->child)[i], tree);
 	}
 
 }
