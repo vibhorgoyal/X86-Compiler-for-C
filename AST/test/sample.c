@@ -1,3 +1,4 @@
-int main(int a,int b){
-	int x;
+int main(){
+	float x;
+	x = (float)(3+4) + 5;
 }

@@ -77,15 +77,19 @@ extern FILE *yyin;
 extern int yylex();
 void yyerror(const char* s);
 extern int yydebug;
-
+extern int  yylineno;
+const char* bhej;
 quad_array Quad;
 symboltable globalst;
 symboltable *current_ST,*hunny;
 vector<symboltable *> stack_ST;
+
 string current_name;
 string bing;
 int globe;
 int flag;
+int error_exists;
+expression* type_check(expression* t1,expression* t2, string op);
 
 #ifndef TRUE
 #define TRUE 1
@@ -101,7 +105,7 @@ int flag;
 
 
 
-#line 105 "y.tab.c" /* yacc.c:339  */
+#line 109 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -287,7 +291,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 40 "grammar.y" /* yacc.c:355  */
+#line 44 "grammar.y" /* yacc.c:355  */
 
   int intval;
   double doubleval;
@@ -306,7 +310,7 @@ union YYSTYPE
   struct treeNode *tVal;
   new_tab curls;
 
-#line 310 "y.tab.c" /* yacc.c:355  */
+#line 314 "y.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -323,7 +327,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 327 "y.tab.c" /* yacc.c:358  */
+#line 331 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -627,34 +631,34 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   106,   106,   107,   108,   109,   110,   114,   115,   119,
-     120,   124,   128,   129,   133,   134,   138,   139,   140,   141,
-     142,   143,   144,   145,   146,   147,   151,   152,   156,   157,
-     158,   159,   160,   161,   162,   166,   167,   168,   169,   170,
-     171,   175,   176,   180,   181,   182,   183,   187,   188,   189,
-     193,   194,   195,   199,   200,   201,   202,   203,   207,   208,
-     209,   213,   214,   218,   219,   223,   224,   228,   229,   233,
-     234,   238,   239,   243,   244,   248,   249,   250,   251,   252,
-     253,   254,   255,   256,   257,   258,   262,   263,   267,   271,
-     272,   353,   357,   358,   359,   360,   364,   365,   366,   367,
-     368,   369,   373,   378,   386,   387,   391,   395,   401,   402,
-     403,   404,   405,   406,   410,   414,   417,   418,   422,   426,
-     430,   434,   435,   436,   437,   438,   439,   440,   441,   445,
-     446,   447,   451,   452,   456,   457,   461,   462,   463,   467,
-     468,   469,   470,   474,   475,   479,   480,   481,   485,   489,
-     490,   491,   492,   496,   497,   501,   502,   506,   511,   518,
-     523,   524,   525,   526,   527,   528,   529,   530,   531,   532,
-     533,   687,   688,   692,   693,   694,   698,   705,   706,   711,
-     712,   719,   724,   731,   737,   738,   742,   743,   747,   748,
-     752,   753,   754,   758,   759,   760,   761,   762,   763,   764,
-     765,   766,   767,   768,   769,   770,   771,   772,   773,   774,
-     775,   776,   777,   778,   782,   783,   784,   788,   789,   790,
-     791,   795,   799,   800,   804,   805,   809,   813,   814,   815,
-     816,   817,   818,   822,   823,   824,   828,   855,   856,   856,
-     863,   864,   868,   869,   873,   874,   878,   898,   918,   918,
-     919,   919,   922,   927,   947,   947,   948,   948,   949,   950,
-     951,   952,   956,   957,   958,   959,   960,   964,   968,   969,
-     973,   977,   982,   983,  1014,  1015
+       0,   112,   112,   127,   130,   136,   139,   143,   147,   154,
+     155,   159,   163,   164,   168,   169,   173,   176,   179,   182,
+     185,   188,   191,   194,   197,   203,   212,   213,   217,   220,
+     223,   226,   229,   233,   237,   241,   242,   243,   244,   245,
+     246,   250,   253,   262,   265,   268,   271,   277,   280,   283,
+     289,   292,   295,   301,   304,   307,   310,   313,   319,   322,
+     325,   331,   334,   340,   343,   349,   352,   358,   361,   367,
+     370,   376,   379,   383,   386,   392,   395,   398,   401,   404,
+     407,   410,   413,   416,   419,   422,   428,   431,   437,   443,
+     444,   535,   539,   540,   541,   542,   546,   547,   548,   549,
+     550,   551,   555,   560,   568,   572,   580,   585,   590,   591,
+     592,   593,   594,   595,   599,   603,   606,   607,   611,   615,
+     619,   623,   624,   625,   626,   627,   628,   629,   630,   634,
+     635,   636,   640,   641,   645,   646,   650,   651,   652,   656,
+     657,   658,   659,   663,   664,   668,   669,   670,   674,   678,
+     679,   680,   681,   685,   686,   690,   691,   695,   700,   713,
+     718,   719,   720,   721,   722,   723,   724,   725,   726,   727,
+     728,   902,   938,   942,   943,   944,   948,   955,   956,   961,
+     962,   970,   975,   982,   988,   989,   993,   994,   998,   999,
+    1003,  1004,  1005,  1009,  1010,  1011,  1012,  1013,  1014,  1015,
+    1016,  1017,  1018,  1019,  1020,  1021,  1022,  1023,  1024,  1025,
+    1026,  1027,  1028,  1029,  1033,  1034,  1035,  1039,  1040,  1041,
+    1042,  1046,  1050,  1051,  1055,  1056,  1060,  1064,  1065,  1066,
+    1067,  1068,  1069,  1073,  1074,  1075,  1079,  1106,  1107,  1107,
+    1114,  1115,  1119,  1120,  1124,  1125,  1129,  1150,  1171,  1171,
+    1172,  1172,  1175,  1180,  1200,  1200,  1201,  1201,  1202,  1203,
+    1204,  1205,  1209,  1210,  1211,  1212,  1213,  1221,  1225,  1226,
+    1230,  1234,  1239,  1240,  1277,  1278
 };
 #endif
 
@@ -2120,8 +2124,588 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 90:
-#line 273 "grammar.y" /* yacc.c:1646  */
+        case 2:
+#line 112 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		string tmp1=(*((yyvsp[0].pstring)));
+		symboldata *var=current_ST->lookup(tmp1);
+		if(var==NULL){		
+				bhej=tmp1.c_str();
+				yyerror("undeclared variable");//errorr undeclared tmp1 at line number 
+		}
+		else{
+			(yyval.exp_info)->b_type = var->type.b_type;
+			(yyval.exp_info)->pc=var->type.pc;
+			(yyval.exp_info)->base_t=var->type.base_t;
+		}
+
+	}
+#line 2145 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 3:
+#line 127 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2153 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 130 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type=type_char;
+		(yyval.exp_info)->pc=1;
+		(yyval.exp_info)->base_t=type_pointer;
+	}
+#line 2164 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 136 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-1].exp_info);
+	}
+#line 2172 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 143 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type = type_int;
+	}
+#line 2181 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 147 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type = type_double;
+	}
+#line 2190 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 16:
+#line 173 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2198 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 17:
+#line 176 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-3].exp_info);
+	}
+#line 2206 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 179 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-2].exp_info);
+	}
+#line 2214 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 182 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-3].exp_info);
+	}
+#line 2222 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 20:
+#line 185 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-2].exp_info);
+	}
+#line 2230 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 21:
+#line 188 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-2].exp_info);
+	}
+#line 2238 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 22:
+#line 191 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-1].exp_info);
+	}
+#line 2246 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 23:
+#line 194 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-1].exp_info);
+	}
+#line 2254 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 24:
+#line 197 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type=(yyvsp[-4].symboltypei)->b_type;
+		(yyval.exp_info)->pc=(yyvsp[-4].symboltypei)->pc;
+		(yyval.exp_info)->base_t=(yyvsp[-4].symboltypei)->base_t;
+	}
+#line 2265 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 25:
+#line 203 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type=(yyvsp[-5].symboltypei)->b_type;
+		(yyval.exp_info)->pc=(yyvsp[-5].symboltypei)->pc;
+		(yyval.exp_info)->base_t=(yyvsp[-5].symboltypei)->base_t;
+	}
+#line 2276 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 28:
+#line 217 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2284 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 29:
+#line 220 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2292 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 30:
+#line 223 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2300 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 31:
+#line 226 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2308 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 229 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type= type_int;
+	}
+#line 2317 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 33:
+#line 233 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type= type_int;
+	}
+#line 2326 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 41:
+#line 250 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2334 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 253 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=new expression;
+		(yyval.exp_info)->b_type=(yyvsp[-2].symboltypei)->b_type;
+		(yyval.exp_info)->pc=(yyvsp[-2].symboltypei)->pc;
+		(yyval.exp_info)->base_t=(yyvsp[-2].symboltypei)->base_t;
+	}
+#line 2345 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 262 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2353 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 265 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "*");
+	}
+#line 2361 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 45:
+#line 268 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "/");
+	}
+#line 2369 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 271 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "%");
+	}
+#line 2377 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 277 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2385 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 280 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "+");
+	}
+#line 2393 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 49:
+#line 283 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "-");
+	}
+#line 2401 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 289 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2409 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 51:
+#line 292 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "<<");
+	}
+#line 2417 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 52:
+#line 295 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), ">>");
+	}
+#line 2425 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 53:
+#line 301 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2433 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 54:
+#line 304 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "<");
+	}
+#line 2441 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 55:
+#line 307 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), ">");
+	}
+#line 2449 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 56:
+#line 310 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "<=");
+	}
+#line 2457 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 57:
+#line 313 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), ">=");
+	}
+#line 2465 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 58:
+#line 319 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2473 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 59:
+#line 322 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "==");
+	}
+#line 2481 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 60:
+#line 325 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "!=");
+	}
+#line 2489 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 61:
+#line 331 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2497 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 62:
+#line 334 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "&");
+	}
+#line 2505 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 63:
+#line 340 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2513 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 64:
+#line 343 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "^");
+	}
+#line 2521 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 65:
+#line 349 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2529 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 66:
+#line 352 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "|");
+	}
+#line 2537 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 67:
+#line 358 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2545 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 68:
+#line 361 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "&&");
+	}
+#line 2553 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 69:
+#line 367 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2561 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 70:
+#line 370 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "||");
+	}
+#line 2569 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 71:
+#line 376 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2577 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 73:
+#line 383 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2585 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 74:
+#line 386 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), *(yyvsp[-1].pstring));
+	}
+#line 2593 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 75:
+#line 392 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="=";
+	}
+#line 2601 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 76:
+#line 395 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="*=";
+	}
+#line 2609 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 77:
+#line 398 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="/=";
+	}
+#line 2617 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 78:
+#line 401 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="%=";
+	}
+#line 2625 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 79:
+#line 404 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="+=";
+	}
+#line 2633 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 80:
+#line 407 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="-=";
+	}
+#line 2641 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 81:
+#line 410 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="<<=";
+	}
+#line 2649 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 82:
+#line 413 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)=">>=";
+	}
+#line 2657 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 83:
+#line 416 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="&=";
+	}
+#line 2665 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 84:
+#line 419 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="^=";
+	}
+#line 2673 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 85:
+#line 422 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring)="|=";
+	}
+#line 2681 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 86:
+#line 428 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2689 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 87:
+#line 431 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[-2].exp_info);
+	}
+#line 2697 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 88:
+#line 437 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.exp_info)=(yyvsp[0].exp_info);
+	}
+#line 2705 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 90:
+#line 445 "grammar.y" /* yacc.c:1646  */
     {
 		basic_type type_current = (yyvsp[-2].b_type);
 		int size_now=-1;
@@ -2164,11 +2748,16 @@ yyreduce:
             }
             */
             symboldata *var=current_ST->lookup(my_dec->name);
+
             if(var == NULL){
             	var = new symboldata;
             	var->nested_symboltable=NULL;
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
+            	if(my_dec->pc > 0){
+            		var->type.base_t = type_pointer;
+            	}
+
             	var->type.b_type = type_current;
             	if(my_dec->alist.size()){
             		var->type.base_t = type_array;
@@ -2179,13 +2768,14 @@ yyreduce:
             		size_now*=p;
             	var->size = size_now;	
             	current_ST->insert(var);
+            	continue;
             }
             else if(var->type.base_t == type_function){
-            	cout<<"\n\n\n\n\n\n\n yaha aa gaya \n\n\n\n\n\n";
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
             	var->type.b_type = type_current;
             	if(my_dec->alist.size()){
+            		cout<<"helllo"<<endl;
             		var->type.base_t = type_array;
             		var->type.alist = my_dec->alist;
             	}
@@ -2193,8 +2783,12 @@ yyreduce:
             	for(int p:my_dec->alist )
             		size_now*=p;
             	var->size = size_now;
-            	current_ST->insert(var);
-            	current_ST->offset-=var->size;
+            	//current_ST->insert(var);
+            	//current_ST->offset-=var->size;
+            }
+            else if(var!=NULL ){
+            	bhej = var->name.c_str();
+            	yyerror("already declared ");
             }
             
             
@@ -2202,153 +2796,180 @@ yyreduce:
 
 
 	}
-#line 2206 "y.tab.c" /* yacc.c:1646  */
+#line 2800 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
-#line 361 "grammar.y" /* yacc.c:1646  */
+#line 543 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type) = (yyvsp[0].b_type);
 	}
-#line 2214 "y.tab.c" /* yacc.c:1646  */
+#line 2808 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 374 "grammar.y" /* yacc.c:1646  */
+#line 556 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.decvec) = new vector<decc *>;
 		(yyval.decvec)->pb((yyvsp[0].declarationi));
 	}
-#line 2223 "y.tab.c" /* yacc.c:1646  */
+#line 2817 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 379 "grammar.y" /* yacc.c:1646  */
+#line 561 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.decvec)=(yyvsp[-2].decvec);
 		(yyval.decvec)->pb((yyvsp[0].declarationi));
 	}
-#line 2232 "y.tab.c" /* yacc.c:1646  */
+#line 2826 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 104:
+#line 569 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring) = *(yyvsp[0].pstring);
+	}
+#line 2834 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 105:
+#line 573 "grammar.y" /* yacc.c:1646  */
+    {
+		*(yyval.pstring) = "";
+		
+	}
+#line 2843 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 392 "grammar.y" /* yacc.c:1646  */
+#line 581 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi) = (yyvsp[-2].declarationi);
+
 	}
-#line 2240 "y.tab.c" /* yacc.c:1646  */
+#line 2852 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 395 "grammar.y" /* yacc.c:1646  */
+#line 585 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi) = (yyvsp[0].declarationi);
 	}
-#line 2248 "y.tab.c" /* yacc.c:1646  */
+#line 2860 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 114:
-#line 411 "grammar.y" /* yacc.c:1646  */
+#line 600 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_void;
 	}
-#line 2256 "y.tab.c" /* yacc.c:1646  */
+#line 2868 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 115:
-#line 414 "grammar.y" /* yacc.c:1646  */
+#line 603 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_char;
 	}
-#line 2264 "y.tab.c" /* yacc.c:1646  */
+#line 2876 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 419 "grammar.y" /* yacc.c:1646  */
+#line 608 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_int;
 	}
-#line 2272 "y.tab.c" /* yacc.c:1646  */
+#line 2884 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 118:
-#line 423 "grammar.y" /* yacc.c:1646  */
+#line 612 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_long;
 	}
-#line 2280 "y.tab.c" /* yacc.c:1646  */
+#line 2892 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 119:
-#line 427 "grammar.y" /* yacc.c:1646  */
+#line 616 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_float;
 	}
-#line 2288 "y.tab.c" /* yacc.c:1646  */
+#line 2900 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 120:
-#line 431 "grammar.y" /* yacc.c:1646  */
+#line 620 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_double;
 	}
-#line 2296 "y.tab.c" /* yacc.c:1646  */
+#line 2908 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 157:
-#line 507 "grammar.y" /* yacc.c:1646  */
+#line 696 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi) = (yyvsp[0].declarationi);
 		(yyval.declarationi)->pc = (yyvsp[-1].intval);
 	}
-#line 2305 "y.tab.c" /* yacc.c:1646  */
+#line 2917 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 158:
-#line 511 "grammar.y" /* yacc.c:1646  */
+#line 700 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi) = (yyvsp[0].declarationi);
 		(yyval.declarationi)->pc = 0;
 	}
-#line 2314 "y.tab.c" /* yacc.c:1646  */
+#line 2926 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 159:
-#line 519 "grammar.y" /* yacc.c:1646  */
+#line 714 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi)=new decc;
 		(yyval.declarationi)->name=*((yyvsp[0].pstring));
 	}
-#line 2323 "y.tab.c" /* yacc.c:1646  */
+#line 2935 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 170:
-#line 534 "grammar.y" /* yacc.c:1646  */
+#line 729 "grammar.y" /* yacc.c:1646  */
     {
+		
 		(yyval.declarationi)=(yyvsp[-3].declarationi);
 		(yyval.declarationi)->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup((yyval.declarationi)->name);
-		printf("\n\n\n\n\n\n\n\n\n\n hunny \n\n\n\n\n\n\n\n");
 		if(funcdata!=NULL){
-			if(funcdata->nested_symboltable->declared==1)
-				printf("\n\n\n\n\n\n\n\n\n\n already declared \n\n\n\n\n\n\n\n");
-			else if(funcdata->nested_symboltable->defined==1){
-				funcdata->nested_symboltable->declared=1;
+			
+			if(funcdata->nested_symboltable==NULL){
+				funcdata->nested_symboltable = new symboltable;
+			}
+			else if(funcdata->nested_symboltable!=NULL&&funcdata->nested_symboltable->declared==1){
+
+			}
+			else if(funcdata->nested_symboltable!=NULL && funcdata->nested_symboltable->defined==1){
+				bhej = funcdata->nested_symboltable->name.c_str();
+				yyerror("already defined");
 			}
 			
-			else funcdata->nested_symboltable->declared=1;	
-		}
+			else funcdata->nested_symboltable->declared=1;
+			
 
+
+
+		}
 		if(funcdata==NULL){
+		cout<<"bbb"<<endl;
 			funcdata = new symboldata;
-			cout<<"\n\n\n\n\n\n\n\n\n\n singh " <<(yyvsp[-3].declarationi)->name<<"\n\n\n\n\n\n\n\n";
 			funcdata->name = (yyvsp[-3].declarationi)->name;
 			funcdata->type.base_t = type_function;
 			funcdata->nested_symboltable = new symboltable;
 			funcdata->nested_symboltable->declared=1;
 			funcdata->nested_symboltable->name = (yyvsp[-3].declarationi)->name;
 			stack_ST.pb(funcdata->nested_symboltable);
-
+			current_ST->insert(funcdata);
 			current_ST->Symboltable[funcdata->name]= funcdata;
 
 
@@ -2393,15 +3014,19 @@ yyreduce:
 	            	var->size = size_now;	
 	            	funcdata->nested_symboltable->insert(var);
 	            }
+	            else {
+	            	bhej = my_dec->name.c_str();
+	            	yyerror("already declared ");
+	            }
 			}
 			//if(flag==1)
 				//current_ST = funcdata->nested_symboltable;
 
-			cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"<<funcdata->nested_symboltable->order_symbol.size()<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 		}
 
 		else{
 			if((*(yyvsp[-1].parameter_list)).size()==(funcdata->nested_symboltable->order_symbol).size()){
+
 				vector<symboltype> param,symb;
 				for(auto it:*(yyvsp[-1].parameter_list))
 					param.pb(it->type);
@@ -2410,10 +3035,11 @@ yyreduce:
 				
 				int yes=1;
 				for(int i=0;i<param.size();i++){
-					if(param[i].b_type!=symb[i].b_type && param[i].alist!=symb[i].alist && param[i].pc!=symb[i].pc && param[i].base_t!=symb[i].base_t)
+					if(param[i].b_type!=symb[i].b_type || param[i].alist!=symb[i].alist || param[i].pc!=symb[i].pc || param[i].base_t!=symb[i].base_t)
 						yes=0;
 						
 				}
+				cout<<yes<<endl;
 				if(yes){
 					delete funcdata->nested_symboltable;
 					funcdata->nested_symboltable = new symboltable;
@@ -2467,73 +3093,120 @@ yyreduce:
 				}	
 
 				else{
-					printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
+					string fname=funcdata->name;
+					bhej=fname.c_str();
+					yyerror("declarations and definition are not same for ");
+					//printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
 				}		
 			}
 			else {
-				printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
+				string fname=funcdata->name;
+				bhej=fname.c_str();
+				yyerror("declarations and definition are not same for ");
+				//printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
 			}
 		}
 
 
 	}
-#line 2481 "y.tab.c" /* yacc.c:1646  */
+#line 3113 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 171:
+#line 903 "grammar.y" /* yacc.c:1646  */
+    {
+		(yyval.declarationi)=(yyvsp[-2].declarationi);
+		(yyval.declarationi)->b_type = type_function;
+		symboldata *funcdata=current_ST->lookup((yyval.declarationi)->name);
+		if(funcdata==NULL){
+			funcdata = new symboldata;
+			funcdata->name = (yyvsp[-2].declarationi)->name;
+			funcdata->type.base_t = type_function;
+			funcdata->nested_symboltable = new symboltable;
+			funcdata->nested_symboltable->declared=1;
+			funcdata->nested_symboltable->name = (yyvsp[-2].declarationi)->name;
+			stack_ST.pb(funcdata->nested_symboltable);
+			current_ST->insert(funcdata);
+			current_ST->Symboltable[funcdata->name]= funcdata;
+			
+		}
+		else if(funcdata->nested_symboltable->Symboltable.size()!=0){
+			bhej = funcdata->name.c_str();
+			yyerror("declaration and definition not same");		}
+		else{
+			if(funcdata->nested_symboltable==NULL){
+				funcdata->nested_symboltable = new symboltable;
+			}
+			else if(funcdata->nested_symboltable!=NULL&&funcdata->nested_symboltable->declared==1){
+
+			}
+			else if(funcdata->nested_symboltable!=NULL && funcdata->nested_symboltable->defined==1){
+				bhej = funcdata->nested_symboltable->name.c_str();
+				yyerror("already defined");
+			}
+			
+			else funcdata->nested_symboltable->declared=1;
+			
+		}
+	}
+#line 3153 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 175:
-#line 695 "grammar.y" /* yacc.c:1646  */
+#line 945 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.intval)=1 + (yyvsp[0].intval);
 	}
-#line 2489 "y.tab.c" /* yacc.c:1646  */
+#line 3161 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 176:
-#line 699 "grammar.y" /* yacc.c:1646  */
+#line 949 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.intval)=1;
 	}
-#line 2497 "y.tab.c" /* yacc.c:1646  */
+#line 3169 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 180:
-#line 713 "grammar.y" /* yacc.c:1646  */
+#line 963 "grammar.y" /* yacc.c:1646  */
     {
+
 		(yyval.parameter_list) = (yyvsp[0].parameter_list);
 	}
-#line 2505 "y.tab.c" /* yacc.c:1646  */
+#line 3178 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 181:
-#line 720 "grammar.y" /* yacc.c:1646  */
+#line 971 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.parameter_list)=new vector<parameter *>;
 		(yyval.parameter_list)->pb((yyvsp[0].param));
 	}
-#line 2514 "y.tab.c" /* yacc.c:1646  */
+#line 3187 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 182:
-#line 724 "grammar.y" /* yacc.c:1646  */
+#line 975 "grammar.y" /* yacc.c:1646  */
     {
 		(yyvsp[-2].parameter_list)->pb((yyvsp[0].param));
 		(yyval.parameter_list)=(yyvsp[-2].parameter_list);
 	}
-#line 2523 "y.tab.c" /* yacc.c:1646  */
+#line 3196 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 183:
-#line 732 "grammar.y" /* yacc.c:1646  */
+#line 983 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.param) = new parameter;
 		(yyval.param)->name = (yyvsp[0].declarationi)->name;
 		(yyval.param)->type.b_type = (yyvsp[-1].b_type); 
 	}
-#line 2533 "y.tab.c" /* yacc.c:1646  */
+#line 3206 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 236:
-#line 828 "grammar.y" /* yacc.c:1646  */
+#line 1079 "grammar.y" /* yacc.c:1646  */
     {	
 		if(flag==0){
 			(yyval.curls).temp = current_ST;
@@ -2558,34 +3231,35 @@ yyreduce:
 			(yyval.curls).temp = current_ST;
 		}
 	}
-#line 2562 "y.tab.c" /* yacc.c:1646  */
+#line 3235 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 238:
-#line 856 "grammar.y" /* yacc.c:1646  */
+#line 1107 "grammar.y" /* yacc.c:1646  */
     {current_name = "cmpd";}
-#line 2568 "y.tab.c" /* yacc.c:1646  */
+#line 3241 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 239:
-#line 857 "grammar.y" /* yacc.c:1646  */
+#line 1108 "grammar.y" /* yacc.c:1646  */
     {
 		current_ST=(yyvsp[-2].curls).temp;
 	}
-#line 2576 "y.tab.c" /* yacc.c:1646  */
+#line 3249 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 246:
-#line 879 "grammar.y" /* yacc.c:1646  */
+#line 1130 "grammar.y" /* yacc.c:1646  */
     {
 		flag=1;
 		(yyval.curls).temp = current_ST;
 		(yyval.curls).created = new symboltable;
 		stack_ST.pb((yyval.curls).created);
 		symboldata *data = new symboldata;
-		char a[100] = "if";
+		char a[100] = "if_";
 		char b[100];
-		sprintf(b,"%d",globe++); 
+		sprintf(b,"%d",globe++);
+		data->offset = current_ST->offset; 
 		data->name = strcat(a,b);
 		current_ST->insert(data);
 		data->nested_symboltable = (yyval.curls).created;
@@ -2593,57 +3267,58 @@ yyreduce:
 		data->nested_symboltable->name = data->name;
 		current_ST = (yyval.curls).created;
 	}
-#line 2597 "y.tab.c" /* yacc.c:1646  */
+#line 3271 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 247:
-#line 899 "grammar.y" /* yacc.c:1646  */
+#line 1151 "grammar.y" /* yacc.c:1646  */
     {
 		flag=1;
 		(yyval.curls).temp = current_ST;
 		(yyval.curls).created = new symboltable;
 		stack_ST.pb((yyval.curls).created);
 		symboldata *data = new symboldata;
-		char a[100] = "else";
+		char a[100] = "else_";
 		char b[100];
 		sprintf(b,"%d",globe++); 
 		data->name = strcat(a,b);
+		data->offset = current_ST->offset;
 		current_ST->insert(data);
 		data->nested_symboltable = (yyval.curls).created;
 		data->nested_symboltable->parent = current_ST;
 		data->nested_symboltable->name = data->name;
 		current_ST = (yyval.curls).created;
 	}
-#line 2618 "y.tab.c" /* yacc.c:1646  */
+#line 3293 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 248:
-#line 918 "grammar.y" /* yacc.c:1646  */
+#line 1171 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-4].curls).temp;}
-#line 2624 "y.tab.c" /* yacc.c:1646  */
+#line 3299 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 249:
-#line 918 "grammar.y" /* yacc.c:1646  */
+#line 1171 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-1].curls).temp;}
-#line 2630 "y.tab.c" /* yacc.c:1646  */
+#line 3305 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 250:
-#line 919 "grammar.y" /* yacc.c:1646  */
+#line 1172 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-4].curls).temp;}
-#line 2636 "y.tab.c" /* yacc.c:1646  */
+#line 3311 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 251:
-#line 920 "grammar.y" /* yacc.c:1646  */
+#line 1173 "grammar.y" /* yacc.c:1646  */
     {
 	}
-#line 2643 "y.tab.c" /* yacc.c:1646  */
+#line 3318 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 253:
-#line 927 "grammar.y" /* yacc.c:1646  */
+#line 1180 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.curls).temp = current_ST;
 		(yyval.curls).created = new symboltable;
@@ -2661,79 +3336,93 @@ yyreduce:
 		current_ST = (yyval.curls).created;
 		flag=1;
 	}
-#line 2665 "y.tab.c" /* yacc.c:1646  */
+#line 3340 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 254:
-#line 947 "grammar.y" /* yacc.c:1646  */
+#line 1200 "grammar.y" /* yacc.c:1646  */
     {current_name="while"; }
-#line 2671 "y.tab.c" /* yacc.c:1646  */
+#line 3346 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 255:
-#line 947 "grammar.y" /* yacc.c:1646  */
+#line 1200 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-4].curls).temp;}
-#line 2677 "y.tab.c" /* yacc.c:1646  */
+#line 3352 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 256:
-#line 948 "grammar.y" /* yacc.c:1646  */
+#line 1201 "grammar.y" /* yacc.c:1646  */
     {current_name="do_while";}
-#line 2683 "y.tab.c" /* yacc.c:1646  */
+#line 3358 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 257:
-#line 948 "grammar.y" /* yacc.c:1646  */
+#line 1201 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-6].curls).temp;}
-#line 2689 "y.tab.c" /* yacc.c:1646  */
+#line 3364 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 258:
-#line 949 "grammar.y" /* yacc.c:1646  */
+#line 1202 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-5].curls).temp;}
-#line 2695 "y.tab.c" /* yacc.c:1646  */
+#line 3370 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 259:
-#line 950 "grammar.y" /* yacc.c:1646  */
+#line 1203 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-6].curls).temp;}
-#line 2701 "y.tab.c" /* yacc.c:1646  */
+#line 3376 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 260:
-#line 951 "grammar.y" /* yacc.c:1646  */
+#line 1204 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-5].curls).temp;}
-#line 2707 "y.tab.c" /* yacc.c:1646  */
+#line 3382 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 261:
-#line 952 "grammar.y" /* yacc.c:1646  */
+#line 1205 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-6].curls).temp;}
-#line 2713 "y.tab.c" /* yacc.c:1646  */
+#line 3388 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 266:
+#line 1214 "grammar.y" /* yacc.c:1646  */
+    {
+		symboldata *funcdata = globalst.lookup(current_ST->name);
+		cout<<"\n\n\n"<<current_ST->name<<"\n\n\n";
+	}
+#line 3397 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 270:
-#line 974 "grammar.y" /* yacc.c:1646  */
+#line 1231 "grammar.y" /* yacc.c:1646  */
     {
 		current_ST = hunny;
 	}
-#line 2721 "y.tab.c" /* yacc.c:1646  */
+#line 3405 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 273:
-#line 984 "grammar.y" /* yacc.c:1646  */
+#line 1241 "grammar.y" /* yacc.c:1646  */
     {
 		flag=1;
 		hunny = current_ST;
 		symboldata *funcdata=current_ST->lookup((yyvsp[0].declarationi)->name);
 
 		//if not NULL do typecheck here
-		if(funcdata==NULL)
+		if(funcdata==NULL){
+			funcdata->nested_symboltable->defined = 1;
 			current_ST->insert(funcdata);
+		}
 		else{
-			if(funcdata->nested_symboltable->defined == 1)
-				printf("\n\n\n\n\n\n\n\n\n\nerror here already defined \n\n\n\n\n\n\n");
+			if(funcdata->nested_symboltable->defined == 1){
+				bhej = funcdata->nested_symboltable->name.c_str();
+				yyerror("already defined");
+			}
 			else{
+				funcdata->nested_symboltable->defined=1;
 				funcdata->nested_symboltable->defined=1;
 			}	
 		}
@@ -2742,6 +3431,7 @@ yyreduce:
 		funcdata->name = my_dec->name;
 		funcdata->type.pc = my_dec->pc;
 		funcdata->type.b_type = my_dec->b_type;
+		funcdata->type.return_type = (yyvsp[-1].b_type);
 		if(my_dec->pc)
 			funcdata->type.base_t = type_pointer;
 		funcdata->size=0;
@@ -2749,11 +3439,11 @@ yyreduce:
 
 		current_ST = funcdata->nested_symboltable;
 	}
-#line 2753 "y.tab.c" /* yacc.c:1646  */
+#line 3443 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2757 "y.tab.c" /* yacc.c:1646  */
+#line 3447 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2981,7 +3671,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1018 "grammar.y" /* yacc.c:1906  */
+#line 1281 "grammar.y" /* yacc.c:1906  */
 
 int id=0;
 
@@ -3035,11 +3725,11 @@ void print_node(PARSE_TREE tree){
 
 }
 
-
 void yyerror(const char *s)
 {
 	fflush(stdout);
-	fprintf(stderr, "*** %s\n", s);
+	error_exists=1;
+	fprintf(stderr, "ERORR : line %d *** %s %s\n",yylineno, s, bhej);
 }
 
 PARSE_TREE create_node(char * na, int noc, PARSE_TREE *ch){
@@ -3071,56 +3761,193 @@ PARSE_TREE create_tnode(char * na, char *ana){
 
 void print(symboltable *table){
 	cout<<"----------------"<<table->name<<"------------"<<endl;
-	cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"\t"<<endl;
+	//cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"base_t\t"<<endl;
+		cout<<"name,"<<"type"<<","<<"size"<<","<<"offset"<<","<<"base_t"<<endl;
+
 	for(auto t:table->order_symbol){
 				
-		cout<<t->name<<"\t"<<"\t";
+		cout<<t->name<<",";
 		if(t->type.b_type==type_char){
-			cout<<"char\t"<<"\t";
+			cout<<"char,";
 		}
 		else if(t->type.b_type==type_int){
-			cout<<"int\t"<<"\t";
+			cout<<"int,";
 		}
 		else if(t->type.b_type==type_double){
-			cout<<"double\t"<<"\t";
+			cout<<"double,";
 		}
 		else if(t->type.b_type==type_float){
-			cout<<"float\t"<<"\t";
+			cout<<"float,";
 		}
 		else if(t->type.b_type==type_function){
-			cout<<"function"<<"\t";
+			cout<<"function,";
 		}
 		else{
-			cout<<"\t\t";
+			
 			if(t->type.b_type==type_char){
-				cout<<"char "<<"\t";
+				cout<<"char, ";
 			}
 			else if(t->type.b_type==type_int){
-				cout<<"int "<<"\t";
+				cout<<"int, ";
 			}
 			else if(t->type.b_type==type_double){
-				cout<<"double "<<"\t";
+				cout<<"double, ";
 			}
 		}
 
+		/*
 		if(t->type.base_t==type_pointer){
 			For(i,0,t->type.pc){
 				cout<<"*";
 			}
 			cout<<"\t"<<"\t";
 		}
-		cout<<t->size<<"\t"<<"\t"<<t->offset<<"\t";
+		*/
+		cout<<t->size<<","<<t->offset<<","<<t->type.base_t<<",";
 		
-		cout<<"\t";
+		
 		
 		cout<<endl;
 	}
 }
+
+expression* type_check(expression* t1, expression* t2, string op){
+		expression* res;
+		res=new expression;
+		bhej = op.c_str();
+		if(op=="*" || op == "/"){
+			if(t1->base_t == type_pointer || t2->base_t == type_pointer || t1->b_type == type_char || t2->b_type == type_char || t1->pc!=0 || t2->pc!=0){
+				yyerror("cannot apply operation");// error cannot apply operation 
+				return NULL;
+			}
+			if(t1->b_type == t2->b_type){
+				res->b_type=t1->b_type;
+				return res;
+			}
+			if(t1->b_type == type_int){
+				res->b_type=t2->b_type;
+				return res;
+			}
+			if(t2->b_type == type_int){
+				res->b_type=t1->b_type;
+				return res;
+			}
+			if(t1->b_type == type_double || t2->b_type==type_double){
+				res->b_type= type_double;
+				return res;
+			}
+
+		}
+		if(op=="%" || op == "<<" || op == ">>" || op=="&" || op=="^" || op== "|" || op =="<<=" || op=="<<=" || op=="%=" || op=="&=" || op=="|=" || op=="^="){
+			if(t1->base_t == type_pointer || t2->base_t == type_pointer || t1->b_type == type_char || t2->b_type == type_char || t1->pc!=0 || t2->pc!=0){
+				yyerror("cannot apply operation");// error cannot apply operation 
+				return NULL;
+			}
+			if(t1->b_type != type_int || t2->b_type != type_int){
+				yyerror("cannot apply operation");// errorr cannot apply operation
+				return NULL;
+			}
+			res->b_type= type_int;
+			return res;
+		}
+		if(op=="+" || op == "-"){
+			//cout<<"\n\n\n\n\n  aa gaya yaha  \n\n\n\n\n\n";
+			if(t1->b_type == t2->b_type){
+				if(t2->base_t == type_pointer || t1->b_type == type_char || t1->pc!=0){
+					yyerror("cannot apply operation");// error cannot apply operation 
+					return NULL;
+				}
+				res->b_type=t1->b_type;
+				return res;
+			}
+			if(t1->b_type == type_int){
+				res->b_type=t2->b_type;
+				return res;
+			}
+			if(t2->b_type == type_int){
+				res->b_type=t1->b_type;
+				return res;
+			}
+			if((t1->b_type == type_double && t2->b_type==type_float) || (t2->b_type==type_double && t1->b_type == type_float)){
+				res->b_type= type_double;
+				return res;
+			}
+			yyerror("cannot apply operation");// error cannot apply operation 
+					return NULL;
+
+		}
+		if(op=="<" || op == "<=" || op == ">" || op == ">="){
+			if((t1->b_type != t2->b_type && (t1->b_type==type_char || t2->b_type==type_char)) || t1->base_t == type_pointer || t1->pc!=0 || t2->pc!=0){
+				yyerror("cannot apply operation");// error cannot apply operation 
+				return NULL;
+			}
+			res->b_type= type_bool;
+			return res;
+		}
+
+		if(op=="==" || op == "!=" ){
+			if( t1->base_t != t2-> base_t || t1->pc!=t2->pc || (t1->b_type != t2->b_type && (t1->b_type==type_char || t2->b_type==type_char))){
+				yyerror("cannot apply operation");// error cannot apply operation 
+				return NULL;
+			}
+			res->b_type= type_bool;
+			return res;
+		}
+		if(op=="&&" || op == "||" ){
+			if(t1->b_type==t2->b_type && (t1->b_type==type_int || t1->b_type==type_bool)){
+				res->b_type= type_bool;
+				return res;
+			}
+			yyerror("cannot apply operation");// error cannot apply operation 
+			return NULL;
+		}
+
+		if(op=="-=" || op=="+=" || op=="*=" || op=="/="){
+			if(t1->b_type!=t2->b_type || t1->base_t == type_pointer || t2->base_t == type_pointer || t1->b_type == type_char || t1->pc!=0 ){
+				yyerror("cannot apply operation");// error cannot apply operation 
+				return NULL;
+			}
+			
+			res->b_type= t1->b_type;
+			return res;
+		}
+		if(op=="="){
+			if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
+				res=t1;
+				return res; 
+				
+			}
+			else if(t1->base_t != t2->base_t ||  t1->pc!= t2->pc || t1->b_type==type_char || t2->b_type==type_char){
+				yyerror("cannot apply operation");// error cannot apply operation 
+				return NULL;
+			}
+			else{
+				if(t1->b_type==type_double || t2->b_type==type_double ){
+					res->b_type=type_double;
+				}
+				else if(t1->b_type==type_float || t2->b_type==type_float ){
+					res->b_type=type_float;
+				}
+				res->pc=t1->pc;
+				res->base_t=t1->base_t;
+				return res;
+
+			}
+			yyerror("cannot apply operation");// error cannot apply operation 
+			return NULL;
+		}
+		
+
+		
+	
+}
+
 int main()
 {
-    yydebug = 1;
+    yydebug = 0;
     flag=0;
     globe=0;
+    error_exists = 0;
     current_ST=&(globalst);
     bool failure = yyparse();  
     //int sz = Quad.a1.size();
@@ -3129,6 +3956,7 @@ int main()
     //    cout<<i<<": "; Quad.a1[i].print();
     //}
     /*cout<<"----------------SYMBOL_TABLE----------------"<<endl;
+
     current_ST->print();
     cout<<"--------------------------------------------"<<endl;
     for(map<string,symboldata*> :: iterator it =current_ST->Symboltable.begin(); it !=current_ST->Symboltable.end(); ++it)
@@ -3147,11 +3975,15 @@ int main()
     else
         printf("success\n");
 
-    cout<<stack_ST.size(); 
-    print(current_ST);
-    cout<<endl;   
-    for(auto t:stack_ST){
-    	print(t);
-    	cout<<endl;
+    //cout<<stack_ST.size(); 
+    cout<<"error exists"<<error_exists<<endl;
+    freopen("symbol_table.csv","w",stdout);
+    if(error_exists==0){
+	    print(current_ST);
+	    cout<<endl;   
+	    for(auto t:stack_ST){
+	    	print(t);
+	    	cout<<endl;
+	    }
     }
 }

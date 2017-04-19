@@ -8,7 +8,6 @@ using namespace std;
 #define For(i,a,b) for(int (i)=(a);(i) < (b); ++(i))
 typedef vector<int> vi;
 
-extern FILE *yyin;
 extern int yylex();
 void yyerror(const char* s);
 extern int yydebug;
@@ -17,9 +16,6 @@ quad_array Quad;
 symboltable globalst;
 symboltable *current_ST,*hunny;
 vector<symboltable *> stack_ST;
-string current_name;
-string bing;
-int globe;
 int flag;
 
 #ifndef TRUE
@@ -59,7 +55,7 @@ int flag;
 %type <tVal> constant string generic_selection generic_assoc_list generic_association constant_expression declaration storage_class_specifier  struct_or_union_specifier struct_or_union struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list struct_declarator  atomic_type_specifier type_qualifier function_specifier alignment_specifier    type_qualifier_list    identifier_list type_name abstract_declarator direct_abstract_declarator designation designator_list designator static_assert_declaration  labeled_statement external_declaration function_definition declaration_list
 
 
-%type<curls> M N if else P
+%type<curls> M N
 %type<exp_info> primary_expression
 %type<exp_info> expression expression_opt
 %type<exp_info> postfix_expression assignment_expression unary_expression
@@ -382,16 +378,8 @@ init_declarator_list
 	}
 	;
 
-hack
-	: IDENTIFIER
-	| constant
-	;
-
 init_declarator
-	: declarator '=' hack
-	{
-		$$ = $1;
-	}
+	: declarator '=' initializer
 	| declarator{
 		$$ = $1;
 	}
@@ -535,27 +523,14 @@ direct_declarator
 		$$=$1;
 		$$->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup($$->name);
-		if(funcdata!=NULL){
-			if(funcdata->nested_symboltable==NULL){
-				funcdata->nested_symboltable = new symboltable;
-			}
-			if(funcdata->nested_symboltable!=NULL&&funcdata->nested_symboltable->declared==1){
-			}
-			else if(funcdata->nested_symboltable!=NULL && funcdata->nested_symboltable->defined==1){
-				funcdata->nested_symboltable->declared=1;
-			}
-			
-			else funcdata->nested_symboltable->declared=1;
-
-		}
+		printf("\n\n\n\n\n\n\n\n\n\n hunny \n\n\n\n\n\n\n\n");
 		if(funcdata==NULL){
 			funcdata = new symboldata;
+			cout<<"\n\n\n\n\n\n\n\n\n\n singh " <<$1->name<<"\n\n\n\n\n\n\n\n";
 			funcdata->name = $1->name;
 			funcdata->type.base_t = type_function;
 			funcdata->nested_symboltable = new symboltable;
-			funcdata->nested_symboltable->declared=1;
-			funcdata->nested_symboltable->name = $1->name;
-			stack_ST.pb(funcdata->nested_symboltable);
+
 
 			current_ST->Symboltable[funcdata->name]= funcdata;
 
@@ -606,81 +581,6 @@ direct_declarator
 				//current_ST = funcdata->nested_symboltable;
 
 			cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"<<funcdata->nested_symboltable->order_symbol.size()<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-		}
-
-		else{
-			if((*$3).size()==(funcdata->nested_symboltable->order_symbol).size()){
-				vector<symboltype> param,symb;
-				for(auto it:*$3)
-					param.pb(it->type);
-				for(auto it:funcdata->nested_symboltable->order_symbol)
-					symb.pb(it->type);
-				
-				int yes=1;
-				for(int i=0;i<param.size();i++){
-					if(param[i].b_type!=symb[i].b_type && param[i].alist!=symb[i].alist && param[i].pc!=symb[i].pc && param[i].base_t!=symb[i].base_t)
-						yes=0;
-						
-				}
-				if(yes){
-					delete funcdata->nested_symboltable;
-					funcdata->nested_symboltable = new symboltable;
-					funcdata->nested_symboltable->name = $1->name;
-
-					current_ST->Symboltable[funcdata->name]= funcdata;
-
-
-					for(auto it: *$3){
-						//cout<<"inside now"<<endl;
-						parameter *my_dec = it;
-
-			            int size_now;
-			            basic_type type_current = my_dec->type.b_type;
-			            if(type_current==type_char){ 
-				        	size_now=SZ_CHAR;
-				        }
-				        if(type_current==type_int){
-				        	size_now=SZ_INT;
-				        }
-				        if(type_current==type_double){
-				        	size_now=SZ_DB;
-				        }
-				        if(type_current==type_float){ 
-				        	size_now=SZ_FLOAT;
-				        }
-				        if(type_current==type_void){
-				        	size_now=SZ_INT;
-				        }
-				        if(type_current==type_long){
-				        	size_now=SZ_DB;
-				        }
-
-			            symboldata *var=funcdata->nested_symboltable->lookup(my_dec->name);
-			            if(var == NULL){
-			            	var = new symboldata;
-			            	var->nested_symboltable=NULL;
-			            	var->name = my_dec->name;
-			            	var->type = my_dec->type;
-			            	if(my_dec->type.alist.size()){
-			            		var->type.base_t = type_array;
-			            		var->type.alist = my_dec->type.alist;
-			            	}
-			            	var->offset = funcdata->nested_symboltable->offset;
-			            	for(int q:my_dec->type.alist )
-			            		size_now*=q;
-			            	var->size = size_now;	
-			            	funcdata->nested_symboltable->insert(var);
-			            }
-					}
-				}	
-
-				else{
-					printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
-				}		
-			}
-			else {
-				printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
-			}
 		}
 
 
@@ -826,38 +726,18 @@ labeled_statement
 	;
 
 M:	
-	{	
-		if(flag==0){
-			$$.temp = current_ST;
-			$$.created = new symboltable;
-			stack_ST.pb($$.created);
-			symboldata *data = new symboldata;
-			char a[100] ;
-			strcpy(a,current_name.c_str());
-			char b[100];
-			sprintf(b,"%d",globe++); 
-			data->name = strcat(a,b);
-			data->offset = current_ST->offset;
-			current_ST->insert(data);
-			data->nested_symboltable = $$.created;
-			data->nested_symboltable->parent = current_ST;
-			data->nested_symboltable->name = data->name;
-			current_ST = $$.created;
-		}
-		else if (flag==1){
-			if(current_name!="for")
-			flag=0;
-			$$.temp = current_ST;
-		}
+	{
+		//symboltable *x = new symboltable;
+		//$$.temp = current_ST;
+		//$$.created = x;
+		//current_ST = x;
+		//printf("\n\n\n\n\n\n\n\n\n hello \n\n\n\n\n\n\n\n\n");
 	}
 	;
 
 compound_statement
 	: '{' '}'
-	|  '{' {current_name = "cmpd";} M block_item_list '}'
-	{
-		current_ST=$3.temp;
-	}
+	| '{' block_item_list '}'
 	;
 
 block_item_list
@@ -878,79 +758,28 @@ expression_statement
 if
 	: IF
 	{
-		flag=1;
-		$$.temp = current_ST;
-		$$.created = new symboltable;
-		stack_ST.pb($$.created);
-		symboldata *data = new symboldata;
-		char a[100] = "if";
-		char b[100];
-		sprintf(b,"%d",globe++); 
-		data->name = strcat(a,b);
-		current_ST->insert(data);
-		data->nested_symboltable = $$.created;
-		data->nested_symboltable->parent = current_ST;
-		data->nested_symboltable->name = data->name;
-		current_ST = $$.created;
+		//$$.temp = current_ST;
+		//$$.created = new symboltable;
+		//current_ST = $$.created;
 	}
 	;
 
-else
-	: ELSE
-	{
-		flag=1;
-		$$.temp = current_ST;
-		$$.created = new symboltable;
-		stack_ST.pb($$.created);
-		symboldata *data = new symboldata;
-		char a[100] = "else";
-		char b[100];
-		sprintf(b,"%d",globe++); 
-		data->name = strcat(a,b);
-		current_ST->insert(data);
-		data->nested_symboltable = $$.created;
-		data->nested_symboltable->parent = current_ST;
-		data->nested_symboltable->name = data->name;
-		current_ST = $$.created;
-	}
-	;
 
 selection_statement
-	: if '(' expression ')' statement {current_ST = $1.temp;} else statement {current_ST = $7.temp;}
-	| if '(' expression ')' statement {current_ST = $1.temp;}
+	: if '(' expression ')' statement ELSE statement
+	| if '(' expression ')' statement
 	{
 	}
 	| SWITCH '(' expression ')' statement
 	;
 
-P
-	:
-	{
-		$$.temp = current_ST;
-		$$.created = new symboltable;
-		stack_ST.pb($$.created);
-		symboldata *data = new symboldata;
-		char a[100] = "for";
-		char b[100];
-		sprintf(b,"%d",globe++); 
-		data->name = strcat(a,b);
-		data->offset = current_ST->offset;
-		current_ST->insert(data);
-		data->nested_symboltable = $$.created;
-		data->nested_symboltable->parent = current_ST;
-		data->nested_symboltable->name = data->name;
-		current_ST = $$.created;
-		flag=1;
-	}
-	;
-
 iteration_statement
-	: WHILE {current_name="while"; } M '(' expression ')' statement {current_ST = $3.temp;}
-	| DO {current_name="do_while";} M statement WHILE '(' expression ')' ';' {current_ST = $3.temp;}
-	| FOR P '(' expression_statement expression_statement ')' statement  {current_ST = $2.temp;}
-	| FOR P '(' expression_statement expression_statement expression ')' statement {current_ST = $2.temp;}
-	| FOR P '(' declaration expression_statement ')' statement {current_ST = $2.temp;}
-	| FOR P '(' declaration expression_statement expression ')' statement {current_ST = $2.temp;}
+	: WHILE '(' expression ')' statement
+	| DO statement WHILE '(' expression ')' ';'
+	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
+	| FOR '(' declaration expression_statement ')' statement
+	| FOR '(' declaration expression_statement expression ')' statement
 	;
 
 jump_statement
@@ -983,6 +812,7 @@ function_definition
 	: declaration_specifiers declarator declaration_list 
 	| declaration_specifiers declarator 
 	{
+		//current_ST = $2.temp2;
 		flag=1;
 		hunny = current_ST;
 		symboldata *funcdata=current_ST->lookup($2->name);
@@ -990,13 +820,7 @@ function_definition
 		//if not NULL do typecheck here
 		if(funcdata==NULL)
 			current_ST->insert(funcdata);
-		else{
-			if(funcdata->nested_symboltable->defined == 1)
-				printf("\n\n\n\n\n\n\n\n\n\nerror here already defined \n\n\n\n\n\n\n");
-			else{
-				funcdata->nested_symboltable->defined=1;
-			}	
-		}
+
 
 		decc *my_dec = $2;
 		funcdata->name = my_dec->name;
@@ -1103,58 +927,11 @@ PARSE_TREE create_tnode(char * na, char *ana){
 
 }
 
-void print(symboltable *table){
-	cout<<"----------------"<<table->name<<"------------"<<endl;
-	cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"\t"<<endl;
-	for(auto t:table->order_symbol){
-				
-		cout<<t->name<<"\t"<<"\t";
-		if(t->type.b_type==type_char){
-			cout<<"char\t"<<"\t";
-		}
-		else if(t->type.b_type==type_int){
-			cout<<"int\t"<<"\t";
-		}
-		else if(t->type.b_type==type_double){
-			cout<<"double\t"<<"\t";
-		}
-		else if(t->type.b_type==type_float){
-			cout<<"float\t"<<"\t";
-		}
-		else if(t->type.b_type==type_function){
-			cout<<"function"<<"\t";
-		}
-		else{
-			cout<<"\t\t";
-			if(t->type.b_type==type_char){
-				cout<<"char "<<"\t";
-			}
-			else if(t->type.b_type==type_int){
-				cout<<"int "<<"\t";
-			}
-			else if(t->type.b_type==type_double){
-				cout<<"double "<<"\t";
-			}
-		}
 
-		if(t->type.base_t==type_pointer){
-			For(i,0,t->type.pc){
-				cout<<"*";
-			}
-			cout<<"\t"<<"\t";
-		}
-		cout<<t->size<<"\t"<<"\t"<<t->offset<<"\t";
-		
-		cout<<"\t";
-		
-		cout<<endl;
-	}
-}
 int main()
 {
-    yydebug = 0;
+    yydebug = 1;
     flag=0;
-    globe=0;
     current_ST=&(globalst);
     bool failure = yyparse();  
     //int sz = Quad.a1.size();
@@ -1162,7 +939,7 @@ int main()
     //For(i,0,sz){
     //    cout<<i<<": "; Quad.a1[i].print();
     //}
-    /*cout<<"----------------SYMBOL_TABLE----------------"<<endl;
+    cout<<"----------------SYMBOL_TABLE----------------"<<endl;
     current_ST->print();
     cout<<"--------------------------------------------"<<endl;
     for(map<string,symboldata*> :: iterator it =current_ST->Symboltable.begin(); it !=current_ST->Symboltable.end(); ++it)
@@ -1175,17 +952,8 @@ int main()
             cout<<"--------------------------------------------"<<endl;
         }
     }
-    */
     if(failure)
         printf("failure\n");
     else
         printf("success\n");
-
-    cout<<stack_ST.size(); 
-    print(current_ST);
-    cout<<endl;   
-    for(auto t:stack_ST){
-    	print(t);
-    	cout<<endl;
-    }
 }

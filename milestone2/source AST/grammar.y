@@ -1889,21 +1889,19 @@ external_declaration
 	;
 
 function_definition
-	: declaration_specifiers declarator declaration_list compound_statement
-	{
+	: declaration_specifiers declarator declaration_list compound_statement{
 		PARSE_TREE arr[5];
 		arr[0]=$1;
-    	arr[1]=$2;
-    	arr[2]=$3;
-    	arr[3]=$4;
+    arr[1]=$2;
+    arr[2]=$3;
+    arr[3]=$4;
 		$$ = create_node("function_definition", 4, arr);
 	}
-	| declaration_specifiers declarator compound_statement
-	{
+	| declaration_specifiers declarator compound_statement{
 		PARSE_TREE arr[4];
 		arr[0]=$1;
-    	arr[1]=$2;
-    	arr[2]=$3;
+    arr[1]=$2;
+    arr[2]=$3;
 		$$ = create_node("function_definition", 3, arr);
 	}
 	;
