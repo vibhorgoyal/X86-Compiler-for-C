@@ -1383,15 +1383,24 @@ else
 	;
 
 selection_statement
-	: if '(' expression ')' M1 statement N {current_ST = $1.temp;} else M1 statement {
+	: if '(' expression ')' N M1 statement N {current_ST = $1.temp;} else M1 statement {
 		 cout<<"hello"<<endl;
-		current_ST = $9.temp;
-		//Quad.backpatch($3->truelist, $5->instr);
-		//Quad.backpatch($3->falselist, $10->instr);
+
+		Quad.backpatch($5->nextlist,Quad.nextinstr); 
+		current_ST = $10.temp;
+		string tmp2;
+		stringstream temp1,temp2;
+		temp1<<$6->instr;
+		temp2<<$11->instr;
+		temp1>>tmp2;
+		Quad.emit(tmp2, $3->loc , "NE", "0");
+		temp2>>tmp2;
+		Quad.emit(tmp2,"","GOTO","");
+
 		list<int> temp;
 		$$= new expression;
-		$$->nextlist = merge($6->nextlist, $7->nextlist);
-		$$->nextlist = merge($$->nextlist, $11->nextlist);
+		$$->nextlist = merge($7->nextlist, $8->nextlist);
+		$$->nextlist = merge($$->nextlist, $12->nextlist);
 	}
 	| if '(' expression ')'  M1 statement {
 		cout<<"world"<<endl;
