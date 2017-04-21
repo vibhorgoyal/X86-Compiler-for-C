@@ -1462,8 +1462,9 @@ iteration_statement
 		stringstream temp1,temp2;
 		temp1<<$5->instr;
 		temp1>>tmp2;
+		Quad.emit(tmp2,"","GOTO","");
 		Quad.backpatch($8->nextlist,Quad.nextinstr); 
-		Quad.backpatch($10->nextlist,$6->instr); 
+		Quad.backpatch($10->nextlist,$5->instr); 
 		temp2<<$9->instr;
 		temp2>>tmp2;
 		Quad.emit(tmp2, $6->loc , "NE", "0");
