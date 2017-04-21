@@ -63,15 +63,14 @@ expression* type_check(expression* t1,expression* t2, string op);
 %type <tVal>  string generic_selection generic_assoc_list generic_association declaration storage_class_specifier  struct_or_union_specifier struct_or_union struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list struct_declarator  atomic_type_specifier type_qualifier function_specifier alignment_specifier    type_qualifier_list    identifier_list  abstract_declarator direct_abstract_declarator designation designator_list designator static_assert_declaration  labeled_statement external_declaration function_definition declaration_list
 
 
-%type<curls> M N if else P
+%type<curls> M if else P
 %type<symboltypei> type_name
 %type<exp_info> primary_expression constant constant_expression
 %type<exp_info> expression expression_opt
 %type<exp_info> postfix_expression assignment_expression unary_expression
 %type<exp_info> additive_expression multiplicative_expression shift_expression cast_expression
-%type<exp_info> relational_expression equality_expression conditional_expression
+%type<exp_info> relational_expression equality_expression conditional_expression unary_operator M1 N
 %type<exp_info> logical_or_expression logical_and_expression and_expression exclusive_or_expression inclusive_or_expression selection_statement statement iteration_statement compound_statement expression_statement jump_statement assignment_expression_opt
-%type<intval> unary_operator 
 %type<pstring> assignment_operator hack
 %type<exp_info> block_item block_item_list
 %type<b_type> type_specifier declaration_specifiers
@@ -104,9 +103,20 @@ expression* type_check(expression* t1,expression* t2, string op);
 
 %start base;
 %%
+N:
+	{
+		$$=new expression;
+		$$->nextlist=makelist(Quad.nextinstr);
+		Quad.emit("","","GOTO","");
+	}
+	;
 
-
-
+M1:
+	{
+		$$=new expression;
+		$$->instr=Quad.nextinstr;
+	}
+	;
 
 primary_expression
 	: IDENTIFIER{
@@ -121,18 +131,15 @@ primary_expression
 			$$->b_type = var->type.b_type;
 			$$->pc=var->type.pc;
 			$$->base_t=var->type.base_t;
+			$$->loc = tmp1;
+			$$->return_type=var->type.return_type;
 		}
 
 	}
 	| constant{
 		$$=$1;
 	}
-	| string{
-		$$=new expression;
-		$$->b_type=type_char;
-		$$->pc=1;
-		$$->base_t=type_pointer;
-	}
+	| string
 	| '(' expression ')'{
 		$$=$2;
 	}
@@ -142,17 +149,37 @@ primary_expression
 constant
 	: I_CONSTANT{
 		$$=new expression;
+		$$->loc= Quad.gentmp();
 		$$->b_type = type_int;
+		Quad.emit($$->loc,$1,"");
 	}		/* includes character_constant */
 	| F_CONSTANT{
 		$$=new expression;
+		$$->loc= Quad.gentmp();
+		Quad.emit($$->loc,$1,"");
 		$$->b_type = type_double;
 	}
 	;
 
 string
-	: STRING_LITERAL
-	| FUNC_NAME
+	: STRING_LITERAL{
+		/*$$=new expression;
+		$$->base_t=type_char;
+		$$->pc=1;
+		$$->b_type=type_pointer;
+		$$->loc= Quad.gentmp();
+		Quad.emit($$->loc, $1 ,"");
+		*/
+	}
+	| FUNC_NAME{
+		/*$$=new expression;
+		$$->base_t=type_char;
+		$$->pc=1;
+		$$->b_type=type_pointer;
+		$$->loc= Quad.gentmp();
+		Quad.emit($$->loc, $1,"");
+		*/
+	}
 	;
 
 generic_selection
@@ -181,6 +208,23 @@ postfix_expression
 	}
 	| postfix_expression '(' argument_expression_list ')'{
 		$$=$1;
+		string function_name=$1->loc;
+		symboltable *functionsymbol=globalst.lookup(function_name)->nested_symboltable;
+		vector<parameter*> arglist=*($3);
+		vector<symboldata*> parameterlist=functionsymbol->order_symbol;
+		For(i,0,arglist.size()){
+			if(arglist[i]->type.b_type!=parameterlist[i]->type.b_type){
+				if(arglist[i]->type.base_t!=parameterlist[i]->type.b_type)
+					yyerror("wrong input arguement given");
+
+				string temp=Quad.gentmp();
+				arglist[i]->name=temp;
+			}
+			Quad.emit(arglist[i]->name,"","PARAM","");
+		}
+		Quad.emit(function_name,(int)arglist.size(),"CALL");
+
+
 	}
 	| postfix_expression '.' IDENTIFIER{
 		$$=$1;
@@ -209,8 +253,26 @@ postfix_expression
 	;
 
 argument_expression_list
-	: assignment_expression
-	| argument_expression_list ',' assignment_expression
+	: assignment_expression{
+		parameter *temp=new parameter;
+		temp->name=$1->loc;
+		temp->type.b_type=$1->b_type;
+		temp->type.base_t=$1->base_t;
+		temp->type.return_type=$1->return_type;
+		temp->type.pc=$1->pc;
+		$$=new vector<parameter*>;
+		$$->pb(temp);
+	}
+	| argument_expression_list ',' assignment_expression{
+		parameter *temp=new parameter;
+		temp->name=$3->loc;
+		temp->type.b_type=$3->b_type;
+		temp->type.base_t=$3->base_t;
+		temp->type.return_type=$3->return_type;
+		temp->type.pc=$3->pc;
+		$$=$1;
+		$$->pb(temp);
+	}
 	;
 
 unary_expression
@@ -218,32 +280,63 @@ unary_expression
 		$$=$1;
 	}
 	| INC_OP unary_expression{
-		$$=$2;
+		$$= new expression;
+		$$->loc=Quad.gentmp();
+		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
+		Quad.emit($$->loc,"","++",$2->loc);
 	}
 	| DEC_OP unary_expression{
-		$$=$2;
+		$$= new expression;
+		$$->loc=Quad.gentmp();
+		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
+		Quad.emit($$->loc,"","--",$2->loc);
 	}
 	| unary_operator cast_expression{
-		$$=$2;
+		$$= new expression;
+		$$->loc=Quad.gentmp();
+		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
+		Quad.emit($$->loc,"",$1->loc,$2->loc);
 	}
 	| SIZEOF unary_expression{
 		$$=new expression;
 		$$->b_type= type_int;
+		$$->loc=Quad.gentmp();
+		Quad.emit($$->loc,"","sizeof",$2->loc);
 	}
 	| SIZEOF '(' type_name ')'{
 		$$=new expression;
 		$$->b_type= type_int;
+		
 	}
-	| ALIGNOF '(' type_name ')'
+	| ALIGNOF '(' type_name ')'{
+	}
 	;
 
 unary_operator
-	: '&'
-	| '*'
-	| '+'
-	| '-'
-	| '~'
-	| '!'
+	: '&'{
+		$$=new expression;
+		$$->loc="&";
+	}
+	| '*'{
+		$$=new expression;
+		$$->loc="*";
+	}
+	| '+'{
+		$$=new expression;
+		$$->loc="+";
+	}
+	| '-'{
+		$$=new expression;
+		$$->loc="-";
+	}
+	| '~'{
+		$$=new expression;
+		$$->loc="~";
+	}
+	| '!'{
+		$$=new expression;
+		$$->loc="!";
+	}
 	;
 
 cast_expression
@@ -264,12 +357,19 @@ multiplicative_expression
 	}
 	| multiplicative_expression '*' cast_expression{
 		$$=type_check($1, $3, "*");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "*", $3->loc);
+
 	}
 	| multiplicative_expression '/' cast_expression{
 		$$=type_check($1, $3, "/");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "/", $3->loc);
 	}
 	| multiplicative_expression '%' cast_expression{
 		$$=type_check($1, $3, "%");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "%", $3->loc);
 	}
 	;
 
@@ -279,9 +379,13 @@ additive_expression
 	}
 	| additive_expression '+' multiplicative_expression{
 		$$=type_check($1, $3, "+");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "+", $3->loc);
 	}
 	| additive_expression '-' multiplicative_expression{
 		$$=type_check($1, $3, "-");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "-", $3->loc);
 	}
 	;
 
@@ -291,9 +395,13 @@ shift_expression
 	}
 	| shift_expression LEFT_OP additive_expression{
 		$$=type_check($1, $3, "<<");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "<<", $3->loc);
 	}
 	| shift_expression RIGHT_OP additive_expression{
 		$$=type_check($1, $3, ">>");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, ">>", $3->loc);
 	}
 	;
 
@@ -303,15 +411,69 @@ relational_expression
 	}
 	| relational_expression '<' shift_expression{
 		$$=type_check($1, $3, "<");
+		$$->loc = Quad.gentmp();
+		string res;
+		stringstream temp1,temp;
+		temp1<<(Quad.nextinstr+3);
+		temp1>>res;
+		$$->truelist = makelist(Quad.nextinstr);
+		Quad.emit(res, $1->loc, "GOTO_L", $3->loc);
+		Quad.emit($$->loc, "0", "ASSIGN", "=");
+		temp<<(Quad.nextinstr+2);
+		temp>>res;
+		$$->falselist = makelist(Quad.nextinstr);
+		Quad.emit(res," ", "GOTO", " ");
+		Quad.emit($$->loc, "1", "ASSIGN", "=");
+
 	}
 	| relational_expression '>' shift_expression{
 		$$=type_check($1, $3, ">");
+		$$->loc = Quad.gentmp();
+		string res;
+		stringstream temp1,temp;
+		temp1<<(Quad.nextinstr+3);
+		temp1>>res;
+		$$->truelist = makelist(Quad.nextinstr);
+		Quad.emit(res, $1->loc, "GOTO_G", $3->loc);
+		Quad.emit($$->loc, "0", "ASSIGN", "=");
+		temp<<(Quad.nextinstr+2);
+		temp>>res;
+		$$->falselist = makelist(Quad.nextinstr);
+		Quad.emit(res," ", "GOTO", " ");
+		Quad.emit($$->loc, "1", "ASSIGN", "=");
+
 	}
 	| relational_expression LE_OP shift_expression{
 		$$=type_check($1, $3, "<=");
+		$$->loc = Quad.gentmp();
+		string res;
+		stringstream temp1,temp;
+		temp1<<(Quad.nextinstr+3);
+		temp1>>res;
+		$$->truelist = makelist(Quad.nextinstr);
+		Quad.emit(res, $1->loc, "GOTO_LE", $3->loc);
+		Quad.emit($$->loc, "0", "ASSIGN", "=");
+		temp<<(Quad.nextinstr+2);
+		temp>>res;
+		$$->falselist = makelist(Quad.nextinstr);
+		Quad.emit(res," ", "GOTO", " ");
+		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	| relational_expression GE_OP shift_expression{
 		$$=type_check($1, $3, ">=");
+		$$->loc = Quad.gentmp();
+		string res;
+		stringstream temp1,temp;
+		temp1<<(Quad.nextinstr+3);
+		temp1>>res;
+		$$->truelist = makelist(Quad.nextinstr);
+		Quad.emit(res, $1->loc, "GOTO_GE", $3->loc);
+		Quad.emit($$->loc, "0", "ASSIGN", "=");
+		temp<<(Quad.nextinstr+2);
+		temp>>res;
+		$$->falselist = makelist(Quad.nextinstr);
+		Quad.emit(res," ", "GOTO", " ");
+		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	;
 
@@ -321,9 +483,35 @@ equality_expression
 	}
 	| equality_expression EQ_OP relational_expression{
 		$$=type_check($1, $3, "==");
+		$$->loc = Quad.gentmp();
+		string res;
+		stringstream temp1,temp;
+		temp1<<(Quad.nextinstr+3);
+		temp1>>res;
+		$$->truelist = makelist(Quad.nextinstr);
+		Quad.emit(res, $1->loc, "EQ", $3->loc);
+		Quad.emit($$->loc, "0", "ASSIGN", "=");
+		temp<<(Quad.nextinstr+2);
+		temp>>res;
+		$$->falselist = makelist(Quad.nextinstr);
+		Quad.emit(res," ", "GOTO", " ");
+		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	| equality_expression NE_OP relational_expression{
 		$$=type_check($1, $3, "!=");
+		$$->loc = Quad.gentmp();
+		string res;
+		stringstream temp1,temp;
+		temp1<<(Quad.nextinstr+3);
+		temp1>>res;
+		$$->truelist = makelist(Quad.nextinstr);
+		Quad.emit(res, $1->loc, "NE", $3->loc);
+		Quad.emit($$->loc, "0", "ASSIGN", "=");
+		temp<<(Quad.nextinstr+2);
+		temp>>res;
+		$$->falselist = makelist(Quad.nextinstr);
+		Quad.emit(res," ", "GOTO", " ");
+		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	;
 
@@ -333,6 +521,8 @@ and_expression
 	}
 	| and_expression '&' equality_expression{
 		$$=type_check($1, $3, "&");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "&", $3->loc);
 	}
 	;
 
@@ -342,6 +532,8 @@ exclusive_or_expression
 	}
 	| exclusive_or_expression '^' and_expression{
 		$$=type_check($1, $3, "^");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "^", $3->loc);
 	}
 	;
 
@@ -351,6 +543,8 @@ inclusive_or_expression
 	}
 	| inclusive_or_expression '|' exclusive_or_expression{
 		$$=type_check($1, $3, "|");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "!", $3->loc);
 	}
 	;
 
@@ -360,6 +554,8 @@ logical_and_expression
 	}
 	| logical_and_expression AND_OP inclusive_or_expression{
 		$$=type_check($1, $3, "&&");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "&&", $3->loc);
 	}
 	;
 
@@ -369,6 +565,8 @@ logical_or_expression
 	}
 	| logical_or_expression OR_OP logical_and_expression{
 		$$=type_check($1, $3, "||");
+		$$->loc = Quad.gentmp();
+		Quad.emit($$->loc, $1->loc, "||", $3->loc);
 	}
 	;
 
@@ -385,6 +583,7 @@ assignment_expression
 	}
 	| unary_expression assignment_operator assignment_expression{
 		$$=type_check($1, $3, *$2);
+		Quad.emit($1->loc, $3->loc, "ASSIGN", *$2);
 	}
 	;
 
@@ -1062,9 +1261,13 @@ static_assert_declaration
 
 statement
 	: labeled_statement
-	| compound_statement
+	| compound_statement{
+		Quad.backpatch($1->nextlist, Quad.nextinstr);
+	}
 	| expression_statement
-	| selection_statement
+	| selection_statement{
+		Quad.backpatch($1->nextlist, Quad.nextinstr);
+	}
 	| iteration_statement
 	| jump_statement
 	;
@@ -1107,22 +1310,34 @@ compound_statement
 	|  '{' {current_name = "cmpd";} M block_item_list '}'
 	{
 		current_ST=$3.temp;
+		$$=new expression;
+		$$->nextlist = $4->nextlist;
 	}
 	;
 
 block_item_list
 	: block_item
-	| block_item_list block_item
+	| block_item_list M1 block_item{
+		$$=new expression;
+		Quad.backpatch($1->nextlist,$2->instr);
+		$$->nextlist=$3->nextlist;
+	}
 	;
 
 block_item
-	: declaration
-	| statement
+	: declaration{
+		$$=new expression;
+	}
+	| statement{
+		$$=new expression;
+	}
 	;
 
 expression_statement
 	: ';'
-	| expression ';'
+	| expression ';'{
+		$$=new expression;
+	}
 	;
 
 if
@@ -1168,9 +1383,23 @@ else
 	;
 
 selection_statement
-	: if '(' expression ')' statement {current_ST = $1.temp;} else statement {current_ST = $7.temp;}
-	| if '(' expression ')' statement {current_ST = $1.temp;}
-	{
+	: if '(' expression ')' M1 statement N {current_ST = $1.temp;} else M1 statement {
+		 cout<<"hello"<<endl;
+		current_ST = $9.temp;
+		Quad.backpatch($3->truelist, $5->instr);
+		Quad.backpatch($3->falselist, $10->instr);
+		list<int> temp;
+		$$= new expression;
+		$$->nextlist = merge($6->nextlist, $7->nextlist);
+		$$->nextlist = merge($$->nextlist, $11->nextlist);
+	}
+	| if '(' expression ')'  M1 statement {
+		cout<<"world"<<endl;
+		current_ST = $1.temp;
+		Quad.backpatch($3->truelist, $5->instr);
+		$$= new expression;
+		$$->nextlist = merge($3->falselist, $6->nextlist);
+
 	}
 	| SWITCH '(' expression ')' statement
 	;
@@ -1214,6 +1443,7 @@ jump_statement
 	{
 		symboldata *funcdata = globalst.lookup(current_ST->name);
 		cout<<"\n\n\n"<<current_ST->name<<"\n\n\n";
+		Quad.emit($2->loc,"", "RETURN","");
 	}
 	;
 
@@ -1457,7 +1687,6 @@ expression* type_check(expression* t1, expression* t2, string op){
 			return res;
 		}
 		if(op=="+" || op == "-"){
-			//cout<<"\n\n\n\n\n  aa gaya yaha  \n\n\n\n\n\n";
 			if(t1->b_type == t2->b_type){
 				if(t2->base_t == type_pointer || t1->b_type == type_char || t1->pc!=0){
 					yyerror("cannot apply operation");// error cannot apply operation 
@@ -1468,10 +1697,14 @@ expression* type_check(expression* t1, expression* t2, string op){
 			}
 			if(t1->b_type == type_int){
 				res->b_type=t2->b_type;
+				res->base_t= t2->base_t;
+				res->pc=t2->pc;
 				return res;
 			}
 			if(t2->b_type == type_int){
 				res->b_type=t1->b_type;
+				res->base_t=t1->base_t;
+				res->pc=t1->pc;
 				return res;
 			}
 			if((t1->b_type == type_double && t2->b_type==type_float) || (t2->b_type==type_double && t1->b_type == type_float)){
@@ -1518,6 +1751,7 @@ expression* type_check(expression* t1, expression* t2, string op){
 			return res;
 		}
 		if(op=="="){
+			cout<<"type    "<<t1->b_type<<","<<t1->base_t<<"   "<<t2->b_type<<","<<t2->base_t<<endl;
 			if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
 				res=t1;
 				return res; 
@@ -1582,6 +1816,12 @@ int main()
         printf("success\n");
 
     //cout<<stack_ST.size(); 
+    if(error_exists==0){
+    	int sz=Quad.a1.size();
+    	for(int i=0;i<sz;i++){
+    		cout<<i<<": "; Quad.a1[i].print();
+    	}
+    }
     cout<<"error exists"<<error_exists<<endl;
     freopen("symbol_table.csv","w",stdout);
     if(error_exists==0){
