@@ -1428,8 +1428,7 @@ selection_statement
 		Quad.emit(tmp2, $3->loc , "NE", "0");
 		current_ST = $1.temp;
 		$$= new expression;
-		$$->nextlist = merge($3->falselist, $7->nextlist);
-		$$->nextlist = merge($$->nextlist, $8->nextlist);
+		$$->nextlist = merge($8->nextlist, $7->nextlist);
 
 	}
 	| SWITCH '(' expression ')' statement
@@ -1457,16 +1456,18 @@ P
 	;
 
 iteration_statement
-	: WHILE {current_name="while"; } M '(' expression ')' N M1 statement {
+	: WHILE {current_name="while"; } M '(' M1 expression ')' N M1 statement {
 		current_ST = $3.temp;
-		Quad.backpatch($7->nextlist,Quad.nextinstr); 
 		string tmp2;
-		stringstream temp1;
-		temp1<<$7->instr;
+		stringstream temp1,temp2;
+		temp1<<$5->instr;
 		temp1>>tmp2;
-		Quad.emit(tmp2, $5->loc , "NE", "0");
+		Quad.backpatch($8->nextlist,Quad.nextinstr); 
+		Quad.backpatch($10->nextlist,$6->instr); 
+		temp2<<$9->instr;
+		temp2>>tmp2;
+		Quad.emit(tmp2, $6->loc , "NE", "0");
 		$$=new expression;
-        $$->nextlist=$5->falselist;
 
 	}
 	| DO {current_name="do_while";} M statement WHILE '(' expression ')' ';' {current_ST = $3.temp;}
