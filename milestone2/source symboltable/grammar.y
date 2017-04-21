@@ -1386,8 +1386,8 @@ selection_statement
 	: if '(' expression ')' M1 statement N {current_ST = $1.temp;} else M1 statement {
 		 cout<<"hello"<<endl;
 		current_ST = $9.temp;
-		Quad.backpatch($3->truelist, $5->instr);
-		Quad.backpatch($3->falselist, $10->instr);
+		//Quad.backpatch($3->truelist, $5->instr);
+		//Quad.backpatch($3->falselist, $10->instr);
 		list<int> temp;
 		$$= new expression;
 		$$->nextlist = merge($6->nextlist, $7->nextlist);
