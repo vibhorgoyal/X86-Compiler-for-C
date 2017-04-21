@@ -1,21 +1,12 @@
-int func(int a,int b){
-	int z;
-	z = 20;
-	int p,q,r;
-}
+int hunny(int x,int y);
 
-int x,y;
+int b;
 
 int main() {
-        int b;
-        int a;
-        a = b + b * a + 5 - 8;
-         
-        {
-        	int p,q;
-        	char x;
-        	p = p + q;
-        }
+        int q;
+
+        if(1==1)q=1;
+        hunny(q,"q");
 
         return 0;
 }

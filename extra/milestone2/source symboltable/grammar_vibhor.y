@@ -8,7 +8,6 @@ using namespace std;
 #define For(i,a,b) for(int (i)=(a);(i) < (b); ++(i))
 typedef vector<int> vi;
 
-extern FILE *yyin;
 extern int yylex();
 void yyerror(const char* s);
 extern int yydebug;
@@ -18,12 +17,8 @@ quad_array Quad;
 symboltable globalst;
 symboltable *current_ST,*hunny;
 vector<symboltable *> stack_ST;
-
-string current_name;
-string bing;
 int globe;
 int flag;
-int error_exists;
 expression* type_check(expression* t1,expression* t2, string op);
 
 #ifndef TRUE
@@ -63,15 +58,16 @@ expression* type_check(expression* t1,expression* t2, string op);
 %type <tVal>  string generic_selection generic_assoc_list generic_association declaration storage_class_specifier  struct_or_union_specifier struct_or_union struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list struct_declarator  atomic_type_specifier type_qualifier function_specifier alignment_specifier    type_qualifier_list    identifier_list  abstract_declarator direct_abstract_declarator designation designator_list designator static_assert_declaration  labeled_statement external_declaration function_definition declaration_list
 
 
-%type<curls> M N if else P
+%type<curls> M N if else
 %type<symboltypei> type_name
 %type<exp_info> primary_expression constant constant_expression
 %type<exp_info> expression expression_opt
 %type<exp_info> postfix_expression assignment_expression unary_expression
 %type<exp_info> additive_expression multiplicative_expression shift_expression cast_expression
-%type<exp_info> relational_expression equality_expression conditional_expression unary_operator 
+%type<exp_info> relational_expression equality_expression conditional_expression
 %type<exp_info> logical_or_expression logical_and_expression and_expression exclusive_or_expression inclusive_or_expression selection_statement statement iteration_statement compound_statement expression_statement jump_statement assignment_expression_opt
-%type<pstring> assignment_operator hack
+%type<intval> unary_operator 
+%type<pstring> assignment_operator
 %type<exp_info> block_item block_item_list
 %type<b_type> type_specifier declaration_specifiers
 %type<intval> pointer
@@ -120,15 +116,18 @@ primary_expression
 			$$->b_type = var->type.b_type;
 			$$->pc=var->type.pc;
 			$$->base_t=var->type.base_t;
-			$$->loc = tmp1;
-			$$->return_type=var->type.return_type;
 		}
 
 	}
 	| constant{
 		$$=$1;
 	}
-	| string
+	| string{
+		$$=new expression;
+		$$->b_type=type_char;
+		$$->pc=1;
+		$$->base_t=type_pointer;
+	}
 	| '(' expression ')'{
 		$$=$2;
 	}
@@ -138,37 +137,17 @@ primary_expression
 constant
 	: I_CONSTANT{
 		$$=new expression;
-		$$->loc= Quad.gentmp();
 		$$->b_type = type_int;
-		Quad.emit($$->loc,$1,"");
 	}		/* includes character_constant */
 	| F_CONSTANT{
 		$$=new expression;
-		$$->loc= Quad.gentmp();
-		Quad.emit($$->loc,$1,"");
 		$$->b_type = type_double;
 	}
 	;
 
 string
-	: STRING_LITERAL{
-		/*$$=new expression;
-		$$->base_t=type_char;
-		$$->pc=1;
-		$$->b_type=type_pointer;
-		$$->loc= Quad.gentmp();
-		Quad.emit($$->loc, $1 ,"");
-		*/
-	}
-	| FUNC_NAME{
-		/*$$=new expression;
-		$$->base_t=type_char;
-		$$->pc=1;
-		$$->b_type=type_pointer;
-		$$->loc= Quad.gentmp();
-		Quad.emit($$->loc, $1,"");
-		*/
-	}
+	: STRING_LITERAL
+	| FUNC_NAME
 	;
 
 generic_selection
@@ -197,39 +176,6 @@ postfix_expression
 	}
 	| postfix_expression '(' argument_expression_list ')'{
 		$$=$1;
-		string function_name=$1->loc;
-		symboltable *functionsymbol=globalst.lookup(function_name)->nested_symboltable;
-		vector<parameter*> arglist=*($3);
-		vector<symboldata*> parameterlist=functionsymbol->order_symbol;
-		if(arglist.size()!=functionsymbol->arg_tot){
-			yyerror("function not called in right way");
-		}
-
-		else{
-			For(i,0,arglist.size()){
-				if(parameterlist[i]->type.b_type == type_function){
-					if(!(arglist[i]->type.base_t==parameterlist[i]->type.return_type && arglist[i]->type.pc==parameterlist[i]->type.pc))
-						yyerror("wrong input arguement given");
-				}
-			}
-		}
-
-		For(i,0,arglist.size()){
-
-			//////////////////////////////////////////////////////////////////////////////////////////////////type check here
-
-			if(arglist[i]->type.b_type!=parameterlist[i]->type.b_type){
-				if(arglist[i]->type.base_t!=parameterlist[i]->type.b_type)
-					yyerror("wrong input arguement given");
-
-				string temp=Quad.gentmp();
-				arglist[i]->name=temp;
-			}
-			Quad.emit(arglist[i]->name,"","PARAM","");
-		}
-		Quad.emit(function_name,(int)arglist.size(),"CALL");
-
-
 	}
 	| postfix_expression '.' IDENTIFIER{
 		$$=$1;
@@ -258,26 +204,8 @@ postfix_expression
 	;
 
 argument_expression_list
-	: assignment_expression{
-		parameter *temp=new parameter;
-		temp->name=$1->loc;
-		temp->type.b_type=$1->b_type;
-		temp->type.base_t=$1->base_t;
-		temp->type.return_type=$1->return_type;
-		temp->type.pc=$1->pc;
-		$$=new vector<parameter*>;
-		$$->pb(temp);
-	}
-	| argument_expression_list ',' assignment_expression{
-		parameter *temp=new parameter;
-		temp->name=$3->loc;
-		temp->type.b_type=$3->b_type;
-		temp->type.base_t=$3->base_t;
-		temp->type.return_type=$3->return_type;
-		temp->type.pc=$3->pc;
-		$$=$1;
-		$$->pb(temp);
-	}
+	: assignment_expression
+	| argument_expression_list ',' assignment_expression
 	;
 
 unary_expression
@@ -285,63 +213,32 @@ unary_expression
 		$$=$1;
 	}
 	| INC_OP unary_expression{
-		$$= new expression;
-		$$->loc=Quad.gentmp();
-		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
-		Quad.emit($$->loc,"","++",$2->loc);
+		$$=$2;
 	}
 	| DEC_OP unary_expression{
-		$$= new expression;
-		$$->loc=Quad.gentmp();
-		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
-		Quad.emit($$->loc,"","--",$2->loc);
+		$$=$2;
 	}
 	| unary_operator cast_expression{
-		$$= new expression;
-		$$->loc=Quad.gentmp();
-		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
-		Quad.emit($$->loc,"",$1->loc,$2->loc);
+		$$=$2;
 	}
 	| SIZEOF unary_expression{
 		$$=new expression;
 		$$->b_type= type_int;
-		$$->loc=Quad.gentmp();
-		Quad.emit($$->loc,"","sizeof",$2->loc);
 	}
 	| SIZEOF '(' type_name ')'{
 		$$=new expression;
 		$$->b_type= type_int;
-		
 	}
-	| ALIGNOF '(' type_name ')'{
-	}
+	| ALIGNOF '(' type_name ')'
 	;
 
 unary_operator
-	: '&'{
-		$$=new expression;
-		$$->loc="&";
-	}
-	| '*'{
-		$$=new expression;
-		$$->loc="*";
-	}
-	| '+'{
-		$$=new expression;
-		$$->loc="+";
-	}
-	| '-'{
-		$$=new expression;
-		$$->loc="-";
-	}
-	| '~'{
-		$$=new expression;
-		$$->loc="~";
-	}
-	| '!'{
-		$$=new expression;
-		$$->loc="!";
-	}
+	: '&'
+	| '*'
+	| '+'
+	| '-'
+	| '~'
+	| '!'
 	;
 
 cast_expression
@@ -362,19 +259,12 @@ multiplicative_expression
 	}
 	| multiplicative_expression '*' cast_expression{
 		$$=type_check($1, $3, "*");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "*", $3->loc);
-
 	}
 	| multiplicative_expression '/' cast_expression{
 		$$=type_check($1, $3, "/");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "/", $3->loc);
 	}
 	| multiplicative_expression '%' cast_expression{
 		$$=type_check($1, $3, "%");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "%", $3->loc);
 	}
 	;
 
@@ -384,13 +274,9 @@ additive_expression
 	}
 	| additive_expression '+' multiplicative_expression{
 		$$=type_check($1, $3, "+");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "+", $3->loc);
 	}
 	| additive_expression '-' multiplicative_expression{
 		$$=type_check($1, $3, "-");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "-", $3->loc);
 	}
 	;
 
@@ -400,13 +286,9 @@ shift_expression
 	}
 	| shift_expression LEFT_OP additive_expression{
 		$$=type_check($1, $3, "<<");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "<<", $3->loc);
 	}
 	| shift_expression RIGHT_OP additive_expression{
 		$$=type_check($1, $3, ">>");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, ">>", $3->loc);
 	}
 	;
 
@@ -416,61 +298,15 @@ relational_expression
 	}
 	| relational_expression '<' shift_expression{
 		$$=type_check($1, $3, "<");
-		$$->loc = Quad.gentmp();
-		string res;
-		stringstream temp1,temp;
-		temp1<<(Quad.nextinstr+3);
-		temp1>>res;
-		Quad.emit(res, $1->loc, "GOTO_L", $3->loc);
-		Quad.emit($$->loc, "0", "ASSIGN", "=");
-		temp<<(Quad.nextinstr+2);
-		temp>>res;
-		Quad.emit(res," ", "GOTO", " ");
-		Quad.emit($$->loc, "1", "ASSIGN", "=");
-
 	}
 	| relational_expression '>' shift_expression{
 		$$=type_check($1, $3, ">");
-		$$->loc = Quad.gentmp();
-		string res;
-		stringstream temp1,temp;
-		temp1<<(Quad.nextinstr+3);
-		temp1>>res;
-		Quad.emit(res, $1->loc, "GOTO_G", $3->loc);
-		Quad.emit($$->loc, "0", "ASSIGN", "=");
-		temp<<(Quad.nextinstr+2);
-		temp>>res;
-		Quad.emit(res," ", "GOTO", " ");
-		Quad.emit($$->loc, "1", "ASSIGN", "=");
-
 	}
 	| relational_expression LE_OP shift_expression{
 		$$=type_check($1, $3, "<=");
-		$$->loc = Quad.gentmp();
-		string res;
-		stringstream temp1,temp;
-		temp1<<(Quad.nextinstr+3);
-		temp1>>res;
-		Quad.emit(res, $1->loc, "GOTO_LE", $3->loc);
-		Quad.emit($$->loc, "0", "ASSIGN", "=");
-		temp<<(Quad.nextinstr+2);
-		temp>>res;
-		Quad.emit(res," ", "GOTO", " ");
-		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	| relational_expression GE_OP shift_expression{
 		$$=type_check($1, $3, ">=");
-		$$->loc = Quad.gentmp();
-		string res;
-		stringstream temp1,temp;
-		temp1<<(Quad.nextinstr+3);
-		temp1>>res;
-		Quad.emit(res, $1->loc, "GOTO_GE", $3->loc);
-		Quad.emit($$->loc, "0", "ASSIGN", "=");
-		temp<<(Quad.nextinstr+2);
-		temp>>res;
-		Quad.emit(res," ", "GOTO", " ");
-		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	;
 
@@ -480,31 +316,9 @@ equality_expression
 	}
 	| equality_expression EQ_OP relational_expression{
 		$$=type_check($1, $3, "==");
-		$$->loc = Quad.gentmp();
-		string res;
-		stringstream temp1,temp;
-		temp1<<(Quad.nextinstr+3);
-		temp1>>res;
-		Quad.emit(res, $1->loc, "EQ", $3->loc);
-		Quad.emit($$->loc, "0", "ASSIGN", "=");
-		temp<<(Quad.nextinstr+2);
-		temp>>res;
-		Quad.emit(res," ", "GOTO", " ");
-		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	| equality_expression NE_OP relational_expression{
 		$$=type_check($1, $3, "!=");
-		$$->loc = Quad.gentmp();
-		string res;
-		stringstream temp1,temp;
-		temp1<<(Quad.nextinstr+3);
-		temp1>>res;
-		Quad.emit(res, $1->loc, "NE", $3->loc);
-		Quad.emit($$->loc, "0", "ASSIGN", "=");
-		temp<<(Quad.nextinstr+2);
-		temp>>res;
-		Quad.emit(res," ", "GOTO", " ");
-		Quad.emit($$->loc, "1", "ASSIGN", "=");
 	}
 	;
 
@@ -514,8 +328,6 @@ and_expression
 	}
 	| and_expression '&' equality_expression{
 		$$=type_check($1, $3, "&");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "&", $3->loc);
 	}
 	;
 
@@ -525,8 +337,6 @@ exclusive_or_expression
 	}
 	| exclusive_or_expression '^' and_expression{
 		$$=type_check($1, $3, "^");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "^", $3->loc);
 	}
 	;
 
@@ -536,8 +346,6 @@ inclusive_or_expression
 	}
 	| inclusive_or_expression '|' exclusive_or_expression{
 		$$=type_check($1, $3, "|");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "!", $3->loc);
 	}
 	;
 
@@ -547,8 +355,6 @@ logical_and_expression
 	}
 	| logical_and_expression AND_OP inclusive_or_expression{
 		$$=type_check($1, $3, "&&");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "&&", $3->loc);
 	}
 	;
 
@@ -558,8 +364,6 @@ logical_or_expression
 	}
 	| logical_or_expression OR_OP logical_and_expression{
 		$$=type_check($1, $3, "||");
-		$$->loc = Quad.gentmp();
-		Quad.emit($$->loc, $1->loc, "||", $3->loc);
 	}
 	;
 
@@ -576,7 +380,6 @@ assignment_expression
 	}
 	| unary_expression assignment_operator assignment_expression{
 		$$=type_check($1, $3, *$2);
-		Quad.emit($1->loc, $3->loc, "ASSIGN", *$2);
 	}
 	;
 
@@ -660,17 +463,27 @@ declaration
         {
         	//cout<<"inside now"<<endl;
             decc *my_dec = *it;
+            /*
+            if(my_dec->b_type==type_function){
+                GST=&(globalst);
+            }            
+            if(my_dec->b_type==type_function)
+            {
+            	//cout<<"wow there we have a function"<<endl;
+                symboldata *var=GST->lookup(my_dec->name);
+                symboldata *retval=var->nested_symboltable->lookup("retVal",type_now,my_dec->pc);
+                var->offset=GST->offset;
+                var->size= 0;
+                var->initial_value=NULL;
+                continue;
+            }
+            */
             symboldata *var=current_ST->lookup(my_dec->name);
-
             if(var == NULL){
             	var = new symboldata;
             	var->nested_symboltable=NULL;
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
-            	if(my_dec->pc > 0){
-            		var->type.base_t = type_pointer;
-            	}
-
             	var->type.b_type = type_current;
             	if(my_dec->alist.size()){
             		var->type.base_t = type_array;
@@ -681,14 +494,13 @@ declaration
             		size_now*=p;
             	var->size = size_now;	
             	current_ST->insert(var);
-            	continue;
             }
             else if(var->type.base_t == type_function){
+            	cout<<"\n\n\n\n\n\n\n yaha aa gaya \n\n\n\n\n\n";
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
             	var->type.b_type = type_current;
             	if(my_dec->alist.size()){
-            		cout<<"helllo"<<endl;
             		var->type.base_t = type_array;
             		var->type.alist = my_dec->alist;
             	}
@@ -696,12 +508,8 @@ declaration
             	for(int p:my_dec->alist )
             		size_now*=p;
             	var->size = size_now;
-            	//current_ST->insert(var);
-            	//current_ST->offset-=var->size;
-            }
-            else if(var!=NULL ){
-            	bhej = var->name.c_str();
-            	yyerror("already declared ");
+            	current_ST->insert(var);
+            	current_ST->offset-=var->size;
             }
             
             
@@ -741,28 +549,13 @@ init_declarator_list
 	}
 	;
 
-hack
-	: IDENTIFIER
-	{
-		*$$ = *$1;
-	}
-	| constant
-	{
-		*$$ = "";
-		
-	}
-	;
-
 init_declarator
-	: declarator '=' hack
-	{
-		$$ = $1;
-
-	}
+	: declarator '=' initializer
 	| declarator{
 		$$ = $1;
 	}
 	;
+
 storage_class_specifier
 	: TYPEDEF	/* identifiers must be flagged as TYPEDEF_NAME */
 	| EXTERN
@@ -880,12 +673,6 @@ declarator
 	}
 	;
 
-Z
-	:
-	{
-		cout<<"hello"<<endl;
-	}
-	;
 direct_declarator
 	: IDENTIFIER
 	{
@@ -904,41 +691,19 @@ direct_declarator
 	| direct_declarator '[' assignment_expression ']'
 	| direct_declarator '(' parameter_type_list ')'
 	{
-		
 		$$=$1;
-		cout<<"here\n";
 		$$->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup($$->name);
-		//funcdata->nested_symboltable->parent = &globalst;
-		if(funcdata!=NULL){
-			
-			if(funcdata->nested_symboltable==NULL){
-				funcdata->nested_symboltable = new symboltable;
-			}
-			else if(funcdata->nested_symboltable!=NULL&&funcdata->nested_symboltable->declared==1){
-
-			}
-			else if(funcdata->nested_symboltable!=NULL && funcdata->nested_symboltable->defined==1){
-				bhej = funcdata->nested_symboltable->name.c_str();
-				yyerror("already defined");
-			}
-			
-			else funcdata->nested_symboltable->declared=1;
-			
-
-
-
-		}
+		printf("\n\n\n\n\n\n\n\n\n\n hunny \n\n\n\n\n\n\n\n");
 		if(funcdata==NULL){
-			cout<<"bbb"<<endl;
 			funcdata = new symboldata;
+			cout<<"\n\n\n\n\n\n\n\n\n\n singh " <<$1->name<<"\n\n\n\n\n\n\n\n";
 			funcdata->name = $1->name;
 			funcdata->type.base_t = type_function;
 			funcdata->nested_symboltable = new symboltable;
-			funcdata->nested_symboltable->declared=1;
 			funcdata->nested_symboltable->name = $1->name;
 			stack_ST.pb(funcdata->nested_symboltable);
-			current_ST->insert(funcdata);
+
 			current_ST->Symboltable[funcdata->name]= funcdata;
 
 
@@ -982,138 +747,17 @@ direct_declarator
 	            		size_now*=q;
 	            	var->size = size_now;	
 	            	funcdata->nested_symboltable->insert(var);
-	            	funcdata->nested_symboltable->arg_tot++;
-	            }
-	            else {
-	            	bhej = my_dec->name.c_str();
-	            	yyerror("already declared ");
 	            }
 			}
 			//if(flag==1)
 				//current_ST = funcdata->nested_symboltable;
 
-		}
-
-		else{
-			if((*$3).size()==(funcdata->nested_symboltable->order_symbol).size()){
-
-				vector<symboltype> param,symb;
-				for(auto it:*$3)
-					param.pb(it->type);
-				for(auto it:funcdata->nested_symboltable->order_symbol)
-					symb.pb(it->type);
-				
-				int yes=1;
-				for(int i=0;i<param.size();i++){
-					if(param[i].b_type!=symb[i].b_type || param[i].alist!=symb[i].alist || param[i].pc!=symb[i].pc || param[i].base_t!=symb[i].base_t)
-						yes=0;
-						
-				}
-				cout<<yes<<endl;
-				if(yes){
-					delete funcdata->nested_symboltable;
-					funcdata->nested_symboltable = new symboltable;
-					funcdata->nested_symboltable->name = $1->name;
-
-					current_ST->Symboltable[funcdata->name]= funcdata;
-
-
-					for(auto it: *$3){
-						//cout<<"inside now"<<endl;
-						parameter *my_dec = it;
-
-			            int size_now;
-			            basic_type type_current = my_dec->type.b_type;
-			            if(type_current==type_char){ 
-				        	size_now=SZ_CHAR;
-				        }
-				        if(type_current==type_int){
-				        	size_now=SZ_INT;
-				        }
-				        if(type_current==type_double){
-				        	size_now=SZ_DB;
-				        }
-				        if(type_current==type_float){ 
-				        	size_now=SZ_FLOAT;
-				        }
-				        if(type_current==type_void){
-				        	size_now=SZ_INT;
-				        }
-				        if(type_current==type_long){
-				        	size_now=SZ_DB;
-				        }
-
-			            symboldata *var=funcdata->nested_symboltable->lookup(my_dec->name);
-			            if(var == NULL){
-			            	var = new symboldata;
-			            	var->nested_symboltable=NULL;
-			            	var->name = my_dec->name;
-			            	var->type = my_dec->type;
-			            	if(my_dec->type.alist.size()){
-			            		var->type.base_t = type_array;
-			            		var->type.alist = my_dec->type.alist;
-			            	}
-			            	var->offset = funcdata->nested_symboltable->offset;
-			            	for(int q:my_dec->type.alist )
-			            		size_now*=q;
-			            	var->size = size_now;	
-			            	funcdata->nested_symboltable->insert(var);
-			            }
-					}
-				}	
-
-				else{
-					string fname=funcdata->name;
-					bhej=fname.c_str();
-					yyerror("declarations and definition are not same for ");
-					//printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
-				}		
-			}
-			else {
-				string fname=funcdata->name;
-				bhej=fname.c_str();
-				yyerror("declarations and definition are not same for ");
-				//printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
-			}
+			cout<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"<<funcdata->nested_symboltable->order_symbol.size()<<"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 		}
 
 
 	}
 	| direct_declarator '(' ')'
-	{
-		$$=$1;
-		$$->b_type = type_function;
-		symboldata *funcdata=current_ST->lookup($$->name);
-		if(funcdata==NULL){
-			funcdata = new symboldata;
-			funcdata->name = $1->name;
-			funcdata->type.base_t = type_function;
-			funcdata->nested_symboltable = new symboltable;
-			funcdata->nested_symboltable->declared=1;
-			funcdata->nested_symboltable->name = $1->name;
-			stack_ST.pb(funcdata->nested_symboltable);
-			current_ST->insert(funcdata);
-			
-		}
-		else if(funcdata->nested_symboltable->Symboltable.size()!=0){
-			bhej = funcdata->name.c_str();
-			yyerror("declaration and definition not same");		}
-		else{
-			if(funcdata->nested_symboltable==NULL){
-				funcdata->nested_symboltable = new symboltable;
-			}
-			else if(funcdata->nested_symboltable!=NULL&&funcdata->nested_symboltable->declared==1){
-
-			}
-			else if(funcdata->nested_symboltable!=NULL && funcdata->nested_symboltable->defined==1){
-				bhej = funcdata->nested_symboltable->name.c_str();
-				yyerror("already defined");
-			}
-			
-			else funcdata->nested_symboltable->declared=1;
-			
-		}
-	}
 	| direct_declarator '(' identifier_list ')'
 	;
 
@@ -1140,7 +784,6 @@ parameter_type_list
 	: parameter_list ',' ELLIPSIS
 	| parameter_list
 	{
-
 		$$ = $1;
 	}
 	;
@@ -1261,12 +904,10 @@ M:
 			$$.created = new symboltable;
 			stack_ST.pb($$.created);
 			symboldata *data = new symboldata;
-			char a[100] ;
-			strcpy(a,current_name.c_str());
+			char a[100] = "cmpd";
 			char b[100];
 			sprintf(b,"%d",globe++); 
 			data->name = strcat(a,b);
-			data->offset = current_ST->offset;
 			current_ST->insert(data);
 			data->nested_symboltable = $$.created;
 			data->nested_symboltable->parent = current_ST;
@@ -1274,7 +915,6 @@ M:
 			current_ST = $$.created;
 		}
 		else if (flag==1){
-			if(current_name!="for")
 			flag=0;
 			$$.temp = current_ST;
 		}
@@ -1283,9 +923,9 @@ M:
 
 compound_statement
 	: '{' '}'
-	|  '{' {current_name = "cmpd";} M block_item_list '}'
+	| '{' M block_item_list '}'
 	{
-		current_ST=$3.temp;
+		current_ST=$2.temp;
 	}
 	;
 
@@ -1312,10 +952,9 @@ if
 		$$.created = new symboltable;
 		stack_ST.pb($$.created);
 		symboldata *data = new symboldata;
-		char a[100] = "if_";
+		char a[100] = "if";
 		char b[100];
-		sprintf(b,"%d",globe++);
-		data->offset = current_ST->offset; 
+		sprintf(b,"%d",globe++); 
 		data->name = strcat(a,b);
 		current_ST->insert(data);
 		data->nested_symboltable = $$.created;
@@ -1333,11 +972,10 @@ else
 		$$.created = new symboltable;
 		stack_ST.pb($$.created);
 		symboldata *data = new symboldata;
-		char a[100] = "else_";
+		char a[100] = "else";
 		char b[100];
 		sprintf(b,"%d",globe++); 
 		data->name = strcat(a,b);
-		data->offset = current_ST->offset;
 		current_ST->insert(data);
 		data->nested_symboltable = $$.created;
 		data->nested_symboltable->parent = current_ST;
@@ -1348,41 +986,19 @@ else
 
 selection_statement
 	: if '(' expression ')' statement {current_ST = $1.temp;} else statement {current_ST = $7.temp;}
-	| if '(' expression ')' statement {
-		current_ST = $1.temp;
-
+	| if '(' expression ')' statement {current_ST = $1.temp;}
+	{
 	}
 	| SWITCH '(' expression ')' statement
 	;
 
-P
-	:
-	{
-		$$.temp = current_ST;
-		$$.created = new symboltable;
-		stack_ST.pb($$.created);
-		symboldata *data = new symboldata;
-		char a[100] = "for";
-		char b[100];
-		sprintf(b,"%d",globe++); 
-		data->name = strcat(a,b);
-		data->offset = current_ST->offset;
-		current_ST->insert(data);
-		data->nested_symboltable = $$.created;
-		data->nested_symboltable->parent = current_ST;
-		data->nested_symboltable->name = data->name;
-		current_ST = $$.created;
-		flag=1;
-	}
-	;
-
 iteration_statement
-	: WHILE {current_name="while"; } M '(' expression ')' statement {current_ST = $3.temp;}
-	| DO {current_name="do_while";} M statement WHILE '(' expression ')' ';' {current_ST = $3.temp;}
-	| FOR P '(' expression_statement expression_statement ')' statement  {current_ST = $2.temp;}
-	| FOR P '(' expression_statement expression_statement expression ')' statement {current_ST = $2.temp;}
-	| FOR P '(' declaration expression_statement ')' statement {current_ST = $2.temp;}
-	| FOR P '(' declaration expression_statement expression ')' statement {current_ST = $2.temp;}
+	: WHILE '(' expression ')' statement
+	| DO statement WHILE '(' expression ')' ';'
+	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
+	| FOR '(' declaration expression_statement ')' statement
+	| FOR '(' declaration expression_statement expression ')' statement
 	;
 
 jump_statement
@@ -1391,10 +1007,6 @@ jump_statement
 	| BREAK ';'
 	| RETURN ';'
 	| RETURN expression ';'
-	{
-		symboldata *funcdata = globalst.lookup(current_ST->name);
-		Quad.emit($2->loc,"", "RETURN","");
-	}
 	;
 
 base
@@ -1419,36 +1031,20 @@ function_definition
 	: declaration_specifiers declarator declaration_list 
 	| declaration_specifiers declarator 
 	{
+		//current_ST = $2.temp2;
 		flag=1;
 		hunny = current_ST;
 		symboldata *funcdata=current_ST->lookup($2->name);
 
 		//if not NULL do typecheck here
-		if(funcdata==NULL){
-			cout<<"was null\n";
-			funcdata->nested_symboltable->defined = 1;
-			funcdata->nested_symboltable->parent = &globalst;
+		if(funcdata==NULL)
 			current_ST->insert(funcdata);
-			current_ST->Symboltable[funcdata->name]= funcdata;
-		}
-		else{
-			cout<<"not null\n";
-			funcdata->nested_symboltable->parent = &globalst;
-			if(funcdata->nested_symboltable->defined == 1){
-				bhej = funcdata->nested_symboltable->name.c_str();
-				yyerror("already defined");
-			}
-			else{
-				funcdata->nested_symboltable->defined=1;
-				funcdata->nested_symboltable->defined=1;
-			}	
-		}
+
 
 		decc *my_dec = $2;
 		funcdata->name = my_dec->name;
 		funcdata->type.pc = my_dec->pc;
 		funcdata->type.b_type = my_dec->b_type;
-		funcdata->type.return_type = $1;
 		if(my_dec->pc)
 			funcdata->type.base_t = type_pointer;
 		funcdata->size=0;
@@ -1516,11 +1112,11 @@ void print_node(PARSE_TREE tree){
 
 }
 
+
 void yyerror(const char *s)
 {
 	fflush(stdout);
-	error_exists=1;
-	fprintf(stderr, "ERORR : line %d *** %s %s\n",yylineno, s, bhej);
+	fprintf(stderr, "\n\n\n\n\n\n\n ERORR : %d *** %s %s\n \n\n\n\n\n\n",yylineno, s, bhej);
 }
 
 PARSE_TREE create_node(char * na, int noc, PARSE_TREE *ch){
@@ -1552,51 +1148,46 @@ PARSE_TREE create_tnode(char * na, char *ana){
 
 void print(symboltable *table){
 	cout<<"----------------"<<table->name<<"------------"<<endl;
-	//cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"base_t\t"<<endl;
-		cout<<"name,"<<"type"<<","<<"size"<<","<<"offset"<<","<<"base_t"<<endl;
-
+	cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"\t"<<endl;
 	for(auto t:table->order_symbol){
 				
-		cout<<t->name<<",";
+		cout<<t->name<<"\t"<<"\t";
 		if(t->type.b_type==type_char){
-			cout<<"char,";
+			cout<<"char\t"<<"\t";
 		}
 		else if(t->type.b_type==type_int){
-			cout<<"int,";
+			cout<<"int\t"<<"\t";
 		}
 		else if(t->type.b_type==type_double){
-			cout<<"double,";
+			cout<<"double\t"<<"\t";
 		}
 		else if(t->type.b_type==type_float){
-			cout<<"float,";
+			cout<<"float\t"<<"\t";
 		}
 		else if(t->type.b_type==type_function){
-			cout<<"function,";
+			cout<<"function"<<"\t";
 		}
 		else{
-			
 			if(t->type.b_type==type_char){
-				cout<<"char, ";
+				cout<<"char "<<"\t";
 			}
 			else if(t->type.b_type==type_int){
-				cout<<"int, ";
+				cout<<"int "<<"\t";
 			}
 			else if(t->type.b_type==type_double){
-				cout<<"double, ";
+				cout<<"double "<<"\t";
 			}
 		}
 
-		/*
-		if(t->type.base_t==type_pointer){
+		if(t->type.b_type==type_pointer){
 			For(i,0,t->type.pc){
 				cout<<"*";
 			}
 			cout<<"\t"<<"\t";
 		}
-		*/
-		cout<<t->size<<","<<t->offset<<","<<t->type.base_t<<",";
+		cout<<t->size<<"\t"<<"\t"<<t->offset<<"\t";
 		
-		
+		cout<<"\t";
 		
 		cout<<endl;
 	}
@@ -1642,6 +1233,7 @@ expression* type_check(expression* t1, expression* t2, string op){
 			return res;
 		}
 		if(op=="+" || op == "-"){
+			//cout<<"\n\n\n\n\n  aa gaya yaha  \n\n\n\n\n\n";
 			if(t1->b_type == t2->b_type){
 				if(t2->base_t == type_pointer || t1->b_type == type_char || t1->pc!=0){
 					yyerror("cannot apply operation");// error cannot apply operation 
@@ -1652,14 +1244,10 @@ expression* type_check(expression* t1, expression* t2, string op){
 			}
 			if(t1->b_type == type_int){
 				res->b_type=t2->b_type;
-				res->base_t= t2->base_t;
-				res->pc=t2->pc;
 				return res;
 			}
 			if(t2->b_type == type_int){
 				res->b_type=t1->b_type;
-				res->base_t=t1->base_t;
-				res->pc=t1->pc;
 				return res;
 			}
 			if((t1->b_type == type_double && t2->b_type==type_float) || (t2->b_type==type_double && t1->b_type == type_float)){
@@ -1706,8 +1294,6 @@ expression* type_check(expression* t1, expression* t2, string op){
 			return res;
 		}
 		if(op=="="){
-
-
 			if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
 				res=t1;
 				return res; 
@@ -1732,7 +1318,7 @@ expression* type_check(expression* t1, expression* t2, string op){
 			yyerror("cannot apply operation");// error cannot apply operation 
 			return NULL;
 		}
-		
+
 
 		
 	
@@ -1743,7 +1329,6 @@ int main()
     yydebug = 0;
     flag=0;
     globe=0;
-    error_exists = 0;
     current_ST=&(globalst);
     bool failure = yyparse();  
     //int sz = Quad.a1.size();
@@ -1752,7 +1337,6 @@ int main()
     //    cout<<i<<": "; Quad.a1[i].print();
     //}
     /*cout<<"----------------SYMBOL_TABLE----------------"<<endl;
-
     current_ST->print();
     cout<<"--------------------------------------------"<<endl;
     for(map<string,symboldata*> :: iterator it =current_ST->Symboltable.begin(); it !=current_ST->Symboltable.end(); ++it)
@@ -1771,21 +1355,11 @@ int main()
     else
         printf("success\n");
 
-    //cout<<stack_ST.size(); 
-    if(error_exists==0){
-    	int sz=Quad.a1.size();
-    	for(int i=0;i<sz;i++){
-    		cout<<i<<": "; Quad.a1[i].print();
-    	}
-    }
-    cout<<"error exists"<<error_exists<<endl;
-    freopen("symbol_table.csv","w",stdout);
-    if(error_exists==0){
-	    print(current_ST);
-	    cout<<endl;   
-	    for(auto t:stack_ST){
-	    	print(t);
-	    	cout<<endl;
-	    }
+    cout<<stack_ST.size(); 
+    print(current_ST);
+    cout<<endl;   
+    for(auto t:stack_ST){
+    	print(t);
+    	cout<<endl;
     }
 }

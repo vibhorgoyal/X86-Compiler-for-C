@@ -10,7 +10,6 @@ typedef vector<int> vi;
 #define SZ_CHAR 1
 #define SZ_INT	4
 #define SZ_DB	8
-
 #define SZ_PTR	4
 #define SZ_FLOAT 4
 
@@ -189,7 +188,6 @@ public:
 
 class symboltable{
 public:
-	int arg_tot;
 	bool defined;
 	bool declared;
 	string name;
@@ -201,7 +199,6 @@ public:
 		name = "GST";
 		defined = 0;
 		declared = 0;
-		arg_tot = 0;
 	}
 	symboltable *parent;
 	symboldata *lookup(string var);

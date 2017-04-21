@@ -34,7 +34,6 @@ string symboltable::gentemp(basic_type bt,bool check_,bool overflow_){
 		temp2=0;
 	}
 	Symboltable[res]->size=temp2;
-	
 	Symboltable[res]->initial_value=NULL;
 	offset+=temp2;
 	check_=true;
@@ -44,7 +43,7 @@ string symboltable::gentemp(basic_type bt,bool check_,bool overflow_){
 
 symboldata* symboltable::lookup(string var){
 	if(parent==NULL && Symboltable.find(var)==Symboltable.end())return NULL;
-	if(Symboltable.find(var)== Symboltable.end()){  return parent->lookup(var);}
+	if(Symboltable.find(var)== Symboltable.end())return parent->lookup(var);
 	else return Symboltable[var];
 }
 

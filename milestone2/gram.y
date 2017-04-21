@@ -201,23 +201,7 @@ postfix_expression
 		symboltable *functionsymbol=globalst.lookup(function_name)->nested_symboltable;
 		vector<parameter*> arglist=*($3);
 		vector<symboldata*> parameterlist=functionsymbol->order_symbol;
-		if(arglist.size()!=functionsymbol->arg_tot){
-			yyerror("function not called in right way");
-		}
-
-		else{
-			For(i,0,arglist.size()){
-				if(parameterlist[i]->type.b_type == type_function){
-					if(!(arglist[i]->type.base_t==parameterlist[i]->type.return_type && arglist[i]->type.pc==parameterlist[i]->type.pc))
-						yyerror("wrong input arguement given");
-				}
-			}
-		}
-
 		For(i,0,arglist.size()){
-
-			//////////////////////////////////////////////////////////////////////////////////////////////////type check here
-
 			if(arglist[i]->type.b_type!=parameterlist[i]->type.b_type){
 				if(arglist[i]->type.base_t!=parameterlist[i]->type.b_type)
 					yyerror("wrong input arguement given");
@@ -660,6 +644,21 @@ declaration
         {
         	//cout<<"inside now"<<endl;
             decc *my_dec = *it;
+            /*
+            if(my_dec->b_type==type_function){
+                GST=&(globalst);
+            }            
+            if(my_dec->b_type==type_function)
+            {
+            	//cout<<"wow there we have a function"<<endl;
+                symboldata *var=GST->lookup(my_dec->name);
+                symboldata *retval=var->nested_symboltable->lookup("retVal",type_now,my_dec->pc);
+                var->offset=GST->offset;
+                var->size= 0;
+                var->initial_value=NULL;
+                continue;
+            }
+            */
             symboldata *var=current_ST->lookup(my_dec->name);
 
             if(var == NULL){
@@ -906,10 +905,8 @@ direct_declarator
 	{
 		
 		$$=$1;
-		cout<<"here\n";
 		$$->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup($$->name);
-		//funcdata->nested_symboltable->parent = &globalst;
 		if(funcdata!=NULL){
 			
 			if(funcdata->nested_symboltable==NULL){
@@ -930,7 +927,7 @@ direct_declarator
 
 		}
 		if(funcdata==NULL){
-			cout<<"bbb"<<endl;
+		cout<<"bbb"<<endl;
 			funcdata = new symboldata;
 			funcdata->name = $1->name;
 			funcdata->type.base_t = type_function;
@@ -982,7 +979,6 @@ direct_declarator
 	            		size_now*=q;
 	            	var->size = size_now;	
 	            	funcdata->nested_symboltable->insert(var);
-	            	funcdata->nested_symboltable->arg_tot++;
 	            }
 	            else {
 	            	bhej = my_dec->name.c_str();
@@ -1093,6 +1089,7 @@ direct_declarator
 			funcdata->nested_symboltable->name = $1->name;
 			stack_ST.pb(funcdata->nested_symboltable);
 			current_ST->insert(funcdata);
+			current_ST->Symboltable[funcdata->name]= funcdata;
 			
 		}
 		else if(funcdata->nested_symboltable->Symboltable.size()!=0){
@@ -1393,6 +1390,7 @@ jump_statement
 	| RETURN expression ';'
 	{
 		symboldata *funcdata = globalst.lookup(current_ST->name);
+		cout<<"\n\n\n"<<current_ST->name<<"\n\n\n";
 		Quad.emit($2->loc,"", "RETURN","");
 	}
 	;
@@ -1425,15 +1423,10 @@ function_definition
 
 		//if not NULL do typecheck here
 		if(funcdata==NULL){
-			cout<<"was null\n";
 			funcdata->nested_symboltable->defined = 1;
-			funcdata->nested_symboltable->parent = &globalst;
 			current_ST->insert(funcdata);
-			current_ST->Symboltable[funcdata->name]= funcdata;
 		}
 		else{
-			cout<<"not null\n";
-			funcdata->nested_symboltable->parent = &globalst;
 			if(funcdata->nested_symboltable->defined == 1){
 				bhej = funcdata->nested_symboltable->name.c_str();
 				yyerror("already defined");
@@ -1706,8 +1699,6 @@ expression* type_check(expression* t1, expression* t2, string op){
 			return res;
 		}
 		if(op=="="){
-
-
 			if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
 				res=t1;
 				return res; 

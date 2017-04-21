@@ -1,11 +1,8 @@
-struct student
-{
-int a;
-char b[10];
+int x;
+int func(int a,int b){
+	a++;
 }
 
-int main(){
-	struct student x;
-	x.a = 0;
-	++x.a++
+char main() {
+        func(x,y);
 }
