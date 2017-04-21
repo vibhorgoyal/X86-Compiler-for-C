@@ -212,7 +212,23 @@ postfix_expression
 		symboltable *functionsymbol=globalst.lookup(function_name)->nested_symboltable;
 		vector<parameter*> arglist=*($3);
 		vector<symboldata*> parameterlist=functionsymbol->order_symbol;
+		if(arglist.size()!=functionsymbol->arg_tot){
+			yyerror("function not called in right way");
+		}
+
+		else{
+			For(i,0,arglist.size()){
+				if(parameterlist[i]->type.b_type == type_function){
+					if(!(arglist[i]->type.base_t==parameterlist[i]->type.return_type && arglist[i]->type.pc==parameterlist[i]->type.pc))
+						yyerror("wrong input arguement given");
+				}
+			}
+		}
+
 		For(i,0,arglist.size()){
+
+			//////////////////////////////////////////////////////////////////////////////////////////////////type check here
+
 			if(arglist[i]->type.b_type!=parameterlist[i]->type.b_type){
 				if(arglist[i]->type.base_t!=parameterlist[i]->type.b_type)
 					yyerror("wrong input arguement given");
@@ -1002,6 +1018,7 @@ direct_declarator
 	            		size_now*=q;
 	            	var->size = size_now;	
 	            	funcdata->nested_symboltable->insert(var);
+	            	funcdata->nested_symboltable->arg_tot++;
 	            }
 	            else {
 	            	bhej = my_dec->name.c_str();
@@ -1383,7 +1400,7 @@ else
 	;
 
 selection_statement
-	: if '(' expression ')' N M1 statement N {current_ST = $1.temp;} else M1 statement {
+	: if '(' expression ')' N M1 statement N {current_ST = $1.temp;} else M1 statement N {
 		 cout<<"hello"<<endl;
 
 		Quad.backpatch($5->nextlist,Quad.nextinstr); 
@@ -1399,8 +1416,9 @@ selection_statement
 		$$= new expression;
 		$$->nextlist = merge($7->nextlist, $8->nextlist);
 		$$->nextlist = merge($$->nextlist, $12->nextlist);
+		$$->nextlist = merge($$->nextlist, $13->nextlist);
 	}
-	| if '(' expression ')' N M1 statement {
+	| if '(' expression ')' N M1 statement N {
 		cout<<"world"<<endl;
 		Quad.backpatch($5->nextlist,Quad.nextinstr); 
 		string tmp2;
@@ -1410,7 +1428,8 @@ selection_statement
 		Quad.emit(tmp2, $3->loc , "NE", "0");
 		current_ST = $1.temp;
 		$$= new expression;
-		$$->nextlist = merge($3->falselist, $6->nextlist);
+		$$->nextlist = merge($3->falselist, $7->nextlist);
+		$$->nextlist = merge($$->nextlist, $8->nextlist);
 
 	}
 	| SWITCH '(' expression ')' statement
@@ -1438,7 +1457,18 @@ P
 	;
 
 iteration_statement
-	: WHILE {current_name="while"; } M '(' expression ')' statement {current_ST = $3.temp;}
+	: WHILE {current_name="while"; } M '(' expression ')' N M1 statement {
+		current_ST = $3.temp;
+		Quad.backpatch($7->nextlist,Quad.nextinstr); 
+		string tmp2;
+		stringstream temp1;
+		temp1<<$7->instr;
+		temp1>>tmp2;
+		Quad.emit(tmp2, $5->loc , "NE", "0");
+		$$=new expression;
+        $$->nextlist=$5->falselist;
+
+	}
 	| DO {current_name="do_while";} M statement WHILE '(' expression ')' ';' {current_ST = $3.temp;}
 	| FOR P '(' expression_statement expression_statement ')' statement  {current_ST = $2.temp;}
 	| FOR P '(' expression_statement expression_statement expression ')' statement {current_ST = $2.temp;}
@@ -1487,10 +1517,15 @@ function_definition
 
 		//if not NULL do typecheck here
 		if(funcdata==NULL){
+			cout<<"was null\n";
 			funcdata->nested_symboltable->defined = 1;
+			funcdata->nested_symboltable->parent = &globalst;
 			current_ST->insert(funcdata);
+			current_ST->Symboltable[funcdata->name]= funcdata;
 		}
 		else{
+			cout<<"not null\n";
+			funcdata->nested_symboltable->parent = &globalst;
 			if(funcdata->nested_symboltable->defined == 1){
 				bhej = funcdata->nested_symboltable->name.c_str();
 				yyerror("already defined");
