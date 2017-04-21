@@ -1281,12 +1281,18 @@ statement
 	| compound_statement{
 		Quad.backpatch($1->nextlist, Quad.nextinstr);
 	}
-	| expression_statement
+	| expression_statement{
+		Quad.backpatch($1->nextlist, Quad.nextinstr);
+	}
 	| selection_statement{
 		Quad.backpatch($1->nextlist, Quad.nextinstr);
 	}
-	| iteration_statement
-	| jump_statement
+	| iteration_statement{
+		Quad.backpatch($1->nextlist, Quad.nextinstr);
+
+	}
+	| jump_statement{
+	}
 	;
 
 labeled_statement
@@ -1354,6 +1360,7 @@ expression_statement
 	: ';'
 	| expression ';'{
 		$$=new expression;
+		$$=$1;
 	}
 	;
 
@@ -1472,11 +1479,45 @@ iteration_statement
 
 	}
 	| DO {current_name="do_while";} M statement WHILE '(' expression ')' ';' {current_ST = $3.temp;}
-	| FOR P '(' expression_statement expression_statement ')' statement  {current_ST = $2.temp;}
-	| FOR P '(' expression_statement expression_statement expression ')' statement {current_ST = $2.temp;}
-	| FOR P '(' declaration expression_statement ')' statement {current_ST = $2.temp;}
-	| FOR P '(' declaration expression_statement expression ')' statement {current_ST = $2.temp;}
+	| FOR P '(' expression_statement M1 expression_statement N M1 expression N ')' M1 statement 
+	{//1  2  3  4                    5  6                    7 8  9          10 11 12 13
+		current_ST = $2.temp;
+		Quad.emit("","","GOTO","");
+        Quad.backpatch(makelist(Quad.nextinstr-1), $8->instr );
+        Quad.backpatch($7->nextlist,Quad.nextinstr);
+        cout<<"here 1\n";
+        Quad.backpatch($6->truelist,Quad.nextinstr);
+		Quad.backpatch($6->falselist,Quad.nextinstr);
+		$7->falselist=makelist(Quad.nextinstr);
+		cout<<"\n\n\n "<<$6->loc<<"\n\n\n";
+		//Quad.emit("",$6->loc,"EQ","0");
+		//Quad.emit($6->loc,"0","ASSIGN","=");
+		$7->truelist=makelist(Quad.nextinstr);
+		//Quad.emit("","","GOTO","");
+		$6->b_type=type_bool;
+        cout<<"here 1\n";
+        Quad.backpatch($6->truelist,$12->instr);
+        Quad.backpatch($13->nextlist,$8->instr);
+        Quad.backpatch($10->nextlist,$5->instr);
+        $$ = new expression;
+        $$->nextlist = $6->falselist;
+	}
+	| {cout<<"here 444\n";} FOR P '(' expression_statement expression_statement ')' statement  
+	{	cout<<"here 4\n";
+		current_ST = $3.temp;
+	}
+	| {cout<<"here 555\n";} FOR P '(' declaration expression_statement ')' statement 
+	{	
+		cout<<"here 5\n";
+		current_ST = $3.temp;
+	}
+	| {cout<<"here 666\n";}  FOR P '(' declaration expression_statement expression ')' statement 
+	{
+		cout<<"here 6\n";
+		current_ST = $3.temp;
+	}
 	;
+
 
 jump_statement
 	: GOTO IDENTIFIER ';'
