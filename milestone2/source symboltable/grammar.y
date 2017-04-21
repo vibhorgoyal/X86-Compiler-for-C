@@ -249,10 +249,16 @@ postfix_expression
 		$$=$1;
 	}
 	| postfix_expression INC_OP{
-		$$=$1;
+		$$=new expression;
+		$$->loc=Quad.gentmp();
+		Quad.emit($$->loc,$1->loc,"ASSIGN","=");
+		Quad.emit($1->loc,$1->loc,"+","1");
 	}
 	| postfix_expression DEC_OP{
-		$$=$1;
+		$$=new expression;
+		$$->loc=Quad.gentmp();
+		Quad.emit($$->loc,$1->loc,"ASSIGN","=");
+		Quad.emit($1->loc,$1->loc,"+","1");
 	}
 	| '(' type_name ')' '{' initializer_list '}'{
 		$$=new expression;
@@ -296,16 +302,18 @@ unary_expression
 		$$=$1;
 	}
 	| INC_OP unary_expression{
+		Quad.emit($2->loc,$2->loc,"+","1");
 		$$= new expression;
 		$$->loc=Quad.gentmp();
 		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
-		Quad.emit($$->loc,"","++",$2->loc);
+		Quad.emit($$->loc,$2->loc,"ASSIGN","=");
 	}
 	| DEC_OP unary_expression{
+		Quad.emit($2->loc,$2->loc,"-","1");
 		$$= new expression;
 		$$->loc=Quad.gentmp();
 		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
-		Quad.emit($$->loc,"","--",$2->loc);
+		Quad.emit($$->loc,$2->loc,"ASSIGN","=");
 	}
 	| unary_operator cast_expression{
 		$$= new expression;
