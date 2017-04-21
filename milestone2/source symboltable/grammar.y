@@ -1396,16 +1396,19 @@ selection_statement
 		Quad.emit(tmp2, $3->loc , "NE", "0");
 		temp2>>tmp2;
 		Quad.emit(tmp2,"","GOTO","");
-
-		list<int> temp;
 		$$= new expression;
 		$$->nextlist = merge($7->nextlist, $8->nextlist);
 		$$->nextlist = merge($$->nextlist, $12->nextlist);
 	}
-	| if '(' expression ')'  M1 statement {
+	| if '(' expression ')' N M1 statement {
 		cout<<"world"<<endl;
+		Quad.backpatch($5->nextlist,Quad.nextinstr); 
+		string tmp2;
+		stringstream temp1;
+		temp1<<$6->instr;
+		temp1>>tmp2;
+		Quad.emit(tmp2, $3->loc , "NE", "0");
 		current_ST = $1.temp;
-		Quad.backpatch($3->truelist, $5->instr);
 		$$= new expression;
 		$$->nextlist = merge($3->falselist, $6->nextlist);
 
