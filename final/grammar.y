@@ -157,13 +157,21 @@ constant
 		//$$->loc= Quad.gentmp();
 		$$->loc = current_ST->gentemp(type_int, type_void, 0);
 		$$->b_type = type_int;
-		Quad.emit($$->loc,$1,"ASSIGN");
+		string tm;
+		stringstream gurki;
+		gurki<<$1;
+		gurki>>tm;
+		Quad.emit($$->loc,tm,"ASSIGN","=");
 	}		/* includes character_constant */
 	| F_CONSTANT{
 		$$=new expression;
 		//$$->loc= Quad.gentmp();
+		string tm;
+		stringstream gurki;
+		gurki<<$1;
+		gurki>>tm;
 		$$->loc = current_ST->gentemp(type_float, type_void, 0);
-		Quad.emit($$->loc,$1,"ASSIGN");
+		Quad.emit($$->loc,tm,"ASSIGN","=");
 		$$->b_type = type_double;
 	}
 	;
@@ -175,7 +183,7 @@ string
 		$$->pc=1;
 		$$->b_type=type_pointer;
 		$$->loc= Quad.gentmp();
-		Quad.emit($$->loc, $1 ,"");
+		Quad.emit($$->loc, $1 ,"ASSIGN");
 		*/
 	}
 	| FUNC_NAME{
@@ -184,7 +192,7 @@ string
 		$$->pc=1;
 		$$->b_type=type_pointer;
 		$$->loc= Quad.gentmp();
-		Quad.emit($$->loc, $1,"");
+		Quad.emit($$->loc, $1,"ASSIGN");
 		*/
 	}
 	;
@@ -252,7 +260,12 @@ postfix_expression
 		basic_type c = globalst.lookup(function_name)->type.return_type;
 		int p = globalst.lookup(function_name)->type.pc;
 		vib = current_ST->gentemp(c,b,p);
-		Quad.emit(function_name,(int)arglist.size(),"CALL");
+		string gurki;
+		stringstream tm;
+		tm<<arglist.size();
+		tm>>gurki;
+		Quad.emit(function_name,gurki,"CALL",vib);
+		$$->loc=vib;
 
 
 	}

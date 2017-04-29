@@ -3,8 +3,10 @@ int prints(char * c);
 int readi(int *eP);
 
 int fac(int n){
-	if(n==0)return 1;
-	return n*fac(n-1);
+	if(n==1){
+		n=6;	
+	} 
+	return n*n;
 }
 
 int main(){

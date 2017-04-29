@@ -207,7 +207,7 @@ void quad::print(){
 		cout<<"PARAM "<<result<<endl;
 	}
 	else if(op=="CALL"){
-		cout<<vib<<" = CALL "<<result<<" "<<arg1<<endl;
+		cout<<arg2<<"CALL "<<result<<" "<<arg1<<endl;
 	}
 	else if(op=="NE"){
 		cout<<"IF "<<arg1<<" != "<<arg2<<" GOTO "<<result<<endl;
@@ -591,7 +591,7 @@ void quad_codes(quad q)
 	}
 	else if(q.op=="*")
 	{
-		if(q.arg1[0]>'0' && q.arg1[0]<='9')
+		if(q.arg1[0]>='0' && q.arg1[0]<='9')
 		{
 			cout << "\tmovl\t$" << q.arg1 << ", %eax\n";
 		}
@@ -608,7 +608,7 @@ void quad_codes(quad q)
 			cout << "\tmovl\t" << to_print2 << ", %edx\n"; 
 		}*/
 		cout << "\timull\t";
-		if(q.arg2[0]>'0' && q.arg2[0]<='9')
+		if(q.arg2[0]>='0' && q.arg2[0]<='9')
 		{
 			cout << "$" << q.arg2 << ", %eax\n";
 		}
@@ -680,9 +680,12 @@ void quad_codes(quad q)
 	else if(q.op=="NE")
 	{
 		cout << "\tmovl\t" << to_print1 << ", %eax\n";
-		cout << "\tcmpl\t" << to_print2 << ", %eax\n";
-		cout << "\tje\t.L" << label_count << "\n";
-		cout << "\tjmp\t" << q.result << endl;
+		if(q.arg2[0]>='0' && q.arg2[0]<='9')
+			cout << "\tcmpl\t$" << q.arg2 << ", %eax\n";
+		else
+			cout << "\tcmpl\t" << to_print2 << ", %eax\n";
+		cout << "\tje\t" << q.result << "\n";
+		cout << "\tjmp\t.L" << label_count << endl;
 		cout << ".L" << label_count++ << ":\n";
 	}
 	else if(q.op=="ARR_IDX_ARG")
