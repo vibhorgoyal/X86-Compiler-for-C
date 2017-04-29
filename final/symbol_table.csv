@@ -1,0 +1,15 @@
+----------------GST------------
+name,type,size,offset,base_t
+main,function,0,0,8,
+
+----------------main------------
+name,type,size,offset,base_t
+a,int,4,0,0,
+b,int,4,4,0,
+c,int,4,8,0,
+d,int,4,12,0,
+for0,0,16,0,
+
+----------------for0------------
+name,type,size,offset,base_t
+
