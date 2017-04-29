@@ -264,6 +264,6 @@ struct treeNode{
 
 typedef struct treeNode TREE_NODE;
 typedef TREE_NODE *PARSE_TREE;
-void GENCODE();
+void generate();
 
 #endif

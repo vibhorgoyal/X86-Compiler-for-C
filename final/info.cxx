@@ -13,9 +13,9 @@ extern string vib;
 map<int,string> labels;
 
 void quad_codes(quad q);
-void STRINGS();
-void GLOBAL();
-void GENCODE();
+void string_init();
+void global_init();
+void generate();
 extern vector<string> str_consts;
 
 
@@ -206,8 +206,12 @@ void quad::print(){
 	else if(op=="PARAM"){
 		cout<<"PARAM "<<result<<endl;
 	}
+	else if(op == "REFERENCE")
+    {
+        cout<<result<<" = &"<<arg1<<endl;
+    }
 	else if(op=="CALL"){
-		cout<<arg2<<"CALL "<<result<<" "<<arg1<<endl;
+		cout<<arg2<<" = CALL "<<result<<" "<<arg1<<endl;
 	}
 	else if(op=="NE"){
 		cout<<"IF "<<arg1<<" != "<<arg2<<" GOTO "<<result<<endl;
@@ -220,6 +224,12 @@ void quad::print(){
 	}
 	else if(op=="func_begin"){
 		cout<<result<<":"<<endl;
+	}
+	else if(op == "ARR_RES"){
+		cout << result << "[" << arg2 << "] = " << arg1 << endl; 
+	}
+	else if(op == "ARR_ARG"){
+		cout << result << " = " << arg1 << "[" << arg2 << "]" <<endl;
 	}
 	else if(op=="func_ends"){
 		cout<<"function "<<result<<" ends"<<endl;
@@ -268,7 +278,7 @@ list<int> merge(list<int> a,list<int> b){
 	return result;
 }
 
-void GLOBAL(){
+void global_init(){
 	for(auto it:globalst.order_symbol){
 		if(it->type.b_type == type_int && it->name[0]!='t'){
 			cout << "\t.comm\t" << it->name << ",4,4" << endl;
@@ -279,7 +289,7 @@ void GLOBAL(){
 	}
 }
 
-void STRINGS()
+void string_init()
 {
 	printf(".section\t.rodata\n");
 	int num=0;
@@ -335,9 +345,9 @@ void gen_prologue(int mem_bind)
 }
 
 
-void GENCODE(){
-	GLOBAL();
-	STRINGS();
+void generate(){
+	global_init();
+	string_init();
 	symboldata *curr_func=NULL;
 	symboltable *curr_func_tab=NULL;
 	set_labels();
@@ -541,8 +551,7 @@ void quad_codes(quad q)
 		}
 		else
 		{
-			int temp=q.arg1[0];
-			cout << "\tmovb\t$" << temp << ", " << to_printres << endl;
+			cout << "\tmovb\t$" << q.arg1 << ", " << to_printres << endl;
 		}
 	}
 	else if(q.op=="+")
@@ -673,8 +682,8 @@ void quad_codes(quad q)
 			cout << "\tcmpl\t$" << q.arg2 << ", %eax\n";
 		else
 			cout << "\tcmpl\t" << to_print2 << ", %eax\n";
-		cout << "\tjne\t.L" << label_count << "\n";
-		cout << "\tjmp\t" << q.result << endl;
+		cout << "\tje\t" << q.result << "\n";
+		cout << "\tjmp\t.L" << label_count << endl;
 		cout << ".L" << label_count++ << ":\n";
 	}
 	else if(q.op=="NE")
@@ -684,11 +693,11 @@ void quad_codes(quad q)
 			cout << "\tcmpl\t$" << q.arg2 << ", %eax\n";
 		else
 			cout << "\tcmpl\t" << to_print2 << ", %eax\n";
-		cout << "\tje\t" << q.result << "\n";
+		cout << "\tjne\t" << q.result << "\n";
 		cout << "\tjmp\t.L" << label_count << endl;
 		cout << ".L" << label_count++ << ":\n";
 	}
-	else if(q.op=="ARR_IDX_ARG")
+	else if(q.op=="ARR_ARG")
 	{
 		
 		cout<<"\tmovl\t"<<to_print2<<", %edx\n";
@@ -706,7 +715,7 @@ void quad_codes(quad q)
 			cout<<"\tmovq\t%rax, "<<to_printres<<endl;
 		}
 	}
-	else if(q.op=="ARR_IDX_RES")
+	else if(q.op=="ARR_RES")
 	{
 		cout<<"\tmovl\t"<<to_print2<<", %edx\n";
 		cout<<"\tmovl\t"<<to_print1<<", %eax\n";
@@ -734,19 +743,6 @@ void quad_codes(quad q)
 			cout << "\tmovq\t" << to_print1 << ", %rax\n";
 			cout << "\tmovq\t%rax, " << to_printres << endl;
 		}
-	}
-	else if(q.op=="DEREFERENCE")
-	{
-		cout << "\tmovq\t" << to_print1 << ", %rax\n";
-		cout << "\tmovq\t(%rax), %rdx\n";
-		cout << "\tmovq\t%rdx, " << to_printres << endl;
-	}
-	else if(q.op=="L_DEREF")
-	{
-		cout << "\tmovq\t" << to_printres << ", %rdx\n";
-		cout << "\tmovl\t" << to_print1 << ", %eax\n";
-		cout << "\tmovl\t%eax, (%rdx)\n";
-		//cout << "\tmovl\t%eax, " << to_printres <<"\n";
 	}
 	else if(q.op=="PARAM")
 	{
@@ -819,45 +815,78 @@ void quad_codes(quad q)
 		conv >> num_of_params;
 		int total_size=0;
 		int k=0;
-		while(!parameters.empty())
+		if(num_of_params>6)
+		{
+			for(int i=0;i<num_of_params-6;i++)
 			{
-				if(parameters.size()==6)
-				{
-					cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %r9d\n";
-					total_size+=parameters.top().second;
-					parameters.pop();
-				}
-				else if(parameters.size()==5)
-				{
-					cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %r8d\n";
-					total_size+=parameters.top().second;
-					parameters.pop();
-				}
-				else if(parameters.size()==4)
-				{
-					cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rcx\n";
-					total_size+=parameters.top().second;
-					parameters.pop();
-				}
-				else if(parameters.size()==3)
-				{
-					cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rdx\n";
-					total_size+=parameters.top().second;
-					parameters.pop();
-				}
-				else if(parameters.size()==2)
-				{
-					cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rsi\n";
-					total_size+=parameters.top().second;
-					parameters.pop();
-				}
-				else if(parameters.size()==1)
-				{
-					cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rdi\n";
-					total_size+=parameters.top().second;
-					parameters.pop();
-				}
+				string s=parameters.top().first;
+				cout << s;
+				cout << "\tpushq\t%rax\n";
+				total_size+=parameters.top().second;
+				parameters.pop();
 			}
+			cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %r9\n";
+			total_size+=parameters.top().second;
+			parameters.pop();
+			cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %r8\n";
+			total_size+=parameters.top().second;				
+			parameters.pop();
+			cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rcx\n";
+			total_size+=parameters.top().second;
+			parameters.pop();
+			cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rdx\n";
+			total_size+=parameters.top().second;
+			parameters.pop();
+			cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rsi\n";
+			total_size+=parameters.top().second;
+			parameters.pop();
+			cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rdi\n";
+			total_size+=parameters.top().second;
+			parameters.pop();
+
+		}
+		else
+		{
+			while(!parameters.empty())
+				{
+					if(parameters.size()==6)
+					{
+						cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %r9\n";
+						total_size+=parameters.top().second;
+						parameters.pop();
+					}
+					else if(parameters.size()==5)
+					{
+						cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %r8\n";
+						total_size+=parameters.top().second;
+						parameters.pop();
+					}
+					else if(parameters.size()==4)
+					{
+						cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rcx\n";
+						total_size+=parameters.top().second;
+						parameters.pop();
+					}
+					else if(parameters.size()==3)
+					{
+						cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rdx\n";
+						total_size+=parameters.top().second;
+						parameters.pop();
+					}
+					else if(parameters.size()==2)
+					{
+						cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rsi\n";
+						total_size+=parameters.top().second;
+						parameters.pop();
+					}
+					else if(parameters.size()==1)
+					{
+						cout << parameters.top().first << "\tpushq\t%rax\n" << "\tmovq\t%rax, %rdi\n";
+						total_size+=parameters.top().second;
+						parameters.pop();
+					}
+				}
+		}
 		cout << "\tcall\t" << q.result <<"\n";
 		if(q.arg2!= "")
 			cout << "\tmovq\t%rax, " << to_print2 << endl;

@@ -22,11 +22,19 @@ info.o: info.h info.cxx
 	g++ -std=c++11 -c info.cxx
 
 clean:
-	rm compile.out compile y.tab.o lex.yy.o lex.yy.c y.tab.c y.tab.h info.o test1.s test2.s test3.s test4.s test5.s test1.out test2.out test3.out test4.out test5.out
+	rm compile.out compile y.tab.o lex.yy.o lex.yy.c y.tab.c y.tab.h info.o Ack.s Ack.out g7.s fib.s oem.s
 
 run:
-	./compile < test1.c > test1.s
-	gcc myl.o test1.s -o test1.out
+	./compile < test/Ack.c > Ack.s
+	 gcc myl.o Ack.s -o Ack.out 
+	./compile < test/greater_than_7.c > g7.s
+	 gcc myl.o g7.s -o g7.out 
+	./compile < test/iterative_fib.c > fib.s
+	 gcc myl.o fib.s -o fib.out 
+	./compile < test/odd_even_mutual.c > oem.s
+	 gcc myl.o oem.s -o oem.out  
+	 ./compile < test1.c > test1.s
+	 gcc myl.o test1.s -o test1.out 
 	
 	
 

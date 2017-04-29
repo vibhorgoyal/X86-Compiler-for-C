@@ -2,60 +2,6 @@
 # printi:
 # prints:
 # readi:
-# fac:
-	.text
-	.globl	fac
-	.type	fac, @function
-fac:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$16, %rsp
-# t0 = 1
-	movl	$1, -4(%rbp)
-# IF n == t0 GOTO .L0
-	movl	16(%rbp), %eax
-	cmpl	-4(%rbp), %eax
-	jne	.L5
-	jmp	.L0
-.L5:
-# t1 = 0
-	movb	$48, -4(%rbp)
-# GOTO .L1
-	jmp	.L1
-# t1 = 1
-.L0:
-	movb	$49, -4(%rbp)
-# GOTO .L2
-.L1:
-	jmp	.L2
-# t2 = 6
-.L4:
-	movl	$6, -8(%rbp)
-# n = t2
-	movl	-8(%rbp), %eax
-	movl	%eax, 16(%rbp)
-# GOTO .L3
-	jmp	.L3
-# IF t1 != 0 GOTO .L4
-.L2:
-	movl	-4(%rbp), %eax
-	cmpl	$0, %eax
-	je	.L4
-	jmp	.L6
-.L6:
-# t3 = n * n
-.L3:
-	movl	16(%rbp), %eax
-	imull	16(%rbp), %eax
-	movl	%eax, -12(%rbp)
-# RETURN t3
-	movq	-12(%rbp), %rax
-	leave
-	ret
-# function fac ends
-	leave
-	ret
-	.size	fac, .-fac
 # main:
 	.text
 	.globl	main
@@ -63,35 +9,80 @@ fac:
 main:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$32, %rsp
-# t4 = 5
-	movl	$5, -8(%rbp)
-# n = t4
-	movl	-8(%rbp), %eax
-	movl	%eax, -4(%rbp)
-# PARAM n
-# t5CALL fac 1
-	movq	-4(%rbp), %rax
+	subq	$96, %rsp
+# t0 = 10
+	movl	$10, -4(%rbp)
+# t1 = &n
+	leaq	-12(%rbp), %rax
+	movq	%rax, -24(%rbp)
+# PARAM t1
+# t2 = CALL readi 1
+	movq	-24(%rbp), %rax
 	pushq	%rax
 	movq	%rax, %rdi
-	call	fac
-	movq	%rax, -16(%rbp)
+	call	readi
+	movq	%rax, -28(%rbp)
 	addq	$4, %rsp
-# x = t5
-	movl	-16(%rbp), %eax
-	movl	%eax, -12(%rbp)
-# PARAM x
-# t6CALL printi 1
-	movq	-12(%rbp), %rax
+# m = t2
+	movl	-28(%rbp), %eax
+	movl	%eax, -16(%rbp)
+# PARAM m
+# t3 = CALL printi 1
+	movq	-16(%rbp), %rax
 	pushq	%rax
 	movq	%rax, %rdi
 	call	printi
-	movq	%rax, -20(%rbp)
+	movq	%rax, -32(%rbp)
 	addq	$4, %rsp
-# t7 = 0
-	movl	$0, -24(%rbp)
-# RETURN t7
-	movq	-24(%rbp), %rax
+# t4 = 0
+	movl	$0, -36(%rbp)
+# t5 = t0
+	movl	-4(%rbp), %eax
+	movl	%eax, -40(%rbp)
+# t7 = t4
+	movl	-36(%rbp), %eax
+	movl	%eax, -48(%rbp)
+# t7 = t7 * 4
+	movl	-48(%rbp), %eax
+	imull	$4, %eax
+	movl	%eax, -48(%rbp)
+# arr[=] = t7
+	movl	0(%rbp), %edx
+	movl	-48(%rbp), %eax
+cltq
+	movl	%eax, -8(%rbp,%rdx,1)
+# t9 = 0
+	movl	$0, -56(%rbp)
+# t10 = t0
+	movl	-4(%rbp), %eax
+	movl	%eax, -60(%rbp)
+# t12 = t9
+	movl	-56(%rbp), %eax
+	movl	%eax, -68(%rbp)
+# t12 = t12 * 4
+	movl	-68(%rbp), %eax
+	imull	$4, %eax
+	movl	%eax, -68(%rbp)
+# t14 = arr[t12]
+	movl	-68(%rbp), %edx
+cltq
+	movl	-8(%rbp,%rdx,1), %eax
+	movl	%eax, -76(%rbp)
+# tm = t14
+	movl	-76(%rbp), %eax
+	movl	%eax, -20(%rbp)
+# PARAM tm
+# t15 = CALL printi 1
+	movq	-20(%rbp), %rax
+	pushq	%rax
+	movq	%rax, %rdi
+	call	printi
+	movq	%rax, -80(%rbp)
+	addq	$4, %rsp
+# t16 = 0
+	movl	$0, -84(%rbp)
+# RETURN t16
+	movq	-84(%rbp), %rax
 	leave
 	ret
 # function main ends

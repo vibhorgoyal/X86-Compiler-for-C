@@ -229,7 +229,7 @@ postfix_expression
 		vector<parameter*> arglist=*($3);
 		vector<symboldata*> parameterlist=functionsymbol->order_symbol;
 		if(arglist.size()!=functionsymbol->arg_tot){
-			yyerror("function not called in right way");
+			//yyerror("function not called in right way");
 		}
 
 		else{
@@ -346,7 +346,16 @@ unary_expression
 		$$= new expression;
 		$$->loc=current_ST->gentemp($2->b_type,$2->base_t,$2->pc);
 		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
-		Quad.emit($$->loc,"",$1->loc,$2->loc);
+		if($1->loc[0] == '&'){
+			$$->b_type = type_pointer; $$->base_t=$2->b_type; $$->pc=1;
+			Quad.emit($$->loc,$2->loc,"REFERENCE",""); 
+		}
+		else if($1->loc[0] == '*'){
+			$$->b_type = $2->base_t; $$->base_t=$2->b_type; $$->pc=0; 
+		}
+		else{
+			Quad.emit($$->loc,"",$1->loc,$2->loc);
+		}
 	}
 	| SIZEOF unary_expression{
 		$$=new expression;
@@ -684,11 +693,8 @@ assignment_expression
 				Quad.emit(xxx,new_str,"+",old_str);
 				old_str = xxx;
 			}
-			stringstream temp1;
-			temp1<<$1->loc<<"["<<old_str<<"]";
-			
-			temp1>>result;
-			Quad.emit(result, $3->loc, "ASSIGN", *$2);
+			Quad.emit(old_str, old_str, "*", "4");
+			Quad.emit($1->loc, old_str, "ARR_RES", *$2);
 		}
 		else if(size2 && !size){
 			var=current_ST->lookup($3->loc);
@@ -719,7 +725,8 @@ assignment_expression
 			temp1>>temp;
 			//xxx = Quad.gentmp();
 			xxx = current_ST->gentemp(type_int,type_int,0);
-			Quad.emit(xxx,temp,"ASSIGN","=");
+			Quad.emit(old_str, old_str, "*", "4");
+			Quad.emit(xxx,$3->loc,"ARR_ARG",old_str);
 			Quad.emit($1->loc, xxx, "ASSIGN", *$2);
 
 		}
@@ -857,14 +864,14 @@ declaration
             		var->type.base_t = type_pointer;
             	var->type.return_type = type_current;	
             	if(my_dec->alist.size()){
-            		cout<<"helllo"<<endl;
+            		//cout<<"helllo"<<endl;
             		var->type.base_t = type_array;
             		var->type.alist = my_dec->alist;
             	}
             	var->offset = current_ST->offset;
             	for(int p:my_dec->alist )
             		size_now*=p;
-            	var->size = size_now;
+            	var->size = 0;
             	//current_ST->insert(var);
             	//current_ST->offset-=var->size;
             }
@@ -1288,7 +1295,7 @@ direct_declarator
 						yes=0;
 						
 				}
-				cout<<yes<<endl;
+				//cout<<yes<<endl;
 				if(yes){
 					delete funcdata->nested_symboltable;
 					funcdata->nested_symboltable = new symboltable;
@@ -1449,6 +1456,12 @@ parameter_declaration
 		$$ = new parameter;
 		$$->name = $2->name;
 		$$->type.b_type = $1; 
+		if($2->pc){
+			$$->type.b_type = type_pointer;
+			$$->type.base_t = $1;
+			$$->type.pc = $2->pc;
+		}
+		
 	}
 	| declaration_specifiers abstract_declarator
 	| declaration_specifiers
@@ -2275,5 +2288,5 @@ int main()
 	    }
     }
     */
-    GENCODE();
+    generate();
 }

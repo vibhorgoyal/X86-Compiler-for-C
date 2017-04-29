@@ -2,18 +2,18 @@ int printi(int num);
 int prints(char * c);
 int readi(int *eP);
 
-int fac(int n){
-	if(n==1){
-		n=6;	
-	} 
-	return n*n;
-}
+
+// iteratice fibo
+
 
 int main(){
-    int n;
-    n=5;
-    int x;
-    x=fac(n);
-    printi(x);
+	int arr[10];
+	int n,m,tm;
+	m=readi(&n);
+	printi(m);
+	arr[0] =m;
+	tm=arr[0];
+   printi(tm);
+	
     return 0;
 }
