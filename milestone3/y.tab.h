@@ -196,7 +196,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 44 "grammar.y" /* yacc.c:1909  */
+#line 40 "grammar.y" /* yacc.c:1909  */
 
   int intval;
   double doubleval;

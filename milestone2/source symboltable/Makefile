@@ -1,15 +1,32 @@
-a.out: lex.yy.c y.tab.c y.tab.h info.h info.cxx
-	g++ -std=c++14 -o ../bin/sym_tab lex.yy.c y.tab.c info.cxx -lfl
-	#->>> Type "make run to generate output for all test files"
+all: compile.out
 
-y.tab.h: grammar.y
-	yacc --verbose --debug -d grammar.y 
-y.tab.c: grammar.y
-	yacc --verbose --debug -d grammar.y 
-lex.yy.c: lexer.l y.tab.h
-	flex lexer.l
+compile: lex.yy.o y.tab.o ass6_14CS10022_translator.o 
+	g++ lex.yy.o y.tab.o ass6_14CS10022_translator.o -lfl -o compile
 
-clean: 
-	rm a.out y.tab.h y.tab.c lex.yy.c y.output
-
+myl.o:	myl.c
+	gcc -c myl.c
 	
+y.tab.o:	y.tab.c
+	g++ -c y.tab.c
+
+lex.yy.o:	lex.yy.c
+	g++ -c lex.yy.c
+
+lex.yy.c:	ass6_14CS10022.l y.tab.c
+	flex ass6_14CS10022.l
+
+y.tab.c:	ass6_14CS10022.y
+	yacc --verbose -dtv ass6_14CS10022.y
+
+ass6_14CS10022_translator.o: ass6_14CS10022_translator.h ass6_14CS10022_translator.cxx
+	g++ -c ass6_14CS10022_translator.cxx
+
+clean:
+	rm compile.out compile y.tab.o lex.yy.o lex.yy.c y.tab.c y.tab.h y.output ass6_14CS10022_translator.o test1.s test2.s test3.s test4.s test5.s test1.out test2.out test3.out test4.out test5.out
+
+run:
+	./compile < test1.c > test1.s
+	gcc myl.o test1.s -o test1.out
+	
+	
+

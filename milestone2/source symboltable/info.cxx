@@ -47,40 +47,7 @@ symboldata* symboltable::lookup(string var){
 	else return Symboltable[var];
 }
 
-	/*if(Symboltable.count(var)==0){
-		ispresent=false;
-		Symboltable[var]=new symboldata;
-		order_symbol.pb(Symboltable[var]);
-		Symboltable[var]->name=var;
-		Symboltable[var]->type.b_type=bt;
-		Symboltable[var]->offset=offset;
-		int temp2=0;
-		if(pc==0){
-			if(bt==type_int){
-				temp2=SZ_INT;
-			}
-			else if(bt==type_function || bt==type_void){
-				temp2=0;
-			}
-			else if(bt==type_double){
-				temp2=SZ_DB;
-			}
-			else if(bt==type_char){
-				temp2=SZ_CHAR;
-			}
-		}
-		else{
-			temp2=SZ_PTR;
-			Symboltable[var]->type.base_t=bt;
-			Symboltable[var]->type.pc=pc;
-			Symboltable[var]->type.b_type=type_array;
-		}
-		Symboltable[var]->size=temp2;
-		Symboltable[var]->initial_value=NULL;
-		offset+=temp2;
-	}
-	return Symboltable[var];
-}*/
+	
 
 void symboltable::insert(symboldata* var){
 	Symboltable[var->name]= var;
@@ -158,6 +125,109 @@ void symboltable::print(bool iserror){
 	}
 }
 
+void quad_array::emit(string res,string arg1,string op,string arg2){
+	quad insertion;
+	insertion.op=op;
+	insertion.arg1=arg1;
+	insertion.arg2=arg2;
+	insertion.result=res;
+	a1.pb(insertion);
+	nextinstr++;
+}
+
+void quad_array::emit(string res,int constant,string unary_op){
+	quad insertion;
+	insertion.result=res;
+	insertion.op=unary_op;
+	stringstream temp1;
+	temp1<<constant;
+	temp1>>insertion.arg1;
+	a1.pb(insertion);
+	nextinstr++;
+}
+
+void  quad_array::emit(string res,double constant,string unary_op){
+	quad insertion;
+	insertion.op=unary_op;
+	insertion.result=res;
+	stringstream temp1;
+	temp1<<constant;
+	temp1>>insertion.arg1;
+	a1.pb(insertion);
+	nextinstr++;
+}
+
+void  quad_array::emit(string res,char constant,string unary_op){
+	quad insertion;
+	insertion.op=unary_op;
+	insertion.result=res;
+	stringstream temp1;
+	temp1<<constant;
+	temp1>>insertion.arg1;
+	a1.pb(insertion);
+	nextinstr++;
+}
+
+void quad::print(){
+	if(op=="GOTO_L"){
+		cout<<"IF "<<arg1<<" < "<<arg2<<" GOTO "<<result<<endl;
+	}
+	else if(op=="GOTO_G"){
+		cout<<"IF "<<arg1<<" > "<<arg2<<" GOTO "<<result<<endl;
+	}
+	else if(op=="GOTO_LE"){
+		cout<<"IF "<<arg1<<" <= "<<arg2<<" GOTO "<<result<<endl;
+	}
+	else if(op=="GOTO_GE"){
+		cout<<"IF "<<arg1<<" >= "<<arg2<<" GOTO "<<result<<endl;
+	}
+	else if(op=="EQ"){
+		cout<<"IF "<<arg1<<" == "<<arg2<<" GOTO "<<result<<endl;
+	}
+	else if(op=="PARAM"){
+		cout<<"PARAM "<<result<<endl;
+	}
+	else if(op=="CALL"){
+		cout<<"CALL "<<result<<" "<<arg1<<endl;
+	}
+	else if(op=="NE"){
+		cout<<"IF "<<arg1<<" != "<<arg2<<" GOTO "<<result<<endl;
+	}
+	else if(op=="GOTO" || op == "RETURN"){
+		cout<<op<<" "<<result<<endl;
+	}
+	else if(op=="ASSIGN"){
+		cout<<result<<" "<<arg2<<" "<<arg1<<endl;
+	}
+	else
+	cout<<result<<" = "<<arg1<<" "<<op<<" "<<arg2<<endl;
+}
+
+void quad_array::backpatch(list<int> argumentlist,int index){
+	list<int>::iterator it=argumentlist.begin();
+	cout<<"backpatch\n"<<argumentlist.size()<<endl;
+
+	for(auto i:argumentlist){
+		//cout<<i<<endl;
+		stringstream temp1;
+		temp1<<index;
+		temp1>>a1[i].result;
+	}
+
+	
+		cout<<"backpatch\n";
+
+}
+
+string quad_array::gentmp(){
+	stringstream temp1;
+	temp1<<"t"<<counter++;
+	string res;
+	temp1>>res;
+	return res;
+}
+
+
 list<int> makelist(int index){
 	list<int> res;
 	res.pb(index);
@@ -166,7 +236,9 @@ list<int> makelist(int index){
 
 list<int> merge(list<int> a,list<int> b){
 	list<int> res;
+	cout<<a.size()<<" "<<b.size()<<endl;
 	res.merge(a);
 	res.merge(b);
+	cout<<res.size()<<endl;
 	return res;
 }

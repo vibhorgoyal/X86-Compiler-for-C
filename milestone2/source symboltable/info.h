@@ -124,7 +124,8 @@ enum basic_type{
 
 class quad{
 public:
-	string name;
+	string op, arg1, arg2, result;
+	void print();
 };
 
 class decc{
@@ -152,6 +153,10 @@ public:
 	int fold;
 	string *folder;
 	expression(){
+		base_t=type_void;
+		b_type=type_void;
+		return_type=type_void;
+		pc=0;
 		fold=0;
 		folder=NULL;
 	}
@@ -164,6 +169,12 @@ public:
 	int pc;
 	basic_type base_t;
 	basic_type return_type;
+	symboltype(){
+		base_t=type_void;
+		b_type=type_void;
+		return_type=type_void;
+		pc=0;
+	}
 };
 
 class parameter{
@@ -187,6 +198,7 @@ public:
 
 class symboltable{
 public:
+	int arg_tot;
 	bool defined;
 	bool declared;
 	string name;
@@ -198,6 +210,7 @@ public:
 		name = "GST";
 		defined = 0;
 		declared = 0;
+		arg_tot = 0;
 	}
 	symboltable *parent;
 	symboldata *lookup(string var);
@@ -215,6 +228,18 @@ public:
 class quad_array{
 public:
 	string name;
+	vector<quad> a1;
+	int nextinstr,counter;
+	quad_array(){
+		nextinstr=0;
+		counter=0;
+	}
+   	void emit(string res,string arg1,string op,string arg2="");
+   	void backpatch(list<int> argumentlist,int index);
+   	void emit(string res,int constant,string unary_op);
+   	void emit(string res,double constant,string unary_op);
+   	void emit(string res,char constant,string unary_op);
+   	string gentmp();
 };
 
 

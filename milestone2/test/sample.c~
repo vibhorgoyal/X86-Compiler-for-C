@@ -3,7 +3,7 @@ int x;
 
 int main(int m, int n){
 
-
+	int x;
 	if(x==x){
 		int p,q;
 	}
