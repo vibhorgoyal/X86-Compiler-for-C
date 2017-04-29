@@ -10,6 +10,7 @@ typedef vector<int> vi;
 #define SZ_CHAR 1
 #define SZ_INT	4
 #define SZ_DB	8
+
 #define SZ_PTR	4
 #define SZ_FLOAT 4
 
@@ -119,7 +120,8 @@ enum basic_type{
 	type_array,
 	type_pointer,
 	type_function,
-	type_long
+	type_long,
+	type_struct
 };
 
 class quad{
@@ -133,6 +135,7 @@ public:
 	string name;
 	int pc;
 	vi alist;
+	vector <string> array_list;
 	expression *initial_value;
 	basic_type b_type;
 	decc(){
@@ -150,13 +153,14 @@ public:
 	int pc;
 	basic_type base_t;
 	basic_type return_type;
+	vector<string> array_list;
 	int fold;
 	string *folder;
 	expression(){
-		base_t=type_void;
 		b_type=type_void;
+		base_t=type_void;
 		return_type=type_void;
-		pc=0;
+		pc = 0;
 		fold=0;
 		folder=NULL;
 	}
@@ -166,14 +170,15 @@ class symboltype{
 public:
 	basic_type b_type;
 	vector<int> alist;
+	vector <string> array_list;
 	int pc;
 	basic_type base_t;
 	basic_type return_type;
 	symboltype(){
-		base_t=type_void;
 		b_type=type_void;
+		base_t=type_void;
 		return_type=type_void;
-		pc=0;
+		pc = 0;
 	}
 };
 
@@ -192,6 +197,8 @@ public:
 	int size,offset;
 	symboltable *nested_symboltable;
 	symboldata(){
+		size=0;
+		offset=0;
 		nested_symboltable=NULL;
 	}
 };
@@ -215,7 +222,7 @@ public:
 	symboltable *parent;
 	symboldata *lookup(string var);
 	void insert(symboldata* var);
-	string gentemp(basic_type bt=type_int,bool check_=false,bool overflow_=false);
+	string gentemp(basic_type b_type=type_void,basic_type base_t=type_void,int pc=0);
 	void print(bool iserror=0);
 };
 

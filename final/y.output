@@ -1,6 +1,8 @@
 Nonterminals useless in grammar
 
+   hack
    Z
+   hunny
    assignment_expression_opt
    expression_opt
    parameter_type_list_opt
@@ -8,26 +10,31 @@ Nonterminals useless in grammar
 
 Rules useless in grammar
 
-  279 Z: %empty
+  279 hack: IDENTIFIER
+  280     | constant
+
+  281 Z: %empty
+
+  282 hunny: %empty
 
 
 Rules useless in parser due to conflicts
 
-  259 $@5: %empty
+  259 $@6: %empty
 
-  261 $@6: %empty
+  261 $@7: %empty
 
-  263 $@7: %empty
+  263 $@8: %empty
 
 
 State 26 conflicts: 1 shift/reduce
 State 210 conflicts: 1 shift/reduce, 1 reduce/reduce
-State 355 conflicts: 1 shift/reduce, 1 reduce/reduce
-State 357 conflicts: 1 shift/reduce, 1 reduce/reduce
-State 369 conflicts: 1 shift/reduce, 1 reduce/reduce
-State 405 conflicts: 1 shift/reduce, 1 reduce/reduce
-State 409 conflicts: 1 shift/reduce, 1 reduce/reduce
-State 437 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 370 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 372 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 384 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 417 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 421 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 444 conflicts: 1 shift/reduce, 1 reduce/reduce
 State 469 conflicts: 1 shift/reduce, 1 reduce/reduce
 State 477 conflicts: 1 shift/reduce, 1 reduce/reduce
 State 478 conflicts: 1 shift/reduce, 1 reduce/reduce
@@ -67,7 +74,7 @@ Grammar
    16                    | DEFAULT ':' assignment_expression
 
    17 postfix_expression: primary_expression
-   18                   | postfix_expression '[' expression ']'
+   18                   | postfix_expression '[' assignment_expression ']'
    19                   | postfix_expression '(' ')'
    20                   | postfix_expression '(' argument_expression_list ')'
    21                   | postfix_expression '.' IDENTIFIER
@@ -177,37 +184,39 @@ Grammar
   103 init_declarator_list: init_declarator
   104                     | init_declarator_list ',' init_declarator
 
-  105 hack: IDENTIFIER
-  106     | constant
+  105 init_declarator: declarator '=' initializer
+  106                | declarator
 
-  107 init_declarator: declarator '=' hack
-  108                | declarator
+  107 storage_class_specifier: TYPEDEF
+  108                        | EXTERN
+  109                        | STATIC
+  110                        | THREAD_LOCAL
+  111                        | AUTO
+  112                        | REGISTER
 
-  109 storage_class_specifier: TYPEDEF
-  110                        | EXTERN
-  111                        | STATIC
-  112                        | THREAD_LOCAL
-  113                        | AUTO
-  114                        | REGISTER
+  113 type_specifier: VOID
+  114               | CHAR
+  115               | SHORT
+  116               | INT
+  117               | LONG
+  118               | FLOAT
+  119               | DOUBLE
+  120               | SIGNED
+  121               | UNSIGNED
+  122               | BOOL
+  123               | COMPLEX
+  124               | IMAGINARY
+  125               | atomic_type_specifier
+  126               | struct_or_union_specifier
+  127               | TYPEDEF_NAME
 
-  115 type_specifier: VOID
-  116               | CHAR
-  117               | SHORT
-  118               | INT
-  119               | LONG
-  120               | FLOAT
-  121               | DOUBLE
-  122               | SIGNED
-  123               | UNSIGNED
-  124               | BOOL
-  125               | COMPLEX
-  126               | IMAGINARY
-  127               | atomic_type_specifier
-  128               | struct_or_union_specifier
-  129               | TYPEDEF_NAME
+  128 MMstruct: %empty
 
-  130 struct_or_union_specifier: struct_or_union '{' struct_declaration_list '}'
-  131                          | struct_or_union IDENTIFIER '{' struct_declaration_list '}'
+  129 struct_or_union_specifier: struct_or_union '{' struct_declaration_list '}'
+
+  130 $@1: %empty
+
+  131 struct_or_union_specifier: struct_or_union IDENTIFIER $@1 MMstruct '{' struct_declaration_list '}'
   132                          | struct_or_union IDENTIFIER
 
   133 struct_or_union: STRUCT
@@ -347,9 +356,9 @@ Grammar
 
   238 compound_statement: '{' '}'
 
-  239 $@1: %empty
+  239 $@2: %empty
 
-  240 compound_statement: '{' $@1 M block_item_list '}'
+  240 compound_statement: '{' $@2 M block_item_list '}'
 
   241 block_item_list: block_item
   242                | block_item_list M1 block_item
@@ -364,34 +373,34 @@ Grammar
 
   248 else: ELSE
 
-  249 $@2: %empty
+  249 $@3: %empty
 
-  250 selection_statement: if '(' expression ')' N M1 statement N $@2 else M1 statement N
+  250 selection_statement: if '(' expression ')' N M1 statement N $@3 else M1 statement N
   251                    | if '(' expression ')' N M1 statement N
   252                    | SWITCH '(' expression ')' statement
 
   253 P: %empty
 
-  254 $@3: %empty
+  254 $@4: %empty
 
-  255 iteration_statement: WHILE $@3 M '(' M1 expression ')' N M1 statement
+  255 iteration_statement: WHILE $@4 M '(' M1 expression ')' N M1 statement
 
-  256 $@4: %empty
+  256 $@5: %empty
 
-  257 iteration_statement: DO $@4 M statement WHILE '(' expression ')' ';'
+  257 iteration_statement: DO $@5 M statement WHILE '(' expression ')' ';'
   258                    | FOR P '(' expression_statement M1 expression_statement N M1 expression N ')' M1 statement
 
-  259 $@5: %empty
+  259 $@6: %empty
 
-  260 iteration_statement: $@5 FOR P '(' expression_statement expression_statement ')' statement
+  260 iteration_statement: $@6 FOR P '(' expression_statement expression_statement ')' statement
 
-  261 $@6: %empty
+  261 $@7: %empty
 
-  262 iteration_statement: $@6 FOR P '(' declaration expression_statement ')' statement
+  262 iteration_statement: $@7 FOR P '(' declaration expression_statement ')' statement
 
-  263 $@7: %empty
+  263 $@8: %empty
 
-  264 iteration_statement: $@7 FOR P '(' declaration expression_statement expression ')' statement
+  264 iteration_statement: $@8 FOR P '(' declaration expression_statement expression ')' statement
 
   265 jump_statement: GOTO IDENTIFIER ';'
   266               | CONTINUE ';'
@@ -433,7 +442,7 @@ $end (0) 0
 ':' (58) 15 16 73 146 147 234 235 236
 ';' (59) 90 91 137 138 227 245 246 257 265 266 267 268 269
 '<' (60) 55
-'=' (61) 76 107 222
+'=' (61) 76 105 222
 '>' (62) 56
 '?' (63) 73
 '[' (91) 18 162 163 164 165 166 167 168 169 170 195 196 197 198 199
@@ -441,14 +450,14 @@ $end (0) 0
 ']' (93) 18 162 163 164 165 166 167 168 169 170 195 196 197 198 199
     200 201 202 203 204 205 206 207 208 209 210 225
 '^' (94) 65
-'{' (123) 25 26 130 131 215 216 238 240
+'{' (123) 25 26 129 131 215 216 238 240
 '|' (124) 67
-'}' (125) 25 26 130 131 215 216 238 240
+'}' (125) 25 26 129 131 215 216 238 240
 '~' (126) 40
 error (256)
-IDENTIFIER (258) 3 21 22 105 131 132 160 187 188 226 234 265
+IDENTIFIER (258) 3 21 22 131 132 160 187 188 226 234 265
 STRING_LITERAL (259) 10 227
-TYPEDEF_NAME (260) 129
+TYPEDEF_NAME (260) 127
 I_CONSTANT (261) 8
 F_CONSTANT (262) 9
 SIZEOF (263) 33 34
@@ -474,27 +483,27 @@ RIGHT_ASSIGN (282) 83
 AND_ASSIGN (283) 84
 XOR_ASSIGN (284) 85
 OR_ASSIGN (285) 86
-TYPEDEF (286) 109
-EXTERN (287) 110
-STATIC (288) 111 164 165 167 197 198 199 205 206 208
-AUTO (289) 113
-REGISTER (290) 114
+TYPEDEF (286) 107
+EXTERN (287) 108
+STATIC (288) 109 164 165 167 197 198 199 205 206 208
+AUTO (289) 111
+REGISTER (290) 112
 INLINE (291) 154
 CONST (292) 150
 RESTRICT (293) 151
 VOLATILE (294) 152
-BOOL (295) 124
-CHAR (296) 116
-SHORT (297) 117
-INT (298) 118
-LONG (299) 119
-SIGNED (300) 122
-UNSIGNED (301) 123
-FLOAT (302) 120
-DOUBLE (303) 121
-VOID (304) 115
-COMPLEX (305) 125
-IMAGINARY (306) 126
+BOOL (295) 122
+CHAR (296) 114
+SHORT (297) 115
+INT (298) 116
+LONG (299) 117
+SIGNED (300) 120
+UNSIGNED (301) 121
+FLOAT (302) 118
+DOUBLE (303) 119
+VOID (304) 113
+COMPLEX (305) 123
+IMAGINARY (306) 124
 STRUCT (307) 133
 UNION (308) 134
 ELLIPSIS (309) 180
@@ -516,7 +525,7 @@ ATOMIC (324) 149 153
 GENERIC (325) 12
 NORETURN (326) 155
 STATIC_ASSERT (327) 227
-THREAD_LOCAL (328) 112
+THREAD_LOCAL (328) 110
 
 
 Nonterminals, with rules where they appear
@@ -530,7 +539,7 @@ M1 (100)
 primary_expression (101)
     on left: 3 4 5 6 7, on right: 17
 constant (102)
-    on left: 8 9, on right: 4 106
+    on left: 8 9, on right: 4
 string (103)
     on left: 10 11, on right: 5
 generic_selection (104)
@@ -573,13 +582,13 @@ logical_or_expression (121)
 conditional_expression (122)
     on left: 72 73, on right: 73 74 89
 assignment_expression (123)
-    on left: 74 75, on right: 12 15 16 27 28 75 87 88 164 165 167 168
-    170 197 198 199 200 202 205 206 207 208 210 217
+    on left: 74 75, on right: 12 15 16 18 27 28 75 87 88 164 165 167
+    168 170 197 198 199 200 202 205 206 207 208 210 217
 assignment_operator (124)
     on left: 76 77 78 79 80 81 82 83 84 85 86, on right: 75
 expression (125)
-    on left: 87 88, on right: 6 18 73 88 246 250 251 252 255 257 258
-    264 269
+    on left: 87 88, on right: 6 73 88 246 250 251 252 255 257 258 264
+    269
 constant_expression (126)
     on left: 89, on right: 146 147 157 225 227 235
 declaration (127)
@@ -589,125 +598,127 @@ declaration_specifiers (128)
     97 99 101 184 185 186 275 276
 init_declarator_list (129)
     on left: 103 104, on right: 91 104
-hack (130)
-    on left: 105 106, on right: 107
-init_declarator (131)
-    on left: 107 108, on right: 103 104
-storage_class_specifier (132)
-    on left: 109 110 111 112 113 114, on right: 93 94
-type_specifier (133)
-    on left: 115 116 117 118 119 120 121 122 123 124 125 126 127 128
-    129, on right: 95 96 140 141
+init_declarator (130)
+    on left: 105 106, on right: 103 104
+storage_class_specifier (131)
+    on left: 107 108 109 110 111 112, on right: 93 94
+type_specifier (132)
+    on left: 113 114 115 116 117 118 119 120 121 122 123 124 125 126
+    127, on right: 95 96 140 141
+MMstruct (133)
+    on left: 128, on right: 131
 struct_or_union_specifier (134)
-    on left: 130 131 132, on right: 128
-struct_or_union (135)
-    on left: 133 134, on right: 130 131 132
-struct_declaration_list (136)
-    on left: 135 136, on right: 130 131 136
-struct_declaration (137)
+    on left: 129 131 132, on right: 126
+$@1 (135)
+    on left: 130, on right: 131
+struct_or_union (136)
+    on left: 133 134, on right: 129 131 132
+struct_declaration_list (137)
+    on left: 135 136, on right: 129 131 136
+struct_declaration (138)
     on left: 137 138 139, on right: 135 136
-specifier_qualifier_list (138)
+specifier_qualifier_list (139)
     on left: 140 141 142 143, on right: 137 138 140 142 189 190
-struct_declarator_list (139)
+struct_declarator_list (140)
     on left: 144 145, on right: 138 145
-struct_declarator (140)
+struct_declarator (141)
     on left: 146 147 148, on right: 144 145
-atomic_type_specifier (141)
-    on left: 149, on right: 127
-type_qualifier (142)
+atomic_type_specifier (142)
+    on left: 149, on right: 125
+type_qualifier (143)
     on left: 150 151 152 153, on right: 97 98 142 143 178 179
-function_specifier (143)
+function_specifier (144)
     on left: 154 155, on right: 99 100
-alignment_specifier (144)
+alignment_specifier (145)
     on left: 156 157, on right: 101 102
-declarator (145)
-    on left: 158 159, on right: 107 108 147 148 161 184 275 276
-direct_declarator (146)
+declarator (146)
+    on left: 158 159, on right: 105 106 147 148 161 184 275 276
+direct_declarator (147)
     on left: 160 161 162 163 164 165 166 167 168 169 170 171 172 173,
     on right: 158 159 162 163 164 165 166 167 168 169 170 171 172 173
-pointer (147)
+pointer (148)
     on left: 174 175 176 177, on right: 158 174 176 191 192
-type_qualifier_list (148)
+type_qualifier_list (149)
     on left: 178 179, on right: 164 166 167 168 169 174 175 179 197
     199 200 201 205 207 208 209
-parameter_type_list (149)
+parameter_type_list (150)
     on left: 180 181, on right: 171 212 214
-parameter_list (150)
+parameter_list (151)
     on left: 182 183, on right: 180 181 183
-parameter_declaration (151)
+parameter_declaration (152)
     on left: 184 185 186, on right: 182 183
-identifier_list (152)
+identifier_list (153)
     on left: 187 188, on right: 173 188
-type_name (153)
+type_name (154)
     on left: 189 190, on right: 15 25 26 34 35 43 149 156
-abstract_declarator (154)
+abstract_declarator (155)
     on left: 191 192 193, on right: 185 189 194
-direct_abstract_declarator (155)
+direct_abstract_declarator (156)
     on left: 194 195 196 197 198 199 200 201 202 203 204 205 206 207
     208 209 210 211 212 213 214, on right: 191 193 203 204 205 206
     207 208 209 210 213 214
-initializer (156)
-    on left: 215 216 217, on right: 218 219 220 221
-initializer_list (157)
+initializer (157)
+    on left: 215 216 217, on right: 105 218 219 220 221
+initializer_list (158)
     on left: 218 219 220 221, on right: 25 26 215 216 220 221
-designation (158)
+designation (159)
     on left: 222, on right: 218 220
-designator_list (159)
+designator_list (160)
     on left: 223 224, on right: 222 224
-designator (160)
+designator (161)
     on left: 225 226, on right: 223 224
-static_assert_declaration (161)
+static_assert_declaration (162)
     on left: 227, on right: 92 139
-statement (162)
+statement (163)
     on left: 228 229 230 231 232 233, on right: 234 235 236 244 250
     251 252 255 257 258 260 262 264
-labeled_statement (163)
+labeled_statement (164)
     on left: 234 235 236, on right: 228
-M (164)
+M (165)
     on left: 237, on right: 240 255 257
-compound_statement (165)
+compound_statement (166)
     on left: 238 240, on right: 229 273
-$@1 (166)
+$@2 (167)
     on left: 239, on right: 240
-block_item_list (167)
+block_item_list (168)
     on left: 241 242, on right: 240 242
-block_item (168)
+block_item (169)
     on left: 243 244, on right: 241 242
-expression_statement (169)
+expression_statement (170)
     on left: 245 246, on right: 230 258 260 262 264
-if (170)
+if (171)
     on left: 247, on right: 250 251
-else (171)
+else (172)
     on left: 248, on right: 250
-selection_statement (172)
+selection_statement (173)
     on left: 250 251 252, on right: 231
-$@2 (173)
+$@3 (174)
     on left: 249, on right: 250
-P (174)
+P (175)
     on left: 253, on right: 258 260 262 264
-iteration_statement (175)
+iteration_statement (176)
     on left: 255 257 258 260 262 264, on right: 232
-$@3 (176)
-    on left: 254, on right: 255
 $@4 (177)
-    on left: 256, on right: 257
+    on left: 254, on right: 255
 $@5 (178)
-    on left: 259, on right: 260
+    on left: 256, on right: 257
 $@6 (179)
-    on left: 261, on right: 262
+    on left: 259, on right: 260
 $@7 (180)
+    on left: 261, on right: 262
+$@8 (181)
     on left: 263, on right: 264
-jump_statement (181)
+jump_statement (182)
     on left: 265 266 267 268 269, on right: 233
-base (182)
+base (183)
     on left: 270, on right: 0
-translation_unit (183)
+translation_unit (184)
     on left: 271 272, on right: 270 272
-external_declaration (184)
+external_declaration (185)
     on left: 273 274, on right: 271 272
-function_definition (185)
+function_definition (186)
     on left: 275 276, on right: 273
-declaration_list (186)
+declaration_list (187)
     on left: 277 278, on right: 275 278
 
 
@@ -764,44 +775,44 @@ State 0
 
 State 1
 
-  129 type_specifier: TYPEDEF_NAME .
+  127 type_specifier: TYPEDEF_NAME .
 
-    $default  reduce using rule 129 (type_specifier)
+    $default  reduce using rule 127 (type_specifier)
 
 
 State 2
 
-  109 storage_class_specifier: TYPEDEF .
+  107 storage_class_specifier: TYPEDEF .
 
-    $default  reduce using rule 109 (storage_class_specifier)
+    $default  reduce using rule 107 (storage_class_specifier)
 
 
 State 3
 
-  110 storage_class_specifier: EXTERN .
+  108 storage_class_specifier: EXTERN .
 
-    $default  reduce using rule 110 (storage_class_specifier)
+    $default  reduce using rule 108 (storage_class_specifier)
 
 
 State 4
 
-  111 storage_class_specifier: STATIC .
+  109 storage_class_specifier: STATIC .
 
-    $default  reduce using rule 111 (storage_class_specifier)
+    $default  reduce using rule 109 (storage_class_specifier)
 
 
 State 5
 
-  113 storage_class_specifier: AUTO .
+  111 storage_class_specifier: AUTO .
 
-    $default  reduce using rule 113 (storage_class_specifier)
+    $default  reduce using rule 111 (storage_class_specifier)
 
 
 State 6
 
-  114 storage_class_specifier: REGISTER .
+  112 storage_class_specifier: REGISTER .
 
-    $default  reduce using rule 114 (storage_class_specifier)
+    $default  reduce using rule 112 (storage_class_specifier)
 
 
 State 7
@@ -834,86 +845,86 @@ State 10
 
 State 11
 
-  124 type_specifier: BOOL .
-
-    $default  reduce using rule 124 (type_specifier)
-
-
-State 12
-
-  116 type_specifier: CHAR .
-
-    $default  reduce using rule 116 (type_specifier)
-
-
-State 13
-
-  117 type_specifier: SHORT .
-
-    $default  reduce using rule 117 (type_specifier)
-
-
-State 14
-
-  118 type_specifier: INT .
-
-    $default  reduce using rule 118 (type_specifier)
-
-
-State 15
-
-  119 type_specifier: LONG .
-
-    $default  reduce using rule 119 (type_specifier)
-
-
-State 16
-
-  122 type_specifier: SIGNED .
+  122 type_specifier: BOOL .
 
     $default  reduce using rule 122 (type_specifier)
 
 
-State 17
+State 12
 
-  123 type_specifier: UNSIGNED .
+  114 type_specifier: CHAR .
 
-    $default  reduce using rule 123 (type_specifier)
-
-
-State 18
-
-  120 type_specifier: FLOAT .
-
-    $default  reduce using rule 120 (type_specifier)
+    $default  reduce using rule 114 (type_specifier)
 
 
-State 19
+State 13
 
-  121 type_specifier: DOUBLE .
-
-    $default  reduce using rule 121 (type_specifier)
-
-
-State 20
-
-  115 type_specifier: VOID .
+  115 type_specifier: SHORT .
 
     $default  reduce using rule 115 (type_specifier)
 
 
+State 14
+
+  116 type_specifier: INT .
+
+    $default  reduce using rule 116 (type_specifier)
+
+
+State 15
+
+  117 type_specifier: LONG .
+
+    $default  reduce using rule 117 (type_specifier)
+
+
+State 16
+
+  120 type_specifier: SIGNED .
+
+    $default  reduce using rule 120 (type_specifier)
+
+
+State 17
+
+  121 type_specifier: UNSIGNED .
+
+    $default  reduce using rule 121 (type_specifier)
+
+
+State 18
+
+  118 type_specifier: FLOAT .
+
+    $default  reduce using rule 118 (type_specifier)
+
+
+State 19
+
+  119 type_specifier: DOUBLE .
+
+    $default  reduce using rule 119 (type_specifier)
+
+
+State 20
+
+  113 type_specifier: VOID .
+
+    $default  reduce using rule 113 (type_specifier)
+
+
 State 21
 
-  125 type_specifier: COMPLEX .
+  123 type_specifier: COMPLEX .
 
-    $default  reduce using rule 125 (type_specifier)
+    $default  reduce using rule 123 (type_specifier)
 
 
 State 22
 
-  126 type_specifier: IMAGINARY .
+  124 type_specifier: IMAGINARY .
 
-    $default  reduce using rule 126 (type_specifier)
+    $default  reduce using rule 124 (type_specifier)
 
 
 State 23
@@ -965,9 +976,9 @@ State 28
 
 State 29
 
-  112 storage_class_specifier: THREAD_LOCAL .
+  110 storage_class_specifier: THREAD_LOCAL .
 
-    $default  reduce using rule 112 (storage_class_specifier)
+    $default  reduce using rule 110 (storage_class_specifier)
 
 
 State 30
@@ -1092,15 +1103,15 @@ State 33
 
 State 34
 
-  128 type_specifier: struct_or_union_specifier .
+  126 type_specifier: struct_or_union_specifier .
 
-    $default  reduce using rule 128 (type_specifier)
+    $default  reduce using rule 126 (type_specifier)
 
 
 State 35
 
-  130 struct_or_union_specifier: struct_or_union . '{' struct_declaration_list '}'
-  131                          | struct_or_union . IDENTIFIER '{' struct_declaration_list '}'
+  129 struct_or_union_specifier: struct_or_union . '{' struct_declaration_list '}'
+  131                          | struct_or_union . IDENTIFIER $@1 MMstruct '{' struct_declaration_list '}'
   132                          | struct_or_union . IDENTIFIER
 
     IDENTIFIER  shift, and go to state 59
@@ -1109,9 +1120,9 @@ State 35
 
 State 36
 
-  127 type_specifier: atomic_type_specifier .
+  125 type_specifier: atomic_type_specifier .
 
-    $default  reduce using rule 127 (type_specifier)
+    $default  reduce using rule 125 (type_specifier)
 
 
 State 37
@@ -1550,8 +1561,8 @@ State 53
 
 State 54
 
-  107 init_declarator: declarator . '=' hack
-  108                | declarator .
+  105 init_declarator: declarator . '=' initializer
+  106                | declarator .
   275 function_definition: declaration_specifiers declarator . declaration_list
   276                    | declaration_specifiers declarator .
 
@@ -1587,7 +1598,7 @@ State 54
     '='            shift, and go to state 118
 
     '{'       reduce using rule 276 (function_definition)
-    $default  reduce using rule 108 (init_declarator)
+    $default  reduce using rule 106 (init_declarator)
 
     declaration                go to state 119
     declaration_specifiers     go to state 120
@@ -1651,17 +1662,18 @@ State 58
 
 State 59
 
-  131 struct_or_union_specifier: struct_or_union IDENTIFIER . '{' struct_declaration_list '}'
+  131 struct_or_union_specifier: struct_or_union IDENTIFIER . $@1 MMstruct '{' struct_declaration_list '}'
   132                          | struct_or_union IDENTIFIER .
 
-    '{'  shift, and go to state 125
-
+    '{'       reduce using rule 130 ($@1)
     $default  reduce using rule 132 (struct_or_union_specifier)
+
+    $@1  go to state 125
 
 
 State 60
 
-  130 struct_or_union_specifier: struct_or_union '{' . struct_declaration_list '}'
+  129 struct_or_union_specifier: struct_or_union '{' . struct_declaration_list '}'
 
     TYPEDEF_NAME   shift, and go to state 1
     CONST          shift, and go to state 8
@@ -1733,13 +1745,13 @@ State 65
 State 66
 
   238 compound_statement: '{' . '}'
-  240                   | '{' . $@1 M block_item_list '}'
+  240                   | '{' . $@2 M block_item_list '}'
 
     '}'  shift, and go to state 130
 
-    $default  reduce using rule 239 ($@1)
+    $default  reduce using rule 239 ($@2)
 
-    $@1  go to state 131
+    $@2  go to state 131
 
 
 State 67
@@ -2038,7 +2050,7 @@ State 88
 
 State 89
 
-   18 postfix_expression: postfix_expression . '[' expression ']'
+   18 postfix_expression: postfix_expression . '[' assignment_expression ']'
    19                   | postfix_expression . '(' ')'
    20                   | postfix_expression . '(' argument_expression_list ')'
    21                   | postfix_expression . '.' IDENTIFIER
@@ -2411,14 +2423,48 @@ State 117
 
 State 118
 
-  107 init_declarator: declarator '=' . hack
+  105 init_declarator: declarator '=' . initializer
 
-    IDENTIFIER  shift, and go to state 186
-    I_CONSTANT  shift, and go to state 70
-    F_CONSTANT  shift, and go to state 71
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '{'             shift, and go to state 186
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
 
-    constant  go to state 187
-    hack      go to state 188
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 139
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 140
+    assignment_expression      go to state 187
+    initializer                go to state 188
 
 
 State 119
@@ -2631,43 +2677,16 @@ State 124
 
 State 125
 
-  131 struct_or_union_specifier: struct_or_union IDENTIFIER '{' . struct_declaration_list '}'
+  131 struct_or_union_specifier: struct_or_union IDENTIFIER $@1 . MMstruct '{' struct_declaration_list '}'
 
-    TYPEDEF_NAME   shift, and go to state 1
-    CONST          shift, and go to state 8
-    RESTRICT       shift, and go to state 9
-    VOLATILE       shift, and go to state 10
-    BOOL           shift, and go to state 11
-    CHAR           shift, and go to state 12
-    SHORT          shift, and go to state 13
-    INT            shift, and go to state 14
-    LONG           shift, and go to state 15
-    SIGNED         shift, and go to state 16
-    UNSIGNED       shift, and go to state 17
-    FLOAT          shift, and go to state 18
-    DOUBLE         shift, and go to state 19
-    VOID           shift, and go to state 20
-    COMPLEX        shift, and go to state 21
-    IMAGINARY      shift, and go to state 22
-    STRUCT         shift, and go to state 23
-    UNION          shift, and go to state 24
-    ATOMIC         shift, and go to state 26
-    STATIC_ASSERT  shift, and go to state 28
+    $default  reduce using rule 128 (MMstruct)
 
-    type_specifier             go to state 105
-    struct_or_union_specifier  go to state 34
-    struct_or_union            go to state 35
-    struct_declaration_list    go to state 202
-    struct_declaration         go to state 127
-    specifier_qualifier_list   go to state 128
-    atomic_type_specifier      go to state 36
-    type_qualifier             go to state 107
-    static_assert_declaration  go to state 129
+    MMstruct  go to state 202
 
 
 State 126
 
-  130 struct_or_union_specifier: struct_or_union '{' struct_declaration_list . '}'
+  129 struct_or_union_specifier: struct_or_union '{' struct_declaration_list . '}'
   136 struct_declaration_list: struct_declaration_list . struct_declaration
 
     TYPEDEF_NAME   shift, and go to state 1
@@ -2743,7 +2762,7 @@ State 130
 
 State 131
 
-  240 compound_statement: '{' $@1 . M block_item_list '}'
+  240 compound_statement: '{' $@2 . M block_item_list '}'
 
     $default  reduce using rule 237 (M)
 
@@ -3119,7 +3138,7 @@ State 147
 
 State 148
 
-   18 postfix_expression: postfix_expression '[' . expression ']'
+   18 postfix_expression: postfix_expression '[' . assignment_expression ']'
 
     IDENTIFIER      shift, and go to state 68
     STRING_LITERAL  shift, and go to state 69
@@ -3158,8 +3177,7 @@ State 148
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 141
-    expression                 go to state 234
+    assignment_expression      go to state 234
 
 
 State 149
@@ -4085,33 +4103,79 @@ State 184
 
 State 185
 
-  107 init_declarator: declarator . '=' hack
-  108                | declarator .
+  105 init_declarator: declarator . '=' initializer
+  106                | declarator .
 
     '='  shift, and go to state 118
 
-    $default  reduce using rule 108 (init_declarator)
+    $default  reduce using rule 106 (init_declarator)
 
 
 State 186
 
-  105 hack: IDENTIFIER .
+  215 initializer: '{' . initializer_list '}'
+  216            | '{' . initializer_list ',' '}'
 
-    $default  reduce using rule 105 (hack)
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '['             shift, and go to state 267
+    '.'             shift, and go to state 268
+    '{'             shift, and go to state 186
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
+
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 139
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 140
+    assignment_expression      go to state 187
+    initializer                go to state 269
+    initializer_list           go to state 270
+    designation                go to state 271
+    designator_list            go to state 272
+    designator                 go to state 273
 
 
 State 187
 
-  106 hack: constant .
+  217 initializer: assignment_expression .
 
-    $default  reduce using rule 106 (hack)
+    $default  reduce using rule 217 (initializer)
 
 
 State 188
 
-  107 init_declarator: declarator '=' hack .
+  105 init_declarator: declarator '=' initializer .
 
-    $default  reduce using rule 107 (init_declarator)
+    $default  reduce using rule 105 (init_declarator)
 
 
 State 189
@@ -4142,16 +4206,16 @@ State 192
   186                      | declaration_specifiers .
 
     IDENTIFIER  shift, and go to state 48
-    '('         shift, and go to state 267
+    '('         shift, and go to state 274
     '['         shift, and go to state 173
     '*'         shift, and go to state 50
 
     $default  reduce using rule 186 (parameter_declaration)
 
-    declarator                  go to state 268
+    declarator                  go to state 275
     direct_declarator           go to state 55
-    pointer                     go to state 269
-    abstract_declarator         go to state 270
+    pointer                     go to state 276
+    abstract_declarator         go to state 277
     direct_abstract_declarator  go to state 176
 
 
@@ -4159,7 +4223,7 @@ State 193
 
   171 direct_declarator: direct_declarator '(' parameter_type_list . ')'
 
-    ')'  shift, and go to state 271
+    ')'  shift, and go to state 278
 
 
 State 194
@@ -4168,7 +4232,7 @@ State 194
   181                    | parameter_list .
   183 parameter_list: parameter_list . ',' parameter_declaration
 
-    ','  shift, and go to state 272
+    ','  shift, and go to state 279
 
     $default  reduce using rule 181 (parameter_type_list)
 
@@ -4185,8 +4249,8 @@ State 196
   173 direct_declarator: direct_declarator '(' identifier_list . ')'
   188 identifier_list: identifier_list . ',' IDENTIFIER
 
-    ')'  shift, and go to state 273
-    ','  shift, and go to state 274
+    ')'  shift, and go to state 280
+    ','  shift, and go to state 281
 
 
 State 197
@@ -4235,9 +4299,9 @@ State 197
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 275
+    assignment_expression      go to state 282
     type_qualifier             go to state 113
-    type_qualifier_list        go to state 276
+    type_qualifier_list        go to state 283
 
 
 State 198
@@ -4252,7 +4316,7 @@ State 199
    37 unary_operator: '*' .
   163 direct_declarator: direct_declarator '[' '*' . ']'
 
-    ']'  shift, and go to state 277
+    ']'  shift, and go to state 284
 
     $default  reduce using rule 37 (unary_operator)
 
@@ -4261,7 +4325,7 @@ State 200
 
   170 direct_declarator: direct_declarator '[' assignment_expression . ']'
 
-    ']'  shift, and go to state 278
+    ']'  shift, and go to state 285
 
 
 State 201
@@ -4280,7 +4344,7 @@ State 201
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    STATIC          shift, and go to state 279
+    STATIC          shift, and go to state 286
     CONST           shift, and go to state 8
     RESTRICT        shift, and go to state 9
     VOLATILE        shift, and go to state 10
@@ -4288,9 +4352,9 @@ State 201
     ATOMIC          shift, and go to state 112
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
-    ']'             shift, and go to state 280
+    ']'             shift, and go to state 287
     '&'             shift, and go to state 79
-    '*'             shift, and go to state 281
+    '*'             shift, and go to state 288
     '+'             shift, and go to state 81
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
@@ -4315,52 +4379,22 @@ State 201
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 282
+    assignment_expression      go to state 289
     type_qualifier             go to state 182
 
 
 State 202
 
-  131 struct_or_union_specifier: struct_or_union IDENTIFIER '{' struct_declaration_list . '}'
-  136 struct_declaration_list: struct_declaration_list . struct_declaration
+  131 struct_or_union_specifier: struct_or_union IDENTIFIER $@1 MMstruct . '{' struct_declaration_list '}'
 
-    TYPEDEF_NAME   shift, and go to state 1
-    CONST          shift, and go to state 8
-    RESTRICT       shift, and go to state 9
-    VOLATILE       shift, and go to state 10
-    BOOL           shift, and go to state 11
-    CHAR           shift, and go to state 12
-    SHORT          shift, and go to state 13
-    INT            shift, and go to state 14
-    LONG           shift, and go to state 15
-    SIGNED         shift, and go to state 16
-    UNSIGNED       shift, and go to state 17
-    FLOAT          shift, and go to state 18
-    DOUBLE         shift, and go to state 19
-    VOID           shift, and go to state 20
-    COMPLEX        shift, and go to state 21
-    IMAGINARY      shift, and go to state 22
-    STRUCT         shift, and go to state 23
-    UNION          shift, and go to state 24
-    ATOMIC         shift, and go to state 26
-    STATIC_ASSERT  shift, and go to state 28
-    '}'            shift, and go to state 283
-
-    type_specifier             go to state 105
-    struct_or_union_specifier  go to state 34
-    struct_or_union            go to state 35
-    struct_declaration         go to state 204
-    specifier_qualifier_list   go to state 128
-    atomic_type_specifier      go to state 36
-    type_qualifier             go to state 107
-    static_assert_declaration  go to state 129
+    '{'  shift, and go to state 290
 
 
 State 203
 
-  130 struct_or_union_specifier: struct_or_union '{' struct_declaration_list '}' .
+  129 struct_or_union_specifier: struct_or_union '{' struct_declaration_list '}' .
 
-    $default  reduce using rule 130 (struct_or_union_specifier)
+    $default  reduce using rule 129 (struct_or_union_specifier)
 
 
 State 204
@@ -4411,7 +4445,7 @@ State 205
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 103
-    constant_expression        go to state 284
+    constant_expression        go to state 291
 
 
 State 206
@@ -4426,8 +4460,8 @@ State 207
   138 struct_declaration: specifier_qualifier_list struct_declarator_list . ';'
   145 struct_declarator_list: struct_declarator_list . ',' struct_declarator
 
-    ','  shift, and go to state 285
-    ';'  shift, and go to state 286
+    ','  shift, and go to state 292
+    ';'  shift, and go to state 293
 
 
 State 208
@@ -4442,16 +4476,16 @@ State 209
   147 struct_declarator: declarator . ':' constant_expression
   148                  | declarator .
 
-    ':'  shift, and go to state 287
+    ':'  shift, and go to state 294
 
     $default  reduce using rule 148 (struct_declarator)
 
 
 State 210
 
-  240 compound_statement: '{' $@1 M . block_item_list '}'
+  240 compound_statement: '{' $@2 M . block_item_list '}'
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     TYPEDEF_NAME    shift, and go to state 1
     I_CONSTANT      shift, and go to state 70
@@ -4483,17 +4517,17 @@ State 210
     IMAGINARY       shift, and go to state 22
     STRUCT          shift, and go to state 23
     UNION           shift, and go to state 24
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNAS         shift, and go to state 25
     ALIGNOF         shift, and go to state 76
     ATOMIC          shift, and go to state 26
@@ -4509,11 +4543,11 @@ State 210
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -4535,8 +4569,8 @@ State 210
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    declaration                go to state 302
+    expression                 go to state 308
+    declaration                go to state 309
     declaration_specifiers     go to state 120
     storage_class_specifier    go to state 32
     type_specifier             go to state 33
@@ -4547,19 +4581,19 @@ State 210
     function_specifier         go to state 38
     alignment_specifier        go to state 39
     static_assert_declaration  go to state 40
-    statement                  go to state 303
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    block_item_list            go to state 306
-    block_item                 go to state 307
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    statement                  go to state 310
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    block_item_list            go to state 313
+    block_item                 go to state 314
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 211
@@ -4568,7 +4602,7 @@ State 211
    26                   | '(' type_name . ')' '{' initializer_list ',' '}'
    34 unary_expression: SIZEOF '(' type_name . ')'
 
-    ')'  shift, and go to state 316
+    ')'  shift, and go to state 323
 
 
 State 212
@@ -4576,21 +4610,21 @@ State 212
    25 postfix_expression: '(' type_name . ')' '{' initializer_list '}'
    26                   | '(' type_name . ')' '{' initializer_list ',' '}'
 
-    ')'  shift, and go to state 317
+    ')'  shift, and go to state 324
 
 
 State 213
 
    35 unary_expression: ALIGNOF '(' type_name . ')'
 
-    ')'  shift, and go to state 318
+    ')'  shift, and go to state 325
 
 
 State 214
 
    12 generic_selection: GENERIC '(' assignment_expression . ',' generic_assoc_list ')'
 
-    ','  shift, and go to state 319
+    ','  shift, and go to state 326
 
 
 State 215
@@ -4711,7 +4745,7 @@ State 226
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 320
+    assignment_expression      go to state 327
 
 
 State 227
@@ -4762,7 +4796,7 @@ State 228
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 321
+    assignment_expression      go to state 328
 
 
 State 229
@@ -4782,7 +4816,7 @@ State 229
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
-    '{'             shift, and go to state 322
+    '{'             shift, and go to state 329
     '&'             shift, and go to state 79
     '*'             shift, and go to state 80
     '+'             shift, and go to state 81
@@ -4797,7 +4831,7 @@ State 229
     postfix_expression  go to state 89
     unary_expression    go to state 90
     unary_operator      go to state 91
-    cast_expression     go to state 323
+    cast_expression     go to state 330
 
 
 State 230
@@ -4819,8 +4853,8 @@ State 232
    20 postfix_expression: postfix_expression '(' argument_expression_list . ')'
    28 argument_expression_list: argument_expression_list . ',' assignment_expression
 
-    ')'  shift, and go to state 324
-    ','  shift, and go to state 325
+    ')'  shift, and go to state 331
+    ','  shift, and go to state 332
 
 
 State 233
@@ -4832,11 +4866,9 @@ State 233
 
 State 234
 
-   18 postfix_expression: postfix_expression '[' expression . ']'
-   88 expression: expression . ',' assignment_expression
+   18 postfix_expression: postfix_expression '[' assignment_expression . ']'
 
-    ','  shift, and go to state 228
-    ']'  shift, and go to state 326
+    ']'  shift, and go to state 333
 
 
 State 235
@@ -5057,7 +5089,7 @@ State 254
    88 expression: expression . ',' assignment_expression
 
     ','  shift, and go to state 228
-    ':'  shift, and go to state 327
+    ':'  shift, and go to state 334
 
 
 State 255
@@ -5071,14 +5103,14 @@ State 256
 
   212 direct_abstract_declarator: '(' parameter_type_list . ')'
 
-    ')'  shift, and go to state 328
+    ')'  shift, and go to state 335
 
 
 State 257
 
   194 direct_abstract_declarator: '(' abstract_declarator . ')'
 
-    ')'  shift, and go to state 329
+    ')'  shift, and go to state 336
 
 
 State 258
@@ -5127,9 +5159,9 @@ State 258
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 330
+    assignment_expression      go to state 337
     type_qualifier             go to state 113
-    type_qualifier_list        go to state 331
+    type_qualifier_list        go to state 338
 
 
 State 259
@@ -5144,7 +5176,7 @@ State 260
    37 unary_operator: '*' .
   196 direct_abstract_declarator: '[' '*' . ']'
 
-    ']'  shift, and go to state 332
+    ']'  shift, and go to state 339
 
     $default  reduce using rule 37 (unary_operator)
 
@@ -5153,7 +5185,7 @@ State 261
 
   202 direct_abstract_declarator: '[' assignment_expression . ']'
 
-    ']'  shift, and go to state 333
+    ']'  shift, and go to state 340
 
 
 State 262
@@ -5171,7 +5203,7 @@ State 262
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    STATIC          shift, and go to state 334
+    STATIC          shift, and go to state 341
     CONST           shift, and go to state 8
     RESTRICT        shift, and go to state 9
     VOLATILE        shift, and go to state 10
@@ -5179,7 +5211,7 @@ State 262
     ATOMIC          shift, and go to state 112
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
-    ']'             shift, and go to state 335
+    ']'             shift, and go to state 342
     '&'             shift, and go to state 79
     '*'             shift, and go to state 80
     '+'             shift, and go to state 81
@@ -5206,7 +5238,7 @@ State 262
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 336
+    assignment_expression      go to state 343
     type_qualifier             go to state 182
 
 
@@ -5263,7 +5295,7 @@ State 264
     ATOMIC        shift, and go to state 26
     NORETURN      shift, and go to state 27
     THREAD_LOCAL  shift, and go to state 29
-    ')'           shift, and go to state 337
+    ')'           shift, and go to state 344
 
     declaration_specifiers     go to state 192
     storage_class_specifier    go to state 32
@@ -5274,7 +5306,7 @@ State 264
     type_qualifier             go to state 37
     function_specifier         go to state 38
     alignment_specifier        go to state 39
-    parameter_type_list        go to state 338
+    parameter_type_list        go to state 345
     parameter_list             go to state 194
     parameter_declaration      go to state 195
 
@@ -5298,7 +5330,7 @@ State 265
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    STATIC          shift, and go to state 339
+    STATIC          shift, and go to state 346
     CONST           shift, and go to state 8
     RESTRICT        shift, and go to state 9
     VOLATILE        shift, and go to state 10
@@ -5306,9 +5338,9 @@ State 265
     ATOMIC          shift, and go to state 112
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
-    ']'             shift, and go to state 340
+    ']'             shift, and go to state 347
     '&'             shift, and go to state 79
-    '*'             shift, and go to state 341
+    '*'             shift, and go to state 348
     '+'             shift, and go to state 81
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
@@ -5333,19 +5365,153 @@ State 265
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 342
+    assignment_expression      go to state 349
     type_qualifier             go to state 113
-    type_qualifier_list        go to state 343
+    type_qualifier_list        go to state 350
 
 
 State 266
 
   227 static_assert_declaration: STATIC_ASSERT '(' constant_expression ',' STRING_LITERAL . ')' ';'
 
-    ')'  shift, and go to state 344
+    ')'  shift, and go to state 351
 
 
 State 267
+
+  225 designator: '[' . constant_expression ']'
+
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
+
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 90
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 103
+    constant_expression        go to state 352
+
+
+State 268
+
+  226 designator: '.' . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 353
+
+
+State 269
+
+  219 initializer_list: initializer .
+
+    $default  reduce using rule 219 (initializer_list)
+
+
+State 270
+
+  215 initializer: '{' initializer_list . '}'
+  216            | '{' initializer_list . ',' '}'
+  220 initializer_list: initializer_list . ',' designation initializer
+  221                 | initializer_list . ',' initializer
+
+    ','  shift, and go to state 354
+    '}'  shift, and go to state 355
+
+
+State 271
+
+  218 initializer_list: designation . initializer
+
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '{'             shift, and go to state 186
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
+
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 139
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 140
+    assignment_expression      go to state 187
+    initializer                go to state 356
+
+
+State 272
+
+  222 designation: designator_list . '='
+  224 designator_list: designator_list . designator
+
+    '['  shift, and go to state 267
+    '.'  shift, and go to state 268
+    '='  shift, and go to state 357
+
+    designator  go to state 358
+
+
+State 273
+
+  223 designator_list: designator .
+
+    $default  reduce using rule 223 (designator_list)
+
+
+State 274
 
   161 direct_declarator: '(' . declarator ')'
   194 direct_abstract_declarator: '(' . abstract_declarator ')'
@@ -5381,7 +5547,7 @@ State 267
     ATOMIC        shift, and go to state 26
     NORETURN      shift, and go to state 27
     THREAD_LOCAL  shift, and go to state 29
-    '('           shift, and go to state 267
+    '('           shift, and go to state 274
     ')'           shift, and go to state 255
     '['           shift, and go to state 173
     '*'           shift, and go to state 50
@@ -5397,7 +5563,7 @@ State 267
     alignment_specifier         go to state 39
     declarator                  go to state 111
     direct_declarator           go to state 55
-    pointer                     go to state 269
+    pointer                     go to state 276
     parameter_type_list         go to state 256
     parameter_list              go to state 194
     parameter_declaration       go to state 195
@@ -5405,21 +5571,21 @@ State 267
     direct_abstract_declarator  go to state 176
 
 
-State 268
+State 275
 
   184 parameter_declaration: declaration_specifiers declarator .
 
     $default  reduce using rule 184 (parameter_declaration)
 
 
-State 269
+State 276
 
   158 declarator: pointer . direct_declarator
   191 abstract_declarator: pointer . direct_abstract_declarator
   192                    | pointer .
 
     IDENTIFIER  shift, and go to state 48
-    '('         shift, and go to state 267
+    '('         shift, and go to state 274
     '['         shift, and go to state 173
 
     $default  reduce using rule 192 (abstract_declarator)
@@ -5428,21 +5594,21 @@ State 269
     direct_abstract_declarator  go to state 263
 
 
-State 270
+State 277
 
   185 parameter_declaration: declaration_specifiers abstract_declarator .
 
     $default  reduce using rule 185 (parameter_declaration)
 
 
-State 271
+State 278
 
   171 direct_declarator: direct_declarator '(' parameter_type_list ')' .
 
     $default  reduce using rule 171 (direct_declarator)
 
 
-State 272
+State 279
 
   180 parameter_type_list: parameter_list ',' . ELLIPSIS
   183 parameter_list: parameter_list ',' . parameter_declaration
@@ -5471,7 +5637,7 @@ State 272
     IMAGINARY     shift, and go to state 22
     STRUCT        shift, and go to state 23
     UNION         shift, and go to state 24
-    ELLIPSIS      shift, and go to state 345
+    ELLIPSIS      shift, and go to state 359
     ALIGNAS       shift, and go to state 25
     ATOMIC        shift, and go to state 26
     NORETURN      shift, and go to state 27
@@ -5486,31 +5652,31 @@ State 272
     type_qualifier             go to state 37
     function_specifier         go to state 38
     alignment_specifier        go to state 39
-    parameter_declaration      go to state 346
+    parameter_declaration      go to state 360
 
 
-State 273
+State 280
 
   173 direct_declarator: direct_declarator '(' identifier_list ')' .
 
     $default  reduce using rule 173 (direct_declarator)
 
 
-State 274
+State 281
 
   188 identifier_list: identifier_list ',' . IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 347
+    IDENTIFIER  shift, and go to state 361
 
 
-State 275
+State 282
 
   165 direct_declarator: direct_declarator '[' STATIC assignment_expression . ']'
 
-    ']'  shift, and go to state 348
+    ']'  shift, and go to state 362
 
 
-State 276
+State 283
 
   164 direct_declarator: direct_declarator '[' STATIC type_qualifier_list . assignment_expression ']'
   179 type_qualifier_list: type_qualifier_list . type_qualifier
@@ -5556,25 +5722,25 @@ State 276
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 349
+    assignment_expression      go to state 363
     type_qualifier             go to state 182
 
 
-State 277
+State 284
 
   163 direct_declarator: direct_declarator '[' '*' ']' .
 
     $default  reduce using rule 163 (direct_declarator)
 
 
-State 278
+State 285
 
   170 direct_declarator: direct_declarator '[' assignment_expression ']' .
 
     $default  reduce using rule 170 (direct_declarator)
 
 
-State 279
+State 286
 
   167 direct_declarator: direct_declarator '[' type_qualifier_list STATIC . assignment_expression ']'
 
@@ -5615,48 +5781,77 @@ State 279
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 350
+    assignment_expression      go to state 364
 
 
-State 280
+State 287
 
   169 direct_declarator: direct_declarator '[' type_qualifier_list ']' .
 
     $default  reduce using rule 169 (direct_declarator)
 
 
-State 281
+State 288
 
    37 unary_operator: '*' .
   166 direct_declarator: direct_declarator '[' type_qualifier_list '*' . ']'
 
-    ']'  shift, and go to state 351
+    ']'  shift, and go to state 365
 
     $default  reduce using rule 37 (unary_operator)
 
 
-State 282
+State 289
 
   168 direct_declarator: direct_declarator '[' type_qualifier_list assignment_expression . ']'
 
-    ']'  shift, and go to state 352
+    ']'  shift, and go to state 366
 
 
-State 283
+State 290
 
-  131 struct_or_union_specifier: struct_or_union IDENTIFIER '{' struct_declaration_list '}' .
+  131 struct_or_union_specifier: struct_or_union IDENTIFIER $@1 MMstruct '{' . struct_declaration_list '}'
 
-    $default  reduce using rule 131 (struct_or_union_specifier)
+    TYPEDEF_NAME   shift, and go to state 1
+    CONST          shift, and go to state 8
+    RESTRICT       shift, and go to state 9
+    VOLATILE       shift, and go to state 10
+    BOOL           shift, and go to state 11
+    CHAR           shift, and go to state 12
+    SHORT          shift, and go to state 13
+    INT            shift, and go to state 14
+    LONG           shift, and go to state 15
+    SIGNED         shift, and go to state 16
+    UNSIGNED       shift, and go to state 17
+    FLOAT          shift, and go to state 18
+    DOUBLE         shift, and go to state 19
+    VOID           shift, and go to state 20
+    COMPLEX        shift, and go to state 21
+    IMAGINARY      shift, and go to state 22
+    STRUCT         shift, and go to state 23
+    UNION          shift, and go to state 24
+    ATOMIC         shift, and go to state 26
+    STATIC_ASSERT  shift, and go to state 28
+
+    type_specifier             go to state 105
+    struct_or_union_specifier  go to state 34
+    struct_or_union            go to state 35
+    struct_declaration_list    go to state 367
+    struct_declaration         go to state 127
+    specifier_qualifier_list   go to state 128
+    atomic_type_specifier      go to state 36
+    type_qualifier             go to state 107
+    static_assert_declaration  go to state 129
 
 
-State 284
+State 291
 
   146 struct_declarator: ':' constant_expression .
 
     $default  reduce using rule 146 (struct_declarator)
 
 
-State 285
+State 292
 
   145 struct_declarator_list: struct_declarator_list ',' . struct_declarator
 
@@ -5665,20 +5860,20 @@ State 285
     ':'         shift, and go to state 205
     '*'         shift, and go to state 50
 
-    struct_declarator  go to state 353
+    struct_declarator  go to state 368
     declarator         go to state 209
     direct_declarator  go to state 55
     pointer            go to state 56
 
 
-State 286
+State 293
 
   138 struct_declaration: specifier_qualifier_list struct_declarator_list ';' .
 
     $default  reduce using rule 138 (struct_declaration)
 
 
-State 287
+State 294
 
   147 struct_declarator: declarator ':' . constant_expression
 
@@ -5719,20 +5914,20 @@ State 287
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 103
-    constant_expression        go to state 354
+    constant_expression        go to state 369
 
 
-State 288
+State 295
 
     3 primary_expression: IDENTIFIER .
   234 labeled_statement: IDENTIFIER . ':' statement
 
-    ':'  shift, and go to state 355
+    ':'  shift, and go to state 370
 
     $default  reduce using rule 3 (primary_expression)
 
 
-State 289
+State 296
 
   235 labeled_statement: CASE . constant_expression ':' statement
 
@@ -5773,79 +5968,79 @@ State 289
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 103
-    constant_expression        go to state 356
+    constant_expression        go to state 371
 
 
-State 290
+State 297
 
   236 labeled_statement: DEFAULT . ':' statement
 
-    ':'  shift, and go to state 357
+    ':'  shift, and go to state 372
 
 
-State 291
+State 298
 
   247 if: IF .
 
     $default  reduce using rule 247 (if)
 
 
-State 292
+State 299
 
   252 selection_statement: SWITCH . '(' expression ')' statement
 
-    '('  shift, and go to state 358
+    '('  shift, and go to state 373
 
 
-State 293
+State 300
 
-  255 iteration_statement: WHILE . $@3 M '(' M1 expression ')' N M1 statement
+  255 iteration_statement: WHILE . $@4 M '(' M1 expression ')' N M1 statement
 
-    $default  reduce using rule 254 ($@3)
+    $default  reduce using rule 254 ($@4)
 
-    $@3  go to state 359
-
-
-State 294
-
-  257 iteration_statement: DO . $@4 M statement WHILE '(' expression ')' ';'
-
-    $default  reduce using rule 256 ($@4)
-
-    $@4  go to state 360
+    $@4  go to state 374
 
 
-State 295
+State 301
+
+  257 iteration_statement: DO . $@5 M statement WHILE '(' expression ')' ';'
+
+    $default  reduce using rule 256 ($@5)
+
+    $@5  go to state 375
+
+
+State 302
 
   258 iteration_statement: FOR . P '(' expression_statement M1 expression_statement N M1 expression N ')' M1 statement
 
     $default  reduce using rule 253 (P)
 
-    P  go to state 361
+    P  go to state 376
 
 
-State 296
+State 303
 
   265 jump_statement: GOTO . IDENTIFIER ';'
 
-    IDENTIFIER  shift, and go to state 362
+    IDENTIFIER  shift, and go to state 377
 
 
-State 297
+State 304
 
   266 jump_statement: CONTINUE . ';'
 
-    ';'  shift, and go to state 363
+    ';'  shift, and go to state 378
 
 
-State 298
+State 305
 
   267 jump_statement: BREAK . ';'
 
-    ';'  shift, and go to state 364
+    ';'  shift, and go to state 379
 
 
-State 299
+State 306
 
   268 jump_statement: RETURN . ';'
   269               | RETURN . expression ';'
@@ -5867,7 +6062,7 @@ State 299
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 365
+    ';'             shift, and go to state 380
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -5889,156 +6084,156 @@ State 299
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 366
+    expression                 go to state 381
 
 
-State 300
+State 307
 
   245 expression_statement: ';' .
 
     $default  reduce using rule 245 (expression_statement)
 
 
-State 301
+State 308
 
    88 expression: expression . ',' assignment_expression
   246 expression_statement: expression . ';'
 
     ','  shift, and go to state 228
-    ';'  shift, and go to state 367
+    ';'  shift, and go to state 382
 
 
-State 302
+State 309
 
   243 block_item: declaration .
 
     $default  reduce using rule 243 (block_item)
 
 
-State 303
+State 310
 
   244 block_item: statement .
 
     $default  reduce using rule 244 (block_item)
 
 
-State 304
+State 311
 
   228 statement: labeled_statement .
 
     $default  reduce using rule 228 (statement)
 
 
-State 305
+State 312
 
   229 statement: compound_statement .
 
     $default  reduce using rule 229 (statement)
 
 
-State 306
+State 313
 
-  240 compound_statement: '{' $@1 M block_item_list . '}'
+  240 compound_statement: '{' $@2 M block_item_list . '}'
   242 block_item_list: block_item_list . M1 block_item
 
-    '}'  shift, and go to state 368
+    '}'  shift, and go to state 383
 
     $default  reduce using rule 2 (M1)
 
-    M1  go to state 369
+    M1  go to state 384
 
 
-State 307
+State 314
 
   241 block_item_list: block_item .
 
     $default  reduce using rule 241 (block_item_list)
 
 
-State 308
+State 315
 
   230 statement: expression_statement .
 
     $default  reduce using rule 230 (statement)
 
 
-State 309
+State 316
 
-  250 selection_statement: if . '(' expression ')' N M1 statement N $@2 else M1 statement N
+  250 selection_statement: if . '(' expression ')' N M1 statement N $@3 else M1 statement N
   251                    | if . '(' expression ')' N M1 statement N
 
-    '('  shift, and go to state 370
+    '('  shift, and go to state 385
 
 
-State 310
+State 317
 
   231 statement: selection_statement .
 
     $default  reduce using rule 231 (statement)
 
 
-State 311
+State 318
 
   232 statement: iteration_statement .
 
     $default  reduce using rule 232 (statement)
 
 
-State 312
+State 319
 
-  260 iteration_statement: $@5 . FOR P '(' expression_statement expression_statement ')' statement
+  260 iteration_statement: $@6 . FOR P '(' expression_statement expression_statement ')' statement
 
-    FOR  shift, and go to state 371
-
-
-State 313
-
-  262 iteration_statement: $@6 . FOR P '(' declaration expression_statement ')' statement
-
-    FOR  shift, and go to state 372
+    FOR  shift, and go to state 386
 
 
-State 314
+State 320
 
-  264 iteration_statement: $@7 . FOR P '(' declaration expression_statement expression ')' statement
+  262 iteration_statement: $@7 . FOR P '(' declaration expression_statement ')' statement
 
-    FOR  shift, and go to state 373
+    FOR  shift, and go to state 387
 
 
-State 315
+State 321
+
+  264 iteration_statement: $@8 . FOR P '(' declaration expression_statement expression ')' statement
+
+    FOR  shift, and go to state 388
+
+
+State 322
 
   233 statement: jump_statement .
 
     $default  reduce using rule 233 (statement)
 
 
-State 316
+State 323
 
    25 postfix_expression: '(' type_name ')' . '{' initializer_list '}'
    26                   | '(' type_name ')' . '{' initializer_list ',' '}'
    34 unary_expression: SIZEOF '(' type_name ')' .
 
-    '{'  shift, and go to state 322
+    '{'  shift, and go to state 329
 
     $default  reduce using rule 34 (unary_expression)
 
 
-State 317
+State 324
 
    25 postfix_expression: '(' type_name ')' . '{' initializer_list '}'
    26                   | '(' type_name ')' . '{' initializer_list ',' '}'
 
-    '{'  shift, and go to state 322
+    '{'  shift, and go to state 329
 
 
-State 318
+State 325
 
    35 unary_expression: ALIGNOF '(' type_name ')' .
 
     $default  reduce using rule 35 (unary_expression)
 
 
-State 319
+State 326
 
    12 generic_selection: GENERIC '(' assignment_expression ',' . generic_assoc_list ')'
 
@@ -6060,35 +6255,35 @@ State 319
     IMAGINARY     shift, and go to state 22
     STRUCT        shift, and go to state 23
     UNION         shift, and go to state 24
-    DEFAULT       shift, and go to state 374
+    DEFAULT       shift, and go to state 389
     ATOMIC        shift, and go to state 26
 
-    generic_assoc_list         go to state 375
-    generic_association        go to state 376
+    generic_assoc_list         go to state 390
+    generic_association        go to state 391
     type_specifier             go to state 105
     struct_or_union_specifier  go to state 34
     struct_or_union            go to state 35
     specifier_qualifier_list   go to state 106
     atomic_type_specifier      go to state 36
     type_qualifier             go to state 107
-    type_name                  go to state 377
+    type_name                  go to state 392
 
 
-State 320
+State 327
 
    75 assignment_expression: unary_expression assignment_operator assignment_expression .
 
     $default  reduce using rule 75 (assignment_expression)
 
 
-State 321
+State 328
 
    88 expression: expression ',' assignment_expression .
 
     $default  reduce using rule 88 (expression)
 
 
-State 322
+State 329
 
    25 postfix_expression: '(' type_name ')' '{' . initializer_list '}'
    26                   | '(' type_name ')' '{' . initializer_list ',' '}'
@@ -6104,9 +6299,9 @@ State 322
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
-    '['             shift, and go to state 378
-    '.'             shift, and go to state 379
-    '{'             shift, and go to state 380
+    '['             shift, and go to state 267
+    '.'             shift, and go to state 268
+    '{'             shift, and go to state 186
     '&'             shift, and go to state 79
     '*'             shift, and go to state 80
     '+'             shift, and go to state 81
@@ -6133,29 +6328,29 @@ State 322
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 381
-    initializer                go to state 382
-    initializer_list           go to state 383
-    designation                go to state 384
-    designator_list            go to state 385
-    designator                 go to state 386
+    assignment_expression      go to state 187
+    initializer                go to state 269
+    initializer_list           go to state 393
+    designation                go to state 271
+    designator_list            go to state 272
+    designator                 go to state 273
 
 
-State 323
+State 330
 
    43 cast_expression: '(' type_name ')' cast_expression .
 
     $default  reduce using rule 43 (cast_expression)
 
 
-State 324
+State 331
 
    20 postfix_expression: postfix_expression '(' argument_expression_list ')' .
 
     $default  reduce using rule 20 (postfix_expression)
 
 
-State 325
+State 332
 
    28 argument_expression_list: argument_expression_list ',' . assignment_expression
 
@@ -6196,17 +6391,17 @@ State 325
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 387
+    assignment_expression      go to state 394
 
 
-State 326
+State 333
 
-   18 postfix_expression: postfix_expression '[' expression ']' .
+   18 postfix_expression: postfix_expression '[' assignment_expression ']' .
 
     $default  reduce using rule 18 (postfix_expression)
 
 
-State 327
+State 334
 
    73 conditional_expression: logical_or_expression '?' expression ':' . conditional_expression
 
@@ -6246,31 +6441,31 @@ State 327
     inclusive_or_expression    go to state 100
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
-    conditional_expression     go to state 388
+    conditional_expression     go to state 395
 
 
-State 328
+State 335
 
   212 direct_abstract_declarator: '(' parameter_type_list ')' .
 
     $default  reduce using rule 212 (direct_abstract_declarator)
 
 
-State 329
+State 336
 
   194 direct_abstract_declarator: '(' abstract_declarator ')' .
 
     $default  reduce using rule 194 (direct_abstract_declarator)
 
 
-State 330
+State 337
 
   198 direct_abstract_declarator: '[' STATIC assignment_expression . ']'
 
-    ']'  shift, and go to state 389
+    ']'  shift, and go to state 396
 
 
-State 331
+State 338
 
   179 type_qualifier_list: type_qualifier_list . type_qualifier
   197 direct_abstract_declarator: '[' STATIC type_qualifier_list . assignment_expression ']'
@@ -6316,25 +6511,25 @@ State 331
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 390
+    assignment_expression      go to state 397
     type_qualifier             go to state 182
 
 
-State 332
+State 339
 
   196 direct_abstract_declarator: '[' '*' ']' .
 
     $default  reduce using rule 196 (direct_abstract_declarator)
 
 
-State 333
+State 340
 
   202 direct_abstract_declarator: '[' assignment_expression ']' .
 
     $default  reduce using rule 202 (direct_abstract_declarator)
 
 
-State 334
+State 341
 
   199 direct_abstract_declarator: '[' type_qualifier_list STATIC . assignment_expression ']'
 
@@ -6375,38 +6570,38 @@ State 334
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 391
+    assignment_expression      go to state 398
 
 
-State 335
+State 342
 
   201 direct_abstract_declarator: '[' type_qualifier_list ']' .
 
     $default  reduce using rule 201 (direct_abstract_declarator)
 
 
-State 336
+State 343
 
   200 direct_abstract_declarator: '[' type_qualifier_list assignment_expression . ']'
 
-    ']'  shift, and go to state 392
+    ']'  shift, and go to state 399
 
 
-State 337
+State 344
 
   213 direct_abstract_declarator: direct_abstract_declarator '(' ')' .
 
     $default  reduce using rule 213 (direct_abstract_declarator)
 
 
-State 338
+State 345
 
   214 direct_abstract_declarator: direct_abstract_declarator '(' parameter_type_list . ')'
 
-    ')'  shift, and go to state 393
+    ')'  shift, and go to state 400
 
 
-State 339
+State 346
 
   205 direct_abstract_declarator: direct_abstract_declarator '[' STATIC . type_qualifier_list assignment_expression ']'
   206                           | direct_abstract_declarator '[' STATIC . assignment_expression ']'
@@ -6452,36 +6647,36 @@ State 339
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 394
+    assignment_expression      go to state 401
     type_qualifier             go to state 113
-    type_qualifier_list        go to state 395
+    type_qualifier_list        go to state 402
 
 
-State 340
+State 347
 
   203 direct_abstract_declarator: direct_abstract_declarator '[' ']' .
 
     $default  reduce using rule 203 (direct_abstract_declarator)
 
 
-State 341
+State 348
 
    37 unary_operator: '*' .
   204 direct_abstract_declarator: direct_abstract_declarator '[' '*' . ']'
 
-    ']'  shift, and go to state 396
+    ']'  shift, and go to state 403
 
     $default  reduce using rule 37 (unary_operator)
 
 
-State 342
+State 349
 
   210 direct_abstract_declarator: direct_abstract_declarator '[' assignment_expression . ']'
 
-    ']'  shift, and go to state 397
+    ']'  shift, and go to state 404
 
 
-State 343
+State 350
 
   179 type_qualifier_list: type_qualifier_list . type_qualifier
   207 direct_abstract_declarator: direct_abstract_declarator '[' type_qualifier_list . assignment_expression ']'
@@ -6496,7 +6691,7 @@ State 343
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    STATIC          shift, and go to state 398
+    STATIC          shift, and go to state 405
     CONST           shift, and go to state 8
     RESTRICT        shift, and go to state 9
     VOLATILE        shift, and go to state 10
@@ -6504,7 +6699,7 @@ State 343
     ATOMIC          shift, and go to state 112
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
-    ']'             shift, and go to state 399
+    ']'             shift, and go to state 406
     '&'             shift, and go to state 79
     '*'             shift, and go to state 80
     '+'             shift, and go to state 81
@@ -6531,92 +6726,225 @@ State 343
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 400
+    assignment_expression      go to state 407
     type_qualifier             go to state 182
 
 
-State 344
+State 351
 
   227 static_assert_declaration: STATIC_ASSERT '(' constant_expression ',' STRING_LITERAL ')' . ';'
 
-    ';'  shift, and go to state 401
+    ';'  shift, and go to state 408
 
 
-State 345
+State 352
+
+  225 designator: '[' constant_expression . ']'
+
+    ']'  shift, and go to state 409
+
+
+State 353
+
+  226 designator: '.' IDENTIFIER .
+
+    $default  reduce using rule 226 (designator)
+
+
+State 354
+
+  216 initializer: '{' initializer_list ',' . '}'
+  220 initializer_list: initializer_list ',' . designation initializer
+  221                 | initializer_list ',' . initializer
+
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '['             shift, and go to state 267
+    '.'             shift, and go to state 268
+    '{'             shift, and go to state 186
+    '}'             shift, and go to state 410
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
+
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 139
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 140
+    assignment_expression      go to state 187
+    initializer                go to state 411
+    designation                go to state 412
+    designator_list            go to state 272
+    designator                 go to state 273
+
+
+State 355
+
+  215 initializer: '{' initializer_list '}' .
+
+    $default  reduce using rule 215 (initializer)
+
+
+State 356
+
+  218 initializer_list: designation initializer .
+
+    $default  reduce using rule 218 (initializer_list)
+
+
+State 357
+
+  222 designation: designator_list '=' .
+
+    $default  reduce using rule 222 (designation)
+
+
+State 358
+
+  224 designator_list: designator_list designator .
+
+    $default  reduce using rule 224 (designator_list)
+
+
+State 359
 
   180 parameter_type_list: parameter_list ',' ELLIPSIS .
 
     $default  reduce using rule 180 (parameter_type_list)
 
 
-State 346
+State 360
 
   183 parameter_list: parameter_list ',' parameter_declaration .
 
     $default  reduce using rule 183 (parameter_list)
 
 
-State 347
+State 361
 
   188 identifier_list: identifier_list ',' IDENTIFIER .
 
     $default  reduce using rule 188 (identifier_list)
 
 
-State 348
+State 362
 
   165 direct_declarator: direct_declarator '[' STATIC assignment_expression ']' .
 
     $default  reduce using rule 165 (direct_declarator)
 
 
-State 349
+State 363
 
   164 direct_declarator: direct_declarator '[' STATIC type_qualifier_list assignment_expression . ']'
 
-    ']'  shift, and go to state 402
+    ']'  shift, and go to state 413
 
 
-State 350
+State 364
 
   167 direct_declarator: direct_declarator '[' type_qualifier_list STATIC assignment_expression . ']'
 
-    ']'  shift, and go to state 403
+    ']'  shift, and go to state 414
 
 
-State 351
+State 365
 
   166 direct_declarator: direct_declarator '[' type_qualifier_list '*' ']' .
 
     $default  reduce using rule 166 (direct_declarator)
 
 
-State 352
+State 366
 
   168 direct_declarator: direct_declarator '[' type_qualifier_list assignment_expression ']' .
 
     $default  reduce using rule 168 (direct_declarator)
 
 
-State 353
+State 367
+
+  131 struct_or_union_specifier: struct_or_union IDENTIFIER $@1 MMstruct '{' struct_declaration_list . '}'
+  136 struct_declaration_list: struct_declaration_list . struct_declaration
+
+    TYPEDEF_NAME   shift, and go to state 1
+    CONST          shift, and go to state 8
+    RESTRICT       shift, and go to state 9
+    VOLATILE       shift, and go to state 10
+    BOOL           shift, and go to state 11
+    CHAR           shift, and go to state 12
+    SHORT          shift, and go to state 13
+    INT            shift, and go to state 14
+    LONG           shift, and go to state 15
+    SIGNED         shift, and go to state 16
+    UNSIGNED       shift, and go to state 17
+    FLOAT          shift, and go to state 18
+    DOUBLE         shift, and go to state 19
+    VOID           shift, and go to state 20
+    COMPLEX        shift, and go to state 21
+    IMAGINARY      shift, and go to state 22
+    STRUCT         shift, and go to state 23
+    UNION          shift, and go to state 24
+    ATOMIC         shift, and go to state 26
+    STATIC_ASSERT  shift, and go to state 28
+    '}'            shift, and go to state 415
+
+    type_specifier             go to state 105
+    struct_or_union_specifier  go to state 34
+    struct_or_union            go to state 35
+    struct_declaration         go to state 204
+    specifier_qualifier_list   go to state 128
+    atomic_type_specifier      go to state 36
+    type_qualifier             go to state 107
+    static_assert_declaration  go to state 129
+
+
+State 368
 
   145 struct_declarator_list: struct_declarator_list ',' struct_declarator .
 
     $default  reduce using rule 145 (struct_declarator_list)
 
 
-State 354
+State 369
 
   147 struct_declarator: declarator ':' constant_expression .
 
     $default  reduce using rule 147 (struct_declarator)
 
 
-State 355
+State 370
 
   234 labeled_statement: IDENTIFIER ':' . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -6624,17 +6952,17 @@ State 355
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -6645,11 +6973,11 @@ State 355
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -6671,32 +6999,32 @@ State 355
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    statement                  go to state 404
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    expression                 go to state 308
+    statement                  go to state 416
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
-State 356
+State 371
 
   235 labeled_statement: CASE constant_expression . ':' statement
 
-    ':'  shift, and go to state 405
+    ':'  shift, and go to state 417
 
 
-State 357
+State 372
 
   236 labeled_statement: DEFAULT ':' . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -6704,17 +7032,17 @@ State 357
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -6725,11 +7053,11 @@ State 357
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -6751,21 +7079,21 @@ State 357
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    statement                  go to state 406
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    expression                 go to state 308
+    statement                  go to state 418
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
-State 358
+State 373
 
   252 selection_statement: SWITCH '(' . expression ')' statement
 
@@ -6807,90 +7135,90 @@ State 358
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 407
+    expression                 go to state 419
 
 
-State 359
+State 374
 
-  255 iteration_statement: WHILE $@3 . M '(' M1 expression ')' N M1 statement
-
-    $default  reduce using rule 237 (M)
-
-    M  go to state 408
-
-
-State 360
-
-  257 iteration_statement: DO $@4 . M statement WHILE '(' expression ')' ';'
+  255 iteration_statement: WHILE $@4 . M '(' M1 expression ')' N M1 statement
 
     $default  reduce using rule 237 (M)
 
-    M  go to state 409
+    M  go to state 420
 
 
-State 361
+State 375
+
+  257 iteration_statement: DO $@5 . M statement WHILE '(' expression ')' ';'
+
+    $default  reduce using rule 237 (M)
+
+    M  go to state 421
+
+
+State 376
 
   258 iteration_statement: FOR P . '(' expression_statement M1 expression_statement N M1 expression N ')' M1 statement
 
-    '('  shift, and go to state 410
+    '('  shift, and go to state 422
 
 
-State 362
+State 377
 
   265 jump_statement: GOTO IDENTIFIER . ';'
 
-    ';'  shift, and go to state 411
+    ';'  shift, and go to state 423
 
 
-State 363
+State 378
 
   266 jump_statement: CONTINUE ';' .
 
     $default  reduce using rule 266 (jump_statement)
 
 
-State 364
+State 379
 
   267 jump_statement: BREAK ';' .
 
     $default  reduce using rule 267 (jump_statement)
 
 
-State 365
+State 380
 
   268 jump_statement: RETURN ';' .
 
     $default  reduce using rule 268 (jump_statement)
 
 
-State 366
+State 381
 
    88 expression: expression . ',' assignment_expression
   269 jump_statement: RETURN expression . ';'
 
     ','  shift, and go to state 228
-    ';'  shift, and go to state 412
+    ';'  shift, and go to state 424
 
 
-State 367
+State 382
 
   246 expression_statement: expression ';' .
 
     $default  reduce using rule 246 (expression_statement)
 
 
-State 368
+State 383
 
-  240 compound_statement: '{' $@1 M block_item_list '}' .
+  240 compound_statement: '{' $@2 M block_item_list '}' .
 
     $default  reduce using rule 240 (compound_statement)
 
 
-State 369
+State 384
 
   242 block_item_list: block_item_list M1 . block_item
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     TYPEDEF_NAME    shift, and go to state 1
     I_CONSTANT      shift, and go to state 70
@@ -6922,17 +7250,17 @@ State 369
     IMAGINARY       shift, and go to state 22
     STRUCT          shift, and go to state 23
     UNION           shift, and go to state 24
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNAS         shift, and go to state 25
     ALIGNOF         shift, and go to state 76
     ATOMIC          shift, and go to state 26
@@ -6948,11 +7276,11 @@ State 369
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -6974,8 +7302,8 @@ State 369
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    declaration                go to state 302
+    expression                 go to state 308
+    declaration                go to state 309
     declaration_specifiers     go to state 120
     storage_class_specifier    go to state 32
     type_specifier             go to state 33
@@ -6986,23 +7314,23 @@ State 369
     function_specifier         go to state 38
     alignment_specifier        go to state 39
     static_assert_declaration  go to state 40
-    statement                  go to state 303
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    block_item                 go to state 413
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    statement                  go to state 310
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    block_item                 go to state 425
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
-State 370
+State 385
 
-  250 selection_statement: if '(' . expression ')' N M1 statement N $@2 else M1 statement N
+  250 selection_statement: if '(' . expression ')' N M1 statement N $@3 else M1 statement N
   251                    | if '(' . expression ')' N M1 statement N
 
     IDENTIFIER      shift, and go to state 68
@@ -7043,317 +7371,134 @@ State 370
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 414
+    expression                 go to state 426
 
 
-State 371
+State 386
 
-  260 iteration_statement: $@5 FOR . P '(' expression_statement expression_statement ')' statement
-
-    $default  reduce using rule 253 (P)
-
-    P  go to state 415
-
-
-State 372
-
-  262 iteration_statement: $@6 FOR . P '(' declaration expression_statement ')' statement
+  260 iteration_statement: $@6 FOR . P '(' expression_statement expression_statement ')' statement
 
     $default  reduce using rule 253 (P)
 
-    P  go to state 416
+    P  go to state 427
 
 
-State 373
+State 387
 
-  264 iteration_statement: $@7 FOR . P '(' declaration expression_statement expression ')' statement
+  262 iteration_statement: $@7 FOR . P '(' declaration expression_statement ')' statement
 
     $default  reduce using rule 253 (P)
 
-    P  go to state 417
+    P  go to state 428
 
 
-State 374
+State 388
+
+  264 iteration_statement: $@8 FOR . P '(' declaration expression_statement expression ')' statement
+
+    $default  reduce using rule 253 (P)
+
+    P  go to state 429
+
+
+State 389
 
    16 generic_association: DEFAULT . ':' assignment_expression
 
-    ':'  shift, and go to state 418
+    ':'  shift, and go to state 430
 
 
-State 375
+State 390
 
    12 generic_selection: GENERIC '(' assignment_expression ',' generic_assoc_list . ')'
    14 generic_assoc_list: generic_assoc_list . ',' generic_association
 
-    ')'  shift, and go to state 419
-    ','  shift, and go to state 420
+    ')'  shift, and go to state 431
+    ','  shift, and go to state 432
 
 
-State 376
+State 391
 
    13 generic_assoc_list: generic_association .
 
     $default  reduce using rule 13 (generic_assoc_list)
 
 
-State 377
+State 392
 
    15 generic_association: type_name . ':' assignment_expression
 
-    ':'  shift, and go to state 421
+    ':'  shift, and go to state 433
 
 
-State 378
-
-  225 designator: '[' . constant_expression ']'
-
-    IDENTIFIER      shift, and go to state 68
-    STRING_LITERAL  shift, and go to state 69
-    I_CONSTANT      shift, and go to state 70
-    F_CONSTANT      shift, and go to state 71
-    SIZEOF          shift, and go to state 72
-    FUNC_NAME       shift, and go to state 73
-    INC_OP          shift, and go to state 74
-    DEC_OP          shift, and go to state 75
-    ALIGNOF         shift, and go to state 76
-    GENERIC         shift, and go to state 77
-    '('             shift, and go to state 78
-    '&'             shift, and go to state 79
-    '*'             shift, and go to state 80
-    '+'             shift, and go to state 81
-    '-'             shift, and go to state 82
-    '~'             shift, and go to state 83
-    '!'             shift, and go to state 84
-
-    primary_expression         go to state 85
-    constant                   go to state 86
-    string                     go to state 87
-    generic_selection          go to state 88
-    postfix_expression         go to state 89
-    unary_expression           go to state 90
-    unary_operator             go to state 91
-    cast_expression            go to state 92
-    multiplicative_expression  go to state 93
-    additive_expression        go to state 94
-    shift_expression           go to state 95
-    relational_expression      go to state 96
-    equality_expression        go to state 97
-    and_expression             go to state 98
-    exclusive_or_expression    go to state 99
-    inclusive_or_expression    go to state 100
-    logical_and_expression     go to state 101
-    logical_or_expression      go to state 102
-    conditional_expression     go to state 103
-    constant_expression        go to state 422
-
-
-State 379
-
-  226 designator: '.' . IDENTIFIER
-
-    IDENTIFIER  shift, and go to state 423
-
-
-State 380
-
-  215 initializer: '{' . initializer_list '}'
-  216            | '{' . initializer_list ',' '}'
-
-    IDENTIFIER      shift, and go to state 68
-    STRING_LITERAL  shift, and go to state 69
-    I_CONSTANT      shift, and go to state 70
-    F_CONSTANT      shift, and go to state 71
-    SIZEOF          shift, and go to state 72
-    FUNC_NAME       shift, and go to state 73
-    INC_OP          shift, and go to state 74
-    DEC_OP          shift, and go to state 75
-    ALIGNOF         shift, and go to state 76
-    GENERIC         shift, and go to state 77
-    '('             shift, and go to state 78
-    '['             shift, and go to state 378
-    '.'             shift, and go to state 379
-    '{'             shift, and go to state 380
-    '&'             shift, and go to state 79
-    '*'             shift, and go to state 80
-    '+'             shift, and go to state 81
-    '-'             shift, and go to state 82
-    '~'             shift, and go to state 83
-    '!'             shift, and go to state 84
-
-    primary_expression         go to state 85
-    constant                   go to state 86
-    string                     go to state 87
-    generic_selection          go to state 88
-    postfix_expression         go to state 89
-    unary_expression           go to state 139
-    unary_operator             go to state 91
-    cast_expression            go to state 92
-    multiplicative_expression  go to state 93
-    additive_expression        go to state 94
-    shift_expression           go to state 95
-    relational_expression      go to state 96
-    equality_expression        go to state 97
-    and_expression             go to state 98
-    exclusive_or_expression    go to state 99
-    inclusive_or_expression    go to state 100
-    logical_and_expression     go to state 101
-    logical_or_expression      go to state 102
-    conditional_expression     go to state 140
-    assignment_expression      go to state 381
-    initializer                go to state 382
-    initializer_list           go to state 424
-    designation                go to state 384
-    designator_list            go to state 385
-    designator                 go to state 386
-
-
-State 381
-
-  217 initializer: assignment_expression .
-
-    $default  reduce using rule 217 (initializer)
-
-
-State 382
-
-  219 initializer_list: initializer .
-
-    $default  reduce using rule 219 (initializer_list)
-
-
-State 383
+State 393
 
    25 postfix_expression: '(' type_name ')' '{' initializer_list . '}'
    26                   | '(' type_name ')' '{' initializer_list . ',' '}'
   220 initializer_list: initializer_list . ',' designation initializer
   221                 | initializer_list . ',' initializer
 
-    ','  shift, and go to state 425
-    '}'  shift, and go to state 426
+    ','  shift, and go to state 434
+    '}'  shift, and go to state 435
 
 
-State 384
-
-  218 initializer_list: designation . initializer
-
-    IDENTIFIER      shift, and go to state 68
-    STRING_LITERAL  shift, and go to state 69
-    I_CONSTANT      shift, and go to state 70
-    F_CONSTANT      shift, and go to state 71
-    SIZEOF          shift, and go to state 72
-    FUNC_NAME       shift, and go to state 73
-    INC_OP          shift, and go to state 74
-    DEC_OP          shift, and go to state 75
-    ALIGNOF         shift, and go to state 76
-    GENERIC         shift, and go to state 77
-    '('             shift, and go to state 78
-    '{'             shift, and go to state 380
-    '&'             shift, and go to state 79
-    '*'             shift, and go to state 80
-    '+'             shift, and go to state 81
-    '-'             shift, and go to state 82
-    '~'             shift, and go to state 83
-    '!'             shift, and go to state 84
-
-    primary_expression         go to state 85
-    constant                   go to state 86
-    string                     go to state 87
-    generic_selection          go to state 88
-    postfix_expression         go to state 89
-    unary_expression           go to state 139
-    unary_operator             go to state 91
-    cast_expression            go to state 92
-    multiplicative_expression  go to state 93
-    additive_expression        go to state 94
-    shift_expression           go to state 95
-    relational_expression      go to state 96
-    equality_expression        go to state 97
-    and_expression             go to state 98
-    exclusive_or_expression    go to state 99
-    inclusive_or_expression    go to state 100
-    logical_and_expression     go to state 101
-    logical_or_expression      go to state 102
-    conditional_expression     go to state 140
-    assignment_expression      go to state 381
-    initializer                go to state 427
-
-
-State 385
-
-  222 designation: designator_list . '='
-  224 designator_list: designator_list . designator
-
-    '['  shift, and go to state 378
-    '.'  shift, and go to state 379
-    '='  shift, and go to state 428
-
-    designator  go to state 429
-
-
-State 386
-
-  223 designator_list: designator .
-
-    $default  reduce using rule 223 (designator_list)
-
-
-State 387
+State 394
 
    28 argument_expression_list: argument_expression_list ',' assignment_expression .
 
     $default  reduce using rule 28 (argument_expression_list)
 
 
-State 388
+State 395
 
    73 conditional_expression: logical_or_expression '?' expression ':' conditional_expression .
 
     $default  reduce using rule 73 (conditional_expression)
 
 
-State 389
+State 396
 
   198 direct_abstract_declarator: '[' STATIC assignment_expression ']' .
 
     $default  reduce using rule 198 (direct_abstract_declarator)
 
 
-State 390
+State 397
 
   197 direct_abstract_declarator: '[' STATIC type_qualifier_list assignment_expression . ']'
 
-    ']'  shift, and go to state 430
+    ']'  shift, and go to state 436
 
 
-State 391
+State 398
 
   199 direct_abstract_declarator: '[' type_qualifier_list STATIC assignment_expression . ']'
 
-    ']'  shift, and go to state 431
+    ']'  shift, and go to state 437
 
 
-State 392
+State 399
 
   200 direct_abstract_declarator: '[' type_qualifier_list assignment_expression ']' .
 
     $default  reduce using rule 200 (direct_abstract_declarator)
 
 
-State 393
+State 400
 
   214 direct_abstract_declarator: direct_abstract_declarator '(' parameter_type_list ')' .
 
     $default  reduce using rule 214 (direct_abstract_declarator)
 
 
-State 394
+State 401
 
   206 direct_abstract_declarator: direct_abstract_declarator '[' STATIC assignment_expression . ']'
 
-    ']'  shift, and go to state 432
+    ']'  shift, and go to state 438
 
 
-State 395
+State 402
 
   179 type_qualifier_list: type_qualifier_list . type_qualifier
   205 direct_abstract_declarator: direct_abstract_declarator '[' STATIC type_qualifier_list . assignment_expression ']'
@@ -7399,25 +7544,25 @@ State 395
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 433
+    assignment_expression      go to state 439
     type_qualifier             go to state 182
 
 
-State 396
+State 403
 
   204 direct_abstract_declarator: direct_abstract_declarator '[' '*' ']' .
 
     $default  reduce using rule 204 (direct_abstract_declarator)
 
 
-State 397
+State 404
 
   210 direct_abstract_declarator: direct_abstract_declarator '[' assignment_expression ']' .
 
     $default  reduce using rule 210 (direct_abstract_declarator)
 
 
-State 398
+State 405
 
   208 direct_abstract_declarator: direct_abstract_declarator '[' type_qualifier_list STATIC . assignment_expression ']'
 
@@ -7458,56 +7603,130 @@ State 398
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 434
+    assignment_expression      go to state 440
 
 
-State 399
+State 406
 
   209 direct_abstract_declarator: direct_abstract_declarator '[' type_qualifier_list ']' .
 
     $default  reduce using rule 209 (direct_abstract_declarator)
 
 
-State 400
+State 407
 
   207 direct_abstract_declarator: direct_abstract_declarator '[' type_qualifier_list assignment_expression . ']'
 
-    ']'  shift, and go to state 435
+    ']'  shift, and go to state 441
 
 
-State 401
+State 408
 
   227 static_assert_declaration: STATIC_ASSERT '(' constant_expression ',' STRING_LITERAL ')' ';' .
 
     $default  reduce using rule 227 (static_assert_declaration)
 
 
-State 402
+State 409
+
+  225 designator: '[' constant_expression ']' .
+
+    $default  reduce using rule 225 (designator)
+
+
+State 410
+
+  216 initializer: '{' initializer_list ',' '}' .
+
+    $default  reduce using rule 216 (initializer)
+
+
+State 411
+
+  221 initializer_list: initializer_list ',' initializer .
+
+    $default  reduce using rule 221 (initializer_list)
+
+
+State 412
+
+  220 initializer_list: initializer_list ',' designation . initializer
+
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '{'             shift, and go to state 186
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
+
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 139
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 140
+    assignment_expression      go to state 187
+    initializer                go to state 442
+
+
+State 413
 
   164 direct_declarator: direct_declarator '[' STATIC type_qualifier_list assignment_expression ']' .
 
     $default  reduce using rule 164 (direct_declarator)
 
 
-State 403
+State 414
 
   167 direct_declarator: direct_declarator '[' type_qualifier_list STATIC assignment_expression ']' .
 
     $default  reduce using rule 167 (direct_declarator)
 
 
-State 404
+State 415
+
+  131 struct_or_union_specifier: struct_or_union IDENTIFIER $@1 MMstruct '{' struct_declaration_list '}' .
+
+    $default  reduce using rule 131 (struct_or_union_specifier)
+
+
+State 416
 
   234 labeled_statement: IDENTIFIER ':' statement .
 
     $default  reduce using rule 234 (labeled_statement)
 
 
-State 405
+State 417
 
   235 labeled_statement: CASE constant_expression ':' . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -7515,17 +7734,17 @@ State 405
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -7536,11 +7755,11 @@ State 405
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -7562,48 +7781,48 @@ State 405
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    statement                  go to state 436
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    expression                 go to state 308
+    statement                  go to state 443
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
-State 406
+State 418
 
   236 labeled_statement: DEFAULT ':' statement .
 
     $default  reduce using rule 236 (labeled_statement)
 
 
-State 407
+State 419
 
    88 expression: expression . ',' assignment_expression
   252 selection_statement: SWITCH '(' expression . ')' statement
 
-    ')'  shift, and go to state 437
+    ')'  shift, and go to state 444
     ','  shift, and go to state 228
 
 
-State 408
+State 420
 
-  255 iteration_statement: WHILE $@3 M . '(' M1 expression ')' N M1 statement
+  255 iteration_statement: WHILE $@4 M . '(' M1 expression ')' N M1 statement
 
-    '('  shift, and go to state 438
+    '('  shift, and go to state 445
 
 
-State 409
+State 421
 
-  257 iteration_statement: DO $@4 M . statement WHILE '(' expression ')' ';'
+  257 iteration_statement: DO $@5 M . statement WHILE '(' expression ')' ';'
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -7611,17 +7830,17 @@ State 409
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -7632,11 +7851,11 @@ State 409
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -7658,21 +7877,21 @@ State 409
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    statement                  go to state 439
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    expression                 go to state 308
+    statement                  go to state 446
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
-State 410
+State 422
 
   258 iteration_statement: FOR P '(' . expression_statement M1 expression_statement N M1 expression N ')' M1 statement
 
@@ -7693,7 +7912,7 @@ State 410
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -7715,63 +7934,63 @@ State 410
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    expression_statement       go to state 440
+    expression                 go to state 308
+    expression_statement       go to state 447
 
 
-State 411
+State 423
 
   265 jump_statement: GOTO IDENTIFIER ';' .
 
     $default  reduce using rule 265 (jump_statement)
 
 
-State 412
+State 424
 
   269 jump_statement: RETURN expression ';' .
 
     $default  reduce using rule 269 (jump_statement)
 
 
-State 413
+State 425
 
   242 block_item_list: block_item_list M1 block_item .
 
     $default  reduce using rule 242 (block_item_list)
 
 
-State 414
+State 426
 
    88 expression: expression . ',' assignment_expression
-  250 selection_statement: if '(' expression . ')' N M1 statement N $@2 else M1 statement N
+  250 selection_statement: if '(' expression . ')' N M1 statement N $@3 else M1 statement N
   251                    | if '(' expression . ')' N M1 statement N
 
-    ')'  shift, and go to state 441
+    ')'  shift, and go to state 448
     ','  shift, and go to state 228
 
 
-State 415
+State 427
 
-  260 iteration_statement: $@5 FOR P . '(' expression_statement expression_statement ')' statement
+  260 iteration_statement: $@6 FOR P . '(' expression_statement expression_statement ')' statement
 
-    '('  shift, and go to state 442
-
-
-State 416
-
-  262 iteration_statement: $@6 FOR P . '(' declaration expression_statement ')' statement
-
-    '('  shift, and go to state 443
+    '('  shift, and go to state 449
 
 
-State 417
+State 428
 
-  264 iteration_statement: $@7 FOR P . '(' declaration expression_statement expression ')' statement
+  262 iteration_statement: $@7 FOR P . '(' declaration expression_statement ')' statement
 
-    '('  shift, and go to state 444
+    '('  shift, and go to state 450
 
 
-State 418
+State 429
+
+  264 iteration_statement: $@8 FOR P . '(' declaration expression_statement expression ')' statement
+
+    '('  shift, and go to state 451
+
+
+State 430
 
    16 generic_association: DEFAULT ':' . assignment_expression
 
@@ -7812,17 +8031,17 @@ State 418
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 445
+    assignment_expression      go to state 452
 
 
-State 419
+State 431
 
    12 generic_selection: GENERIC '(' assignment_expression ',' generic_assoc_list ')' .
 
     $default  reduce using rule 12 (generic_selection)
 
 
-State 420
+State 432
 
    14 generic_assoc_list: generic_assoc_list ',' . generic_association
 
@@ -7844,20 +8063,20 @@ State 420
     IMAGINARY     shift, and go to state 22
     STRUCT        shift, and go to state 23
     UNION         shift, and go to state 24
-    DEFAULT       shift, and go to state 374
+    DEFAULT       shift, and go to state 389
     ATOMIC        shift, and go to state 26
 
-    generic_association        go to state 446
+    generic_association        go to state 453
     type_specifier             go to state 105
     struct_or_union_specifier  go to state 34
     struct_or_union            go to state 35
     specifier_qualifier_list   go to state 106
     atomic_type_specifier      go to state 36
     type_qualifier             go to state 107
-    type_name                  go to state 377
+    type_name                  go to state 392
 
 
-State 421
+State 433
 
    15 generic_association: type_name ':' . assignment_expression
 
@@ -7898,35 +8117,10 @@ State 421
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 447
+    assignment_expression      go to state 454
 
 
-State 422
-
-  225 designator: '[' constant_expression . ']'
-
-    ']'  shift, and go to state 448
-
-
-State 423
-
-  226 designator: '.' IDENTIFIER .
-
-    $default  reduce using rule 226 (designator)
-
-
-State 424
-
-  215 initializer: '{' initializer_list . '}'
-  216            | '{' initializer_list . ',' '}'
-  220 initializer_list: initializer_list . ',' designation initializer
-  221                 | initializer_list . ',' initializer
-
-    ','  shift, and go to state 449
-    '}'  shift, and go to state 450
-
-
-State 425
+State 434
 
    26 postfix_expression: '(' type_name ')' '{' initializer_list ',' . '}'
   220 initializer_list: initializer_list ',' . designation initializer
@@ -7943,10 +8137,10 @@ State 425
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
-    '['             shift, and go to state 378
-    '.'             shift, and go to state 379
-    '{'             shift, and go to state 380
-    '}'             shift, and go to state 451
+    '['             shift, and go to state 267
+    '.'             shift, and go to state 268
+    '{'             shift, and go to state 186
+    '}'             shift, and go to state 455
     '&'             shift, and go to state 79
     '*'             shift, and go to state 80
     '+'             shift, and go to state 81
@@ -7973,95 +8167,81 @@ State 425
     logical_and_expression     go to state 101
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
-    assignment_expression      go to state 381
-    initializer                go to state 452
-    designation                go to state 453
-    designator_list            go to state 385
-    designator                 go to state 386
+    assignment_expression      go to state 187
+    initializer                go to state 411
+    designation                go to state 412
+    designator_list            go to state 272
+    designator                 go to state 273
 
 
-State 426
+State 435
 
    25 postfix_expression: '(' type_name ')' '{' initializer_list '}' .
 
     $default  reduce using rule 25 (postfix_expression)
 
 
-State 427
-
-  218 initializer_list: designation initializer .
-
-    $default  reduce using rule 218 (initializer_list)
-
-
-State 428
-
-  222 designation: designator_list '=' .
-
-    $default  reduce using rule 222 (designation)
-
-
-State 429
-
-  224 designator_list: designator_list designator .
-
-    $default  reduce using rule 224 (designator_list)
-
-
-State 430
+State 436
 
   197 direct_abstract_declarator: '[' STATIC type_qualifier_list assignment_expression ']' .
 
     $default  reduce using rule 197 (direct_abstract_declarator)
 
 
-State 431
+State 437
 
   199 direct_abstract_declarator: '[' type_qualifier_list STATIC assignment_expression ']' .
 
     $default  reduce using rule 199 (direct_abstract_declarator)
 
 
-State 432
+State 438
 
   206 direct_abstract_declarator: direct_abstract_declarator '[' STATIC assignment_expression ']' .
 
     $default  reduce using rule 206 (direct_abstract_declarator)
 
 
-State 433
+State 439
 
   205 direct_abstract_declarator: direct_abstract_declarator '[' STATIC type_qualifier_list assignment_expression . ']'
 
-    ']'  shift, and go to state 454
+    ']'  shift, and go to state 456
 
 
-State 434
+State 440
 
   208 direct_abstract_declarator: direct_abstract_declarator '[' type_qualifier_list STATIC assignment_expression . ']'
 
-    ']'  shift, and go to state 455
+    ']'  shift, and go to state 457
 
 
-State 435
+State 441
 
   207 direct_abstract_declarator: direct_abstract_declarator '[' type_qualifier_list assignment_expression ']' .
 
     $default  reduce using rule 207 (direct_abstract_declarator)
 
 
-State 436
+State 442
+
+  220 initializer_list: initializer_list ',' designation initializer .
+
+    $default  reduce using rule 220 (initializer_list)
+
+
+State 443
 
   235 labeled_statement: CASE constant_expression ':' statement .
 
     $default  reduce using rule 235 (labeled_statement)
 
 
-State 437
+State 444
 
   252 selection_statement: SWITCH '(' expression ')' . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -8069,17 +8249,17 @@ State 437
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -8090,11 +8270,11 @@ State 437
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -8116,58 +8296,58 @@ State 437
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    statement                  go to state 456
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    expression                 go to state 308
+    statement                  go to state 458
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
-State 438
+State 445
 
-  255 iteration_statement: WHILE $@3 M '(' . M1 expression ')' N M1 statement
-
-    $default  reduce using rule 2 (M1)
-
-    M1  go to state 457
-
-
-State 439
-
-  257 iteration_statement: DO $@4 M statement . WHILE '(' expression ')' ';'
-
-    WHILE  shift, and go to state 458
-
-
-State 440
-
-  258 iteration_statement: FOR P '(' expression_statement . M1 expression_statement N M1 expression N ')' M1 statement
+  255 iteration_statement: WHILE $@4 M '(' . M1 expression ')' N M1 statement
 
     $default  reduce using rule 2 (M1)
 
     M1  go to state 459
 
 
-State 441
+State 446
 
-  250 selection_statement: if '(' expression ')' . N M1 statement N $@2 else M1 statement N
+  257 iteration_statement: DO $@5 M statement . WHILE '(' expression ')' ';'
+
+    WHILE  shift, and go to state 460
+
+
+State 447
+
+  258 iteration_statement: FOR P '(' expression_statement . M1 expression_statement N M1 expression N ')' M1 statement
+
+    $default  reduce using rule 2 (M1)
+
+    M1  go to state 461
+
+
+State 448
+
+  250 selection_statement: if '(' expression ')' . N M1 statement N $@3 else M1 statement N
   251                    | if '(' expression ')' . N M1 statement N
 
     $default  reduce using rule 1 (N)
 
-    N  go to state 460
+    N  go to state 462
 
 
-State 442
+State 449
 
-  260 iteration_statement: $@5 FOR P '(' . expression_statement expression_statement ')' statement
+  260 iteration_statement: $@6 FOR P '(' . expression_statement expression_statement ')' statement
 
     IDENTIFIER      shift, and go to state 68
     STRING_LITERAL  shift, and go to state 69
@@ -8186,7 +8366,7 @@ State 442
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -8208,60 +8388,13 @@ State 442
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    expression_statement       go to state 461
+    expression                 go to state 308
+    expression_statement       go to state 463
 
 
-State 443
+State 450
 
-  262 iteration_statement: $@6 FOR P '(' . declaration expression_statement ')' statement
-
-    TYPEDEF_NAME   shift, and go to state 1
-    TYPEDEF        shift, and go to state 2
-    EXTERN         shift, and go to state 3
-    STATIC         shift, and go to state 4
-    AUTO           shift, and go to state 5
-    REGISTER       shift, and go to state 6
-    INLINE         shift, and go to state 7
-    CONST          shift, and go to state 8
-    RESTRICT       shift, and go to state 9
-    VOLATILE       shift, and go to state 10
-    BOOL           shift, and go to state 11
-    CHAR           shift, and go to state 12
-    SHORT          shift, and go to state 13
-    INT            shift, and go to state 14
-    LONG           shift, and go to state 15
-    SIGNED         shift, and go to state 16
-    UNSIGNED       shift, and go to state 17
-    FLOAT          shift, and go to state 18
-    DOUBLE         shift, and go to state 19
-    VOID           shift, and go to state 20
-    COMPLEX        shift, and go to state 21
-    IMAGINARY      shift, and go to state 22
-    STRUCT         shift, and go to state 23
-    UNION          shift, and go to state 24
-    ALIGNAS        shift, and go to state 25
-    ATOMIC         shift, and go to state 26
-    NORETURN       shift, and go to state 27
-    STATIC_ASSERT  shift, and go to state 28
-    THREAD_LOCAL   shift, and go to state 29
-
-    declaration                go to state 462
-    declaration_specifiers     go to state 120
-    storage_class_specifier    go to state 32
-    type_specifier             go to state 33
-    struct_or_union_specifier  go to state 34
-    struct_or_union            go to state 35
-    atomic_type_specifier      go to state 36
-    type_qualifier             go to state 37
-    function_specifier         go to state 38
-    alignment_specifier        go to state 39
-    static_assert_declaration  go to state 40
-
-
-State 444
-
-  264 iteration_statement: $@7 FOR P '(' . declaration expression_statement expression ')' statement
+  262 iteration_statement: $@7 FOR P '(' . declaration expression_statement ')' statement
 
     TYPEDEF_NAME   shift, and go to state 1
     TYPEDEF        shift, and go to state 2
@@ -8293,7 +8426,7 @@ State 444
     STATIC_ASSERT  shift, and go to state 28
     THREAD_LOCAL   shift, and go to state 29
 
-    declaration                go to state 463
+    declaration                go to state 464
     declaration_specifiers     go to state 120
     storage_class_specifier    go to state 32
     type_specifier             go to state 33
@@ -8306,179 +8439,105 @@ State 444
     static_assert_declaration  go to state 40
 
 
-State 445
+State 451
+
+  264 iteration_statement: $@8 FOR P '(' . declaration expression_statement expression ')' statement
+
+    TYPEDEF_NAME   shift, and go to state 1
+    TYPEDEF        shift, and go to state 2
+    EXTERN         shift, and go to state 3
+    STATIC         shift, and go to state 4
+    AUTO           shift, and go to state 5
+    REGISTER       shift, and go to state 6
+    INLINE         shift, and go to state 7
+    CONST          shift, and go to state 8
+    RESTRICT       shift, and go to state 9
+    VOLATILE       shift, and go to state 10
+    BOOL           shift, and go to state 11
+    CHAR           shift, and go to state 12
+    SHORT          shift, and go to state 13
+    INT            shift, and go to state 14
+    LONG           shift, and go to state 15
+    SIGNED         shift, and go to state 16
+    UNSIGNED       shift, and go to state 17
+    FLOAT          shift, and go to state 18
+    DOUBLE         shift, and go to state 19
+    VOID           shift, and go to state 20
+    COMPLEX        shift, and go to state 21
+    IMAGINARY      shift, and go to state 22
+    STRUCT         shift, and go to state 23
+    UNION          shift, and go to state 24
+    ALIGNAS        shift, and go to state 25
+    ATOMIC         shift, and go to state 26
+    NORETURN       shift, and go to state 27
+    STATIC_ASSERT  shift, and go to state 28
+    THREAD_LOCAL   shift, and go to state 29
+
+    declaration                go to state 465
+    declaration_specifiers     go to state 120
+    storage_class_specifier    go to state 32
+    type_specifier             go to state 33
+    struct_or_union_specifier  go to state 34
+    struct_or_union            go to state 35
+    atomic_type_specifier      go to state 36
+    type_qualifier             go to state 37
+    function_specifier         go to state 38
+    alignment_specifier        go to state 39
+    static_assert_declaration  go to state 40
+
+
+State 452
 
    16 generic_association: DEFAULT ':' assignment_expression .
 
     $default  reduce using rule 16 (generic_association)
 
 
-State 446
+State 453
 
    14 generic_assoc_list: generic_assoc_list ',' generic_association .
 
     $default  reduce using rule 14 (generic_assoc_list)
 
 
-State 447
+State 454
 
    15 generic_association: type_name ':' assignment_expression .
 
     $default  reduce using rule 15 (generic_association)
 
 
-State 448
-
-  225 designator: '[' constant_expression ']' .
-
-    $default  reduce using rule 225 (designator)
-
-
-State 449
-
-  216 initializer: '{' initializer_list ',' . '}'
-  220 initializer_list: initializer_list ',' . designation initializer
-  221                 | initializer_list ',' . initializer
-
-    IDENTIFIER      shift, and go to state 68
-    STRING_LITERAL  shift, and go to state 69
-    I_CONSTANT      shift, and go to state 70
-    F_CONSTANT      shift, and go to state 71
-    SIZEOF          shift, and go to state 72
-    FUNC_NAME       shift, and go to state 73
-    INC_OP          shift, and go to state 74
-    DEC_OP          shift, and go to state 75
-    ALIGNOF         shift, and go to state 76
-    GENERIC         shift, and go to state 77
-    '('             shift, and go to state 78
-    '['             shift, and go to state 378
-    '.'             shift, and go to state 379
-    '{'             shift, and go to state 380
-    '}'             shift, and go to state 464
-    '&'             shift, and go to state 79
-    '*'             shift, and go to state 80
-    '+'             shift, and go to state 81
-    '-'             shift, and go to state 82
-    '~'             shift, and go to state 83
-    '!'             shift, and go to state 84
-
-    primary_expression         go to state 85
-    constant                   go to state 86
-    string                     go to state 87
-    generic_selection          go to state 88
-    postfix_expression         go to state 89
-    unary_expression           go to state 139
-    unary_operator             go to state 91
-    cast_expression            go to state 92
-    multiplicative_expression  go to state 93
-    additive_expression        go to state 94
-    shift_expression           go to state 95
-    relational_expression      go to state 96
-    equality_expression        go to state 97
-    and_expression             go to state 98
-    exclusive_or_expression    go to state 99
-    inclusive_or_expression    go to state 100
-    logical_and_expression     go to state 101
-    logical_or_expression      go to state 102
-    conditional_expression     go to state 140
-    assignment_expression      go to state 381
-    initializer                go to state 452
-    designation                go to state 453
-    designator_list            go to state 385
-    designator                 go to state 386
-
-
-State 450
-
-  215 initializer: '{' initializer_list '}' .
-
-    $default  reduce using rule 215 (initializer)
-
-
-State 451
+State 455
 
    26 postfix_expression: '(' type_name ')' '{' initializer_list ',' '}' .
 
     $default  reduce using rule 26 (postfix_expression)
 
 
-State 452
-
-  221 initializer_list: initializer_list ',' initializer .
-
-    $default  reduce using rule 221 (initializer_list)
-
-
-State 453
-
-  220 initializer_list: initializer_list ',' designation . initializer
-
-    IDENTIFIER      shift, and go to state 68
-    STRING_LITERAL  shift, and go to state 69
-    I_CONSTANT      shift, and go to state 70
-    F_CONSTANT      shift, and go to state 71
-    SIZEOF          shift, and go to state 72
-    FUNC_NAME       shift, and go to state 73
-    INC_OP          shift, and go to state 74
-    DEC_OP          shift, and go to state 75
-    ALIGNOF         shift, and go to state 76
-    GENERIC         shift, and go to state 77
-    '('             shift, and go to state 78
-    '{'             shift, and go to state 380
-    '&'             shift, and go to state 79
-    '*'             shift, and go to state 80
-    '+'             shift, and go to state 81
-    '-'             shift, and go to state 82
-    '~'             shift, and go to state 83
-    '!'             shift, and go to state 84
-
-    primary_expression         go to state 85
-    constant                   go to state 86
-    string                     go to state 87
-    generic_selection          go to state 88
-    postfix_expression         go to state 89
-    unary_expression           go to state 139
-    unary_operator             go to state 91
-    cast_expression            go to state 92
-    multiplicative_expression  go to state 93
-    additive_expression        go to state 94
-    shift_expression           go to state 95
-    relational_expression      go to state 96
-    equality_expression        go to state 97
-    and_expression             go to state 98
-    exclusive_or_expression    go to state 99
-    inclusive_or_expression    go to state 100
-    logical_and_expression     go to state 101
-    logical_or_expression      go to state 102
-    conditional_expression     go to state 140
-    assignment_expression      go to state 381
-    initializer                go to state 465
-
-
-State 454
+State 456
 
   205 direct_abstract_declarator: direct_abstract_declarator '[' STATIC type_qualifier_list assignment_expression ']' .
 
     $default  reduce using rule 205 (direct_abstract_declarator)
 
 
-State 455
+State 457
 
   208 direct_abstract_declarator: direct_abstract_declarator '[' type_qualifier_list STATIC assignment_expression ']' .
 
     $default  reduce using rule 208 (direct_abstract_declarator)
 
 
-State 456
+State 458
 
   252 selection_statement: SWITCH '(' expression ')' statement .
 
     $default  reduce using rule 252 (selection_statement)
 
 
-State 457
+State 459
 
-  255 iteration_statement: WHILE $@3 M '(' M1 . expression ')' N M1 statement
+  255 iteration_statement: WHILE $@4 M '(' M1 . expression ')' N M1 statement
 
     IDENTIFIER      shift, and go to state 68
     STRING_LITERAL  shift, and go to state 69
@@ -8521,14 +8580,14 @@ State 457
     expression                 go to state 466
 
 
-State 458
+State 460
 
-  257 iteration_statement: DO $@4 M statement WHILE . '(' expression ')' ';'
+  257 iteration_statement: DO $@5 M statement WHILE . '(' expression ')' ';'
 
     '('  shift, and go to state 467
 
 
-State 459
+State 461
 
   258 iteration_statement: FOR P '(' expression_statement M1 . expression_statement N M1 expression N ')' M1 statement
 
@@ -8549,7 +8608,7 @@ State 459
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -8571,13 +8630,13 @@ State 459
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     expression_statement       go to state 468
 
 
-State 460
+State 462
 
-  250 selection_statement: if '(' expression ')' N . M1 statement N $@2 else M1 statement N
+  250 selection_statement: if '(' expression ')' N . M1 statement N $@3 else M1 statement N
   251                    | if '(' expression ')' N . M1 statement N
 
     $default  reduce using rule 2 (M1)
@@ -8585,103 +8644,9 @@ State 460
     M1  go to state 469
 
 
-State 461
-
-  260 iteration_statement: $@5 FOR P '(' expression_statement . expression_statement ')' statement
-
-    IDENTIFIER      shift, and go to state 68
-    STRING_LITERAL  shift, and go to state 69
-    I_CONSTANT      shift, and go to state 70
-    F_CONSTANT      shift, and go to state 71
-    SIZEOF          shift, and go to state 72
-    FUNC_NAME       shift, and go to state 73
-    INC_OP          shift, and go to state 74
-    DEC_OP          shift, and go to state 75
-    ALIGNOF         shift, and go to state 76
-    GENERIC         shift, and go to state 77
-    '('             shift, and go to state 78
-    '&'             shift, and go to state 79
-    '*'             shift, and go to state 80
-    '+'             shift, and go to state 81
-    '-'             shift, and go to state 82
-    '~'             shift, and go to state 83
-    '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
-
-    primary_expression         go to state 85
-    constant                   go to state 86
-    string                     go to state 87
-    generic_selection          go to state 88
-    postfix_expression         go to state 89
-    unary_expression           go to state 139
-    unary_operator             go to state 91
-    cast_expression            go to state 92
-    multiplicative_expression  go to state 93
-    additive_expression        go to state 94
-    shift_expression           go to state 95
-    relational_expression      go to state 96
-    equality_expression        go to state 97
-    and_expression             go to state 98
-    exclusive_or_expression    go to state 99
-    inclusive_or_expression    go to state 100
-    logical_and_expression     go to state 101
-    logical_or_expression      go to state 102
-    conditional_expression     go to state 140
-    assignment_expression      go to state 141
-    expression                 go to state 301
-    expression_statement       go to state 470
-
-
-State 462
-
-  262 iteration_statement: $@6 FOR P '(' declaration . expression_statement ')' statement
-
-    IDENTIFIER      shift, and go to state 68
-    STRING_LITERAL  shift, and go to state 69
-    I_CONSTANT      shift, and go to state 70
-    F_CONSTANT      shift, and go to state 71
-    SIZEOF          shift, and go to state 72
-    FUNC_NAME       shift, and go to state 73
-    INC_OP          shift, and go to state 74
-    DEC_OP          shift, and go to state 75
-    ALIGNOF         shift, and go to state 76
-    GENERIC         shift, and go to state 77
-    '('             shift, and go to state 78
-    '&'             shift, and go to state 79
-    '*'             shift, and go to state 80
-    '+'             shift, and go to state 81
-    '-'             shift, and go to state 82
-    '~'             shift, and go to state 83
-    '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
-
-    primary_expression         go to state 85
-    constant                   go to state 86
-    string                     go to state 87
-    generic_selection          go to state 88
-    postfix_expression         go to state 89
-    unary_expression           go to state 139
-    unary_operator             go to state 91
-    cast_expression            go to state 92
-    multiplicative_expression  go to state 93
-    additive_expression        go to state 94
-    shift_expression           go to state 95
-    relational_expression      go to state 96
-    equality_expression        go to state 97
-    and_expression             go to state 98
-    exclusive_or_expression    go to state 99
-    inclusive_or_expression    go to state 100
-    logical_and_expression     go to state 101
-    logical_or_expression      go to state 102
-    conditional_expression     go to state 140
-    assignment_expression      go to state 141
-    expression                 go to state 301
-    expression_statement       go to state 471
-
-
 State 463
 
-  264 iteration_statement: $@7 FOR P '(' declaration . expression_statement expression ')' statement
+  260 iteration_statement: $@6 FOR P '(' expression_statement . expression_statement ')' statement
 
     IDENTIFIER      shift, and go to state 68
     STRING_LITERAL  shift, and go to state 69
@@ -8700,7 +8665,7 @@ State 463
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -8722,28 +8687,108 @@ State 463
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
-    expression_statement       go to state 472
+    expression                 go to state 308
+    expression_statement       go to state 470
 
 
 State 464
 
-  216 initializer: '{' initializer_list ',' '}' .
+  262 iteration_statement: $@7 FOR P '(' declaration . expression_statement ')' statement
 
-    $default  reduce using rule 216 (initializer)
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
+    ';'             shift, and go to state 307
+
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 139
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 140
+    assignment_expression      go to state 141
+    expression                 go to state 308
+    expression_statement       go to state 471
 
 
 State 465
 
-  220 initializer_list: initializer_list ',' designation initializer .
+  264 iteration_statement: $@8 FOR P '(' declaration . expression_statement expression ')' statement
 
-    $default  reduce using rule 220 (initializer_list)
+    IDENTIFIER      shift, and go to state 68
+    STRING_LITERAL  shift, and go to state 69
+    I_CONSTANT      shift, and go to state 70
+    F_CONSTANT      shift, and go to state 71
+    SIZEOF          shift, and go to state 72
+    FUNC_NAME       shift, and go to state 73
+    INC_OP          shift, and go to state 74
+    DEC_OP          shift, and go to state 75
+    ALIGNOF         shift, and go to state 76
+    GENERIC         shift, and go to state 77
+    '('             shift, and go to state 78
+    '&'             shift, and go to state 79
+    '*'             shift, and go to state 80
+    '+'             shift, and go to state 81
+    '-'             shift, and go to state 82
+    '~'             shift, and go to state 83
+    '!'             shift, and go to state 84
+    ';'             shift, and go to state 307
+
+    primary_expression         go to state 85
+    constant                   go to state 86
+    string                     go to state 87
+    generic_selection          go to state 88
+    postfix_expression         go to state 89
+    unary_expression           go to state 139
+    unary_operator             go to state 91
+    cast_expression            go to state 92
+    multiplicative_expression  go to state 93
+    additive_expression        go to state 94
+    shift_expression           go to state 95
+    relational_expression      go to state 96
+    equality_expression        go to state 97
+    and_expression             go to state 98
+    exclusive_or_expression    go to state 99
+    inclusive_or_expression    go to state 100
+    logical_and_expression     go to state 101
+    logical_or_expression      go to state 102
+    conditional_expression     go to state 140
+    assignment_expression      go to state 141
+    expression                 go to state 308
+    expression_statement       go to state 472
 
 
 State 466
 
    88 expression: expression . ',' assignment_expression
-  255 iteration_statement: WHILE $@3 M '(' M1 expression . ')' N M1 statement
+  255 iteration_statement: WHILE $@4 M '(' M1 expression . ')' N M1 statement
 
     ')'  shift, and go to state 473
     ','  shift, and go to state 228
@@ -8751,7 +8796,7 @@ State 466
 
 State 467
 
-  257 iteration_statement: DO $@4 M statement WHILE '(' . expression ')' ';'
+  257 iteration_statement: DO $@5 M statement WHILE '(' . expression ')' ';'
 
     IDENTIFIER      shift, and go to state 68
     STRING_LITERAL  shift, and go to state 69
@@ -8805,10 +8850,10 @@ State 468
 
 State 469
 
-  250 selection_statement: if '(' expression ')' N M1 . statement N $@2 else M1 statement N
+  250 selection_statement: if '(' expression ')' N M1 . statement N $@3 else M1 statement N
   251                    | if '(' expression ')' N M1 . statement N
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -8816,17 +8861,17 @@ State 469
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -8837,11 +8882,11 @@ State 469
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -8863,37 +8908,37 @@ State 469
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     statement                  go to state 476
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 470
 
-  260 iteration_statement: $@5 FOR P '(' expression_statement expression_statement . ')' statement
+  260 iteration_statement: $@6 FOR P '(' expression_statement expression_statement . ')' statement
 
     ')'  shift, and go to state 477
 
 
 State 471
 
-  262 iteration_statement: $@6 FOR P '(' declaration expression_statement . ')' statement
+  262 iteration_statement: $@7 FOR P '(' declaration expression_statement . ')' statement
 
     ')'  shift, and go to state 478
 
 
 State 472
 
-  264 iteration_statement: $@7 FOR P '(' declaration expression_statement . expression ')' statement
+  264 iteration_statement: $@8 FOR P '(' declaration expression_statement . expression ')' statement
 
     IDENTIFIER      shift, and go to state 68
     STRING_LITERAL  shift, and go to state 69
@@ -8938,7 +8983,7 @@ State 472
 
 State 473
 
-  255 iteration_statement: WHILE $@3 M '(' M1 expression ')' . N M1 statement
+  255 iteration_statement: WHILE $@4 M '(' M1 expression ')' . N M1 statement
 
     $default  reduce using rule 1 (N)
 
@@ -8948,7 +8993,7 @@ State 473
 State 474
 
    88 expression: expression . ',' assignment_expression
-  257 iteration_statement: DO $@4 M statement WHILE '(' expression . ')' ';'
+  257 iteration_statement: DO $@5 M statement WHILE '(' expression . ')' ';'
 
     ')'  shift, and go to state 481
     ','  shift, and go to state 228
@@ -8965,7 +9010,7 @@ State 475
 
 State 476
 
-  250 selection_statement: if '(' expression ')' N M1 statement . N $@2 else M1 statement N
+  250 selection_statement: if '(' expression ')' N M1 statement . N $@3 else M1 statement N
   251                    | if '(' expression ')' N M1 statement . N
 
     $default  reduce using rule 1 (N)
@@ -8975,9 +9020,9 @@ State 476
 
 State 477
 
-  260 iteration_statement: $@5 FOR P '(' expression_statement expression_statement ')' . statement
+  260 iteration_statement: $@6 FOR P '(' expression_statement expression_statement ')' . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -8985,17 +9030,17 @@ State 477
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -9006,11 +9051,11 @@ State 477
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -9032,25 +9077,25 @@ State 477
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     statement                  go to state 484
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 478
 
-  262 iteration_statement: $@6 FOR P '(' declaration expression_statement ')' . statement
+  262 iteration_statement: $@7 FOR P '(' declaration expression_statement ')' . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -9058,17 +9103,17 @@ State 478
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -9079,11 +9124,11 @@ State 478
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -9105,24 +9150,24 @@ State 478
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     statement                  go to state 485
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 479
 
    88 expression: expression . ',' assignment_expression
-  264 iteration_statement: $@7 FOR P '(' declaration expression_statement expression . ')' statement
+  264 iteration_statement: $@8 FOR P '(' declaration expression_statement expression . ')' statement
 
     ')'  shift, and go to state 486
     ','  shift, and go to state 228
@@ -9130,7 +9175,7 @@ State 479
 
 State 480
 
-  255 iteration_statement: WHILE $@3 M '(' M1 expression ')' N . M1 statement
+  255 iteration_statement: WHILE $@4 M '(' M1 expression ')' N . M1 statement
 
     $default  reduce using rule 2 (M1)
 
@@ -9139,7 +9184,7 @@ State 480
 
 State 481
 
-  257 iteration_statement: DO $@4 M statement WHILE '(' expression ')' . ';'
+  257 iteration_statement: DO $@5 M statement WHILE '(' expression ')' . ';'
 
     ';'  shift, and go to state 488
 
@@ -9191,35 +9236,35 @@ State 482
 
 State 483
 
-  250 selection_statement: if '(' expression ')' N M1 statement N . $@2 else M1 statement N
+  250 selection_statement: if '(' expression ')' N M1 statement N . $@3 else M1 statement N
   251                    | if '(' expression ')' N M1 statement N .
 
-    ELSE      reduce using rule 249 ($@2)
+    ELSE      reduce using rule 249 ($@3)
     ELSE      [reduce using rule 251 (selection_statement)]
     $default  reduce using rule 251 (selection_statement)
 
-    $@2  go to state 490
+    $@3  go to state 490
 
 
 State 484
 
-  260 iteration_statement: $@5 FOR P '(' expression_statement expression_statement ')' statement .
+  260 iteration_statement: $@6 FOR P '(' expression_statement expression_statement ')' statement .
 
     $default  reduce using rule 260 (iteration_statement)
 
 
 State 485
 
-  262 iteration_statement: $@6 FOR P '(' declaration expression_statement ')' statement .
+  262 iteration_statement: $@7 FOR P '(' declaration expression_statement ')' statement .
 
     $default  reduce using rule 262 (iteration_statement)
 
 
 State 486
 
-  264 iteration_statement: $@7 FOR P '(' declaration expression_statement expression ')' . statement
+  264 iteration_statement: $@8 FOR P '(' declaration expression_statement expression ')' . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -9227,17 +9272,17 @@ State 486
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -9248,11 +9293,11 @@ State 486
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -9274,25 +9319,25 @@ State 486
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     statement                  go to state 491
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 487
 
-  255 iteration_statement: WHILE $@3 M '(' M1 expression ')' N M1 . statement
+  255 iteration_statement: WHILE $@4 M '(' M1 expression ')' N M1 . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -9300,17 +9345,17 @@ State 487
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -9321,11 +9366,11 @@ State 487
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -9347,23 +9392,23 @@ State 487
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     statement                  go to state 492
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 488
 
-  257 iteration_statement: DO $@4 M statement WHILE '(' expression ')' ';' .
+  257 iteration_statement: DO $@5 M statement WHILE '(' expression ')' ';' .
 
     $default  reduce using rule 257 (iteration_statement)
 
@@ -9382,7 +9427,7 @@ State 489
 
 State 490
 
-  250 selection_statement: if '(' expression ')' N M1 statement N $@2 . else M1 statement N
+  250 selection_statement: if '(' expression ')' N M1 statement N $@3 . else M1 statement N
 
     ELSE  shift, and go to state 494
 
@@ -9391,14 +9436,14 @@ State 490
 
 State 491
 
-  264 iteration_statement: $@7 FOR P '(' declaration expression_statement expression ')' statement .
+  264 iteration_statement: $@8 FOR P '(' declaration expression_statement expression ')' statement .
 
     $default  reduce using rule 264 (iteration_statement)
 
 
 State 492
 
-  255 iteration_statement: WHILE $@3 M '(' M1 expression ')' N M1 statement .
+  255 iteration_statement: WHILE $@4 M '(' M1 expression ')' N M1 statement .
 
     $default  reduce using rule 255 (iteration_statement)
 
@@ -9419,7 +9464,7 @@ State 494
 
 State 495
 
-  250 selection_statement: if '(' expression ')' N M1 statement N $@2 else . M1 statement N
+  250 selection_statement: if '(' expression ')' N M1 statement N $@3 else . M1 statement N
 
     $default  reduce using rule 2 (M1)
 
@@ -9437,9 +9482,9 @@ State 496
 
 State 497
 
-  250 selection_statement: if '(' expression ')' N M1 statement N $@2 else M1 . statement N
+  250 selection_statement: if '(' expression ')' N M1 statement N $@3 else M1 . statement N
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -9447,17 +9492,17 @@ State 497
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -9468,11 +9513,11 @@ State 497
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -9494,25 +9539,25 @@ State 497
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     statement                  go to state 499
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 498
 
   258 iteration_statement: FOR P '(' expression_statement M1 expression_statement N M1 expression N ')' M1 . statement
 
-    IDENTIFIER      shift, and go to state 288
+    IDENTIFIER      shift, and go to state 295
     STRING_LITERAL  shift, and go to state 69
     I_CONSTANT      shift, and go to state 70
     F_CONSTANT      shift, and go to state 71
@@ -9520,17 +9565,17 @@ State 498
     FUNC_NAME       shift, and go to state 73
     INC_OP          shift, and go to state 74
     DEC_OP          shift, and go to state 75
-    CASE            shift, and go to state 289
-    DEFAULT         shift, and go to state 290
-    IF              shift, and go to state 291
-    SWITCH          shift, and go to state 292
-    WHILE           shift, and go to state 293
-    DO              shift, and go to state 294
-    FOR             shift, and go to state 295
-    GOTO            shift, and go to state 296
-    CONTINUE        shift, and go to state 297
-    BREAK           shift, and go to state 298
-    RETURN          shift, and go to state 299
+    CASE            shift, and go to state 296
+    DEFAULT         shift, and go to state 297
+    IF              shift, and go to state 298
+    SWITCH          shift, and go to state 299
+    WHILE           shift, and go to state 300
+    DO              shift, and go to state 301
+    FOR             shift, and go to state 302
+    GOTO            shift, and go to state 303
+    CONTINUE        shift, and go to state 304
+    BREAK           shift, and go to state 305
+    RETURN          shift, and go to state 306
     ALIGNOF         shift, and go to state 76
     GENERIC         shift, and go to state 77
     '('             shift, and go to state 78
@@ -9541,11 +9586,11 @@ State 498
     '-'             shift, and go to state 82
     '~'             shift, and go to state 83
     '!'             shift, and go to state 84
-    ';'             shift, and go to state 300
+    ';'             shift, and go to state 307
 
-    FOR  [reduce using rule 259 ($@5)]
-    FOR  [reduce using rule 261 ($@6)]
-    FOR  [reduce using rule 263 ($@7)]
+    FOR  [reduce using rule 259 ($@6)]
+    FOR  [reduce using rule 261 ($@7)]
+    FOR  [reduce using rule 263 ($@8)]
 
     primary_expression         go to state 85
     constant                   go to state 86
@@ -9567,23 +9612,23 @@ State 498
     logical_or_expression      go to state 102
     conditional_expression     go to state 140
     assignment_expression      go to state 141
-    expression                 go to state 301
+    expression                 go to state 308
     statement                  go to state 500
-    labeled_statement          go to state 304
-    compound_statement         go to state 305
-    expression_statement       go to state 308
-    if                         go to state 309
-    selection_statement        go to state 310
-    iteration_statement        go to state 311
-    $@5                        go to state 312
-    $@6                        go to state 313
-    $@7                        go to state 314
-    jump_statement             go to state 315
+    labeled_statement          go to state 311
+    compound_statement         go to state 312
+    expression_statement       go to state 315
+    if                         go to state 316
+    selection_statement        go to state 317
+    iteration_statement        go to state 318
+    $@6                        go to state 319
+    $@7                        go to state 320
+    $@8                        go to state 321
+    jump_statement             go to state 322
 
 
 State 499
 
-  250 selection_statement: if '(' expression ')' N M1 statement N $@2 else M1 statement . N
+  250 selection_statement: if '(' expression ')' N M1 statement N $@3 else M1 statement . N
 
     $default  reduce using rule 1 (N)
 
@@ -9599,6 +9644,6 @@ State 500
 
 State 501
 
-  250 selection_statement: if '(' expression ')' N M1 statement N $@2 else M1 statement N .
+  250 selection_statement: if '(' expression ')' N M1 statement N $@3 else M1 statement N .
 
     $default  reduce using rule 250 (selection_statement)

@@ -19,10 +19,13 @@ symboltable globalst;
 symboltable *current_ST,*hunny;
 vector<symboltable *> stack_ST;
 vector<string> str_consts;
+string named;
+string vib;
 
 string current_name;
+int counter_temp;
 string bing;
-int globe;
+int globe,tell;
 int flag;
 int error_exists;
 expression* type_check(expression* t1,expression* t2, string op);
@@ -61,25 +64,25 @@ expression* type_check(expression* t1,expression* t2, string op);
   new_tab curls;
 }
 
-%type <tVal>  string generic_selection generic_assoc_list generic_association declaration storage_class_specifier  struct_or_union_specifier struct_or_union struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list struct_declarator  atomic_type_specifier type_qualifier function_specifier alignment_specifier    type_qualifier_list    identifier_list  abstract_declarator direct_abstract_declarator designation designator_list designator static_assert_declaration  labeled_statement external_declaration function_definition declaration_list
+%type <tVal>  string generic_selection generic_assoc_list generic_association declaration storage_class_specifier  struct_or_union_specifier struct_or_union struct_declaration_list  atomic_type_specifier type_qualifier function_specifier alignment_specifier    type_qualifier_list    identifier_list  abstract_declarator direct_abstract_declarator designation designator_list designator static_assert_declaration  labeled_statement external_declaration function_definition declaration_list
 
 
-%type<curls> M if else P
+%type<curls> M if else P MMstruct
 %type<symboltypei> type_name
 %type<exp_info> primary_expression constant constant_expression
 %type<exp_info> expression expression_opt
 %type<exp_info> postfix_expression assignment_expression unary_expression
-%type<exp_info> additive_expression multiplicative_expression shift_expression cast_expression
+%type<exp_info> additive_expression multiplicative_expression shift_expression cast_expression hack
 %type<exp_info> relational_expression equality_expression conditional_expression unary_operator M1 N
 %type<exp_info> logical_or_expression logical_and_expression and_expression exclusive_or_expression inclusive_or_expression selection_statement statement iteration_statement compound_statement expression_statement jump_statement assignment_expression_opt
-%type<pstring> assignment_operator hack
+%type<pstring> assignment_operator 
 %type<exp_info> block_item block_item_list
-%type<b_type> type_specifier declaration_specifiers
+%type<b_type> type_specifier declaration_specifiers specifier_qualifier_list
 %type<intval> pointer
 %type<exp_info> initializer
-%type<declarationi> direct_declarator initializer_list declarator init_declarator
+%type<declarationi> direct_declarator initializer_list declarator init_declarator struct_declarator struct_declaration
 %type<param> parameter_declaration
-%type<decvec> init_declarator_list
+%type<decvec> init_declarator_list struct_declarator_list
 %type<parameter_list> parameter_list parameter_type_list parameter_type_list_opt argument_expression_list
 
 %token<pstring>		IDENTIFIER STRING_LITERAL TYPEDEF_NAME 
@@ -100,6 +103,7 @@ expression* type_check(expression* t1,expression* t2, string op);
 %token				CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
 %token				ALIGNAS ALIGNOF ATOMIC GENERIC NORETURN STATIC_ASSERT THREAD_LOCAL
+
 
 
 %start base;
@@ -150,14 +154,16 @@ primary_expression
 constant
 	: I_CONSTANT{
 		$$=new expression;
-		$$->loc= Quad.gentmp();
+		//$$->loc= Quad.gentmp();
+		$$->loc = current_ST->gentemp(type_int, type_void, 0);
 		$$->b_type = type_int;
-		Quad.emit($$->loc,$1,"");
+		Quad.emit($$->loc,$1,"ASSIGN");
 	}		/* includes character_constant */
 	| F_CONSTANT{
 		$$=new expression;
-		$$->loc= Quad.gentmp();
-		Quad.emit($$->loc,$1,"");
+		//$$->loc= Quad.gentmp();
+		$$->loc = current_ST->gentemp(type_float, type_void, 0);
+		Quad.emit($$->loc,$1,"ASSIGN");
 		$$->b_type = type_double;
 	}
 	;
@@ -201,7 +207,8 @@ postfix_expression
 	: primary_expression{
 		$$=$1;
 	}
-	| postfix_expression '[' expression ']'{
+	| postfix_expression '[' assignment_expression ']'{
+		$1->array_list.push_back($3->loc);
 		$$=$1;
 	}
 	| postfix_expression '(' ')'{
@@ -234,11 +241,17 @@ postfix_expression
 				if(arglist[i]->type.base_t!=parameterlist[i]->type.b_type)
 					yyerror("wrong input arguement given");
 
-				string temp=Quad.gentmp();
+				//string temp=Quad.gentmp();
+				string temp= current_ST->gentemp(parameterlist[i]->type.b_type,parameterlist[i]->type.base_t,parameterlist[i]->type.pc);
 				arglist[i]->name=temp;
 			}
 			Quad.emit(arglist[i]->name,"","PARAM","");
 		}
+		basic_type a = globalst.lookup(function_name)->type.b_type;
+		basic_type b = globalst.lookup(function_name)->type.base_t;
+		basic_type c = globalst.lookup(function_name)->type.return_type;
+		int p = globalst.lookup(function_name)->type.pc;
+		vib = current_ST->gentemp(c,b,p);
 		Quad.emit(function_name,(int)arglist.size(),"CALL");
 
 
@@ -305,27 +318,27 @@ unary_expression
 	| INC_OP unary_expression{
 		Quad.emit($2->loc,$2->loc,"+","1");
 		$$= new expression;
-		$$->loc=Quad.gentmp();
+		$$->loc=current_ST->gentemp($2->b_type,$2->base_t,$2->pc);
 		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
 		Quad.emit($$->loc,$2->loc,"ASSIGN","=");
 	}
 	| DEC_OP unary_expression{
 		Quad.emit($2->loc,$2->loc,"-","1");
 		$$= new expression;
-		$$->loc=Quad.gentmp();
+		$$->loc=current_ST->gentemp($2->b_type,$2->base_t,$2->pc);
 		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
 		Quad.emit($$->loc,$2->loc,"ASSIGN","=");
 	}
 	| unary_operator cast_expression{
 		$$= new expression;
-		$$->loc=Quad.gentmp();
+		$$->loc=current_ST->gentemp($2->b_type,$2->base_t,$2->pc);
 		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
 		Quad.emit($$->loc,"",$1->loc,$2->loc);
 	}
 	| SIZEOF unary_expression{
 		$$=new expression;
 		$$->b_type= type_int;
-		$$->loc=Quad.gentmp();
+		$$->loc=current_ST->gentemp(type_int,type_void,0);
 		Quad.emit($$->loc,"","sizeof",$2->loc);
 	}
 	| SIZEOF '(' type_name ')'{
@@ -382,18 +395,21 @@ multiplicative_expression
 	}
 	| multiplicative_expression '*' cast_expression{
 		$$=type_check($1, $3, "*");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc=current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "*", $3->loc);
 
 	}
 	| multiplicative_expression '/' cast_expression{
 		$$=type_check($1, $3, "/");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc=current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "/", $3->loc);
 	}
 	| multiplicative_expression '%' cast_expression{
 		$$=type_check($1, $3, "%");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc=current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "%", $3->loc);
 	}
 	;
@@ -404,12 +420,14 @@ additive_expression
 	}
 	| additive_expression '+' multiplicative_expression{
 		$$=type_check($1, $3, "+");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "+", $3->loc);
 	}
 	| additive_expression '-' multiplicative_expression{
 		$$=type_check($1, $3, "-");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "-", $3->loc);
 	}
 	;
@@ -420,12 +438,14 @@ shift_expression
 	}
 	| shift_expression LEFT_OP additive_expression{
 		$$=type_check($1, $3, "<<");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "<<", $3->loc);
 	}
 	| shift_expression RIGHT_OP additive_expression{
 		$$=type_check($1, $3, ">>");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, ">>", $3->loc);
 	}
 	;
@@ -436,7 +456,8 @@ relational_expression
 	}
 	| relational_expression '<' shift_expression{
 		$$=type_check($1, $3, "<");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		string res;
 		stringstream temp1,temp;
 		temp1<<(Quad.nextinstr+3);
@@ -453,7 +474,8 @@ relational_expression
 	}
 	| relational_expression '>' shift_expression{
 		$$=type_check($1, $3, ">");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		string res;
 		stringstream temp1,temp;
 		temp1<<(Quad.nextinstr+3);
@@ -470,7 +492,8 @@ relational_expression
 	}
 	| relational_expression LE_OP shift_expression{
 		$$=type_check($1, $3, "<=");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		string res;
 		stringstream temp1,temp;
 		temp1<<(Quad.nextinstr+3);
@@ -486,7 +509,8 @@ relational_expression
 	}
 	| relational_expression GE_OP shift_expression{
 		$$=type_check($1, $3, ">=");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		string res;
 		stringstream temp1,temp;
 		temp1<<(Quad.nextinstr+3);
@@ -508,7 +532,8 @@ equality_expression
 	}
 	| equality_expression EQ_OP relational_expression{
 		$$=type_check($1, $3, "==");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		string res;
 		stringstream temp1,temp;
 		temp1<<(Quad.nextinstr+3);
@@ -524,7 +549,8 @@ equality_expression
 	}
 	| equality_expression NE_OP relational_expression{
 		$$=type_check($1, $3, "!=");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		string res;
 		stringstream temp1,temp;
 		temp1<<(Quad.nextinstr+3);
@@ -546,7 +572,8 @@ and_expression
 	}
 	| and_expression '&' equality_expression{
 		$$=type_check($1, $3, "&");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "&", $3->loc);
 	}
 	;
@@ -557,7 +584,8 @@ exclusive_or_expression
 	}
 	| exclusive_or_expression '^' and_expression{
 		$$=type_check($1, $3, "^");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "^", $3->loc);
 	}
 	;
@@ -568,7 +596,8 @@ inclusive_or_expression
 	}
 	| inclusive_or_expression '|' exclusive_or_expression{
 		$$=type_check($1, $3, "|");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "!", $3->loc);
 	}
 	;
@@ -579,7 +608,8 @@ logical_and_expression
 	}
 	| logical_and_expression AND_OP inclusive_or_expression{
 		$$=type_check($1, $3, "&&");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "&&", $3->loc);
 	}
 	;
@@ -590,7 +620,8 @@ logical_or_expression
 	}
 	| logical_or_expression OR_OP logical_and_expression{
 		$$=type_check($1, $3, "||");
-		$$->loc = Quad.gentmp();
+		//$$->loc = Quad.gentmp();
+		$$->loc = current_ST->gentemp($$->b_type,$$->base_t,$$->pc);
 		Quad.emit($$->loc, $1->loc, "||", $3->loc);
 	}
 	;
@@ -608,13 +639,92 @@ assignment_expression
 	}
 	| unary_expression assignment_operator assignment_expression{
 		$$=type_check($1, $3, *$2);
-		Quad.emit($1->loc, $3->loc, "ASSIGN", *$2);
+
+		symboldata *var=current_ST->lookup($1->loc);
+		int size = var->type.array_list.size();
+		int size2 = $3->array_list.size();
+		int i,j;
+		string result,temp;
+		//cout<<"size2 "<<$3->array_list.size()<<"   "<<$3->loc<<endl;
+		//-------for array-------------
+		if(size && !size2){
+			string new_str,old_str,xxx,t;
+
+			old_str = $1->array_list[size - 1];
+			//t = Quad.gentmp();
+			t = current_ST->gentemp(type_int,type_int,0);
+			//xxx = Quad.gentmp();
+			xxx = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(t,var->type.array_list[size - 1],"ASSIGN","=");
+			//new_str = Quad.gentmp();
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(new_str, $1->array_list[size - 1],"ASSIGN","=");
+			old_str = new_str;
+			//new_str = Quad.gentmp();
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			for(i=size-2;i>=0;i--){
+				
+
+				Quad.emit(new_str,$1->array_list[i],"*",t);
+				Quad.emit(t,t,"*",var->type.array_list[i]);
+				
+				Quad.emit(xxx,new_str,"+",old_str);
+				old_str = xxx;
+			}
+			stringstream temp1;
+			temp1<<$1->loc<<"["<<old_str<<"]";
+			
+			temp1>>result;
+			Quad.emit(result, $3->loc, "ASSIGN", *$2);
+		}
+		else if(size2 && !size){
+			var=current_ST->lookup($3->loc);
+			string new_str,old_str,xxx,t;
+
+			old_str = $3->array_list[size2 - 1];
+			//t = Quad.gentmp();
+			t = current_ST->gentemp(type_int,type_int,0);
+			//xxx = Quad.gentmp();
+			xxx = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(t,var->type.array_list[size2 - 1],"ASSIGN","=");
+			//new_str = Quad.gentmp();
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(new_str, $3->array_list[size2 - 1],"ASSIGN","=");
+			old_str = new_str;
+			//new_str = Quad.gentmp();
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			for(i=size2-2;i>=0;i--){
+				Quad.emit(new_str,$3->array_list[i],"*",t);
+				Quad.emit(t,t,"*",var->type.array_list[i]);
+				
+				Quad.emit(xxx,new_str,"+",old_str);
+				old_str = xxx;
+			}
+			stringstream temp1;
+			temp1<<$3->loc<<"["<<old_str<<"]";
+			
+			temp1>>temp;
+			//xxx = Quad.gentmp();
+			xxx = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(xxx,temp,"ASSIGN","=");
+			Quad.emit($1->loc, xxx, "ASSIGN", *$2);
+
+		}
+		else{
+			result = $1->loc;
+			Quad.emit(result, $3->loc, "ASSIGN", *$2);
+		}
+
 	}
 	;
 
 assignment_operator
-	: '='{
-		*$$="=";
+	: '='
+	{	
+		$$ = new string;
+		*$$ = "=";
+		//*$$ ="=";
+		
 	}
 	| MUL_ASSIGN{
 		*$$="*=";
@@ -662,7 +772,6 @@ constant_expression
 		$$=$1;
 	}	/* with constraints */
 	;
-
 declaration
 	: declaration_specifiers ';'
 	| declaration_specifiers init_declarator_list ';'
@@ -692,22 +801,7 @@ declaration
         {
         	//cout<<"inside now"<<endl;
             decc *my_dec = *it;
-            /*
-            if(my_dec->b_type==type_function){
-                GST=&(globalst);
-            }            
-            if(my_dec->b_type==type_function)
-            {
-            	//cout<<"wow there we have a function"<<endl;
-                symboldata *var=GST->lookup(my_dec->name);
-                symboldata *retval=var->nested_symboltable->lookup("retVal",type_now,my_dec->pc);
-                var->offset=GST->offset;
-                var->size= 0;
-                var->initial_value=NULL;
-                continue;
-            }
-            */
-            symboldata *var=current_ST->lookup(my_dec->name);
+            symboldata *var=current_ST->Symboltable[my_dec->name];
 
             if(var == NULL){
             	var = new symboldata;
@@ -715,27 +809,42 @@ declaration
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
             	if(my_dec->pc > 0){
-            		var->type.base_t = type_pointer;
+            		var->type.b_type = type_pointer;
             	}
-
             	var->type.b_type = type_current;
-            	if(my_dec->alist.size()){
-            		var->type.base_t = type_array;
-            		var->type.alist = my_dec->alist;
+            	if(my_dec->array_list.size()){
+            		var->type.b_type = type_array;
+            		var->type.base_t = type_current;
+            		var->type.array_list = my_dec->array_list;
             	}
             	var->offset = current_ST->offset;
-            	for(int p:my_dec->alist )
-            		size_now*=p;
-            	var->size = size_now;	
+            	//for(string p:my_dec->array_list )
+            	//	size_now*=p;
+            	var->size = size_now;
+            	if(my_dec->initial_value!=NULL){
+            		
+            		expression *hunny = new expression;
+            		hunny->b_type = my_dec->b_type;
+            		hunny->base_t = my_dec->b_type;
+            		hunny->pc = my_dec->pc;
+
+            		type_check(hunny, my_dec->initial_value, "=");
+					Quad.emit(var->name, my_dec->initial_value->loc, "ASSIGN", "=");          	
+            	}
+
+
             	current_ST->insert(var);
             	continue;
             }
-            else if(var->type.base_t == type_function){
+            else if(var->type.b_type == type_function || var->type.base_t == type_function){
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
-            	var->type.b_type = type_current;
+            	var->type.b_type=type_function;
+            	if(var->type.pc)
+            		var->type.base_t = type_pointer;
+            	var->type.return_type = type_current;	
             	if(my_dec->alist.size()){
-            		//cout<<"helllo"<<endl;
+            		cout<<"helllo"<<endl;
             		var->type.base_t = type_array;
             		var->type.alist = my_dec->alist;
             	}
@@ -748,7 +857,7 @@ declaration
             }
             else if(var!=NULL ){
             	bhej = var->name.c_str();
-            	yyerror("already declared ");
+            	yyerror("already declared 1");
             }
             
             
@@ -801,8 +910,9 @@ hack
 	;
 
 init_declarator
-	: declarator '=' hack
+	: declarator '=' initializer
 	{
+		$$->initial_value = $3;
 		$$ = $1;
 
 	}
@@ -853,10 +963,41 @@ type_specifier
 	| struct_or_union_specifier
 	| TYPEDEF_NAME		/* after it has been defined as such */
 	;
+MMstruct:	
+	{	
+		if(flag==0){
+			$$.temp = current_ST;
+			$$.created = new symboltable;
+			stack_ST.pb($$.created);
+			symboldata *data = new symboldata;
+			data->type.b_type = type_struct;
+			char a[100] ;
+			strcpy(a,current_name.c_str());
+			char b[100];
+			data->offset = current_ST->offset;
+			current_ST->insert(data);
+			data->nested_symboltable = $$.created;
+			data->name = a;
+			data->nested_symboltable->parent = current_ST;
+			data->nested_symboltable->name = data->name;
+			current_ST = $$.created;
+		}
+		else if (flag==1){
+			if(current_name!="for")
+			flag=0;
+			$$.temp = current_ST;
+		}
+	}
+	;
+
 
 struct_or_union_specifier
 	: struct_or_union '{' struct_declaration_list '}'
-	| struct_or_union IDENTIFIER '{' struct_declaration_list '}'
+	| struct_or_union IDENTIFIER {current_name = *($2);} MMstruct '{'  struct_declaration_list '}' 
+	{
+
+		current_ST=$4.temp;
+	}
 	| struct_or_union IDENTIFIER
 	;
 
@@ -873,6 +1014,71 @@ struct_declaration_list
 struct_declaration
 	: specifier_qualifier_list ';'	/* for anonymous struct/union */
 	| specifier_qualifier_list struct_declarator_list ';'
+	{
+		basic_type type_current = $1;
+		int size_now=-1;
+		if(type_current==type_char){ 
+        	size_now=SZ_CHAR;
+        }
+        if(type_current==type_int){
+        	size_now=SZ_INT;
+        }
+        if(type_current==type_double){
+        	size_now=SZ_DB;
+        }
+        if(type_current==type_float){ 
+        	size_now=SZ_FLOAT;
+        }
+        if(type_current==type_void){
+        	size_now=SZ_INT;
+        }
+        if(type_current==type_long){
+        	size_now=SZ_DB;
+        }
+
+        vector<decc *> temp= *$2;
+        for(auto it: temp){
+        	decc *my_dec = it;
+        	symboldata *var=current_ST->lookup(my_dec->name);
+	            if(var == NULL){
+            	var = new symboldata;
+            	var->nested_symboltable=NULL;
+            	var->name = my_dec->name;
+            	var->type.pc = my_dec->pc;
+            	if(my_dec->pc > 0){
+            		var->type.base_t = type_pointer;
+            	}
+
+            	var->type.b_type = type_current;
+            	if(my_dec->alist.size()){
+            		var->type.base_t = type_array;
+            		var->type.alist = my_dec->alist;
+            	}
+            	var->offset = current_ST->offset;
+            	for(int p:my_dec->alist )
+            		size_now*=p;
+            	var->size = size_now;
+            	if(my_dec->initial_value!=NULL){
+            		
+            		expression *hunny = new expression;
+            		hunny->b_type = my_dec->b_type;
+            		hunny->base_t = my_dec->b_type;
+            		hunny->pc = my_dec->pc;
+
+            		type_check(hunny, my_dec->initial_value, "=");
+					          	
+            	}
+
+
+            	current_ST->insert(var);
+            }
+	            else {
+	            	bhej = my_dec->name.c_str();
+	            	yyerror("already declared 2");
+	            }
+        }
+
+	}
 	| static_assert_declaration
 	;
 
@@ -885,7 +1091,14 @@ specifier_qualifier_list
 
 struct_declarator_list
 	: struct_declarator
-	| struct_declarator_list ',' struct_declarator
+	{
+		$$=new vector<decc *>;
+		$$->pb($1);
+	}
+	| struct_declarator_list ',' struct_declarator{
+		$1->pb($3);
+		$$=$1;
+	}
 	;
 
 struct_declarator
@@ -949,12 +1162,19 @@ direct_declarator
 	| direct_declarator '[' type_qualifier_list assignment_expression ']'
 	| direct_declarator '[' type_qualifier_list ']'
 	| direct_declarator '[' assignment_expression ']'
+	{
+		$1->array_list.pb($3->loc);
+		$$ = $1;
+	}
 	| direct_declarator '(' parameter_type_list ')'
 	{
 		
 		$$=$1;
+		tell=1;
+		named=$1->name;
 		$$->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup($$->name);
+		Quad.emit($1->name,"","func_begin","");
 		if(funcdata!=NULL){
 			
 			if(funcdata->nested_symboltable==NULL){
@@ -975,7 +1195,6 @@ direct_declarator
 
 		}
 		if(funcdata==NULL){
-		//cout<<"bbb"<<endl;
 			funcdata = new symboldata;
 			funcdata->name = $1->name;
 			funcdata->type.base_t = type_function;
@@ -1031,9 +1250,11 @@ direct_declarator
 	            }
 	            else {
 	            	bhej = my_dec->name.c_str();
-	            	yyerror("already declared ");
+	            	yyerror("already declared 3");
 	            }
 			}
+			
+
 			//if(flag==1)
 				//current_ST = funcdata->nested_symboltable;
 
@@ -1054,7 +1275,7 @@ direct_declarator
 						yes=0;
 						
 				}
-				//cout<<yes<<endl;
+				cout<<yes<<endl;
 				if(yes){
 					delete funcdata->nested_symboltable;
 					funcdata->nested_symboltable = new symboltable;
@@ -1121,18 +1342,23 @@ direct_declarator
 				//printf("\n\n\n\n\n\n\ndeclarations and definition are not same\n\n\n\n\n\n\n\n");
 			}
 		}
-
+		if(tell==0)
+		Quad.emit($1->name,"","func_ends","");
 
 	}
 	| direct_declarator '(' ')'
 	{
 		$$=$1;
+		tell=1;
+		named=$1->name;
+		Quad.emit($1->name,"","func_begin","");
 		$$->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup($$->name);
 		if(funcdata==NULL){
 			funcdata = new symboldata;
 			funcdata->name = $1->name;
 			funcdata->type.base_t = type_function;
+			funcdata->offset = current_ST->offset;
 			funcdata->nested_symboltable = new symboltable;
 			funcdata->nested_symboltable->declared=1;
 			funcdata->nested_symboltable->name = $1->name;
@@ -1159,6 +1385,8 @@ direct_declarator
 			else funcdata->nested_symboltable->declared=1;
 			
 		}
+		if(tell==0)
+		Quad.emit($1->name,"","func_ends","");
 	}
 	| direct_declarator '(' identifier_list ')'
 	;
@@ -1175,7 +1403,6 @@ pointer
 		$$=1;
 	}
 	;
-
 type_qualifier_list
 	: type_qualifier
 	| type_qualifier_list type_qualifier
@@ -1314,6 +1541,7 @@ M:
 	{	
 		if(flag==0){
 			$$.temp = current_ST;
+			/*
 			$$.created = new symboltable;
 			stack_ST.pb($$.created);
 			symboldata *data = new symboldata;
@@ -1328,6 +1556,7 @@ M:
 			data->nested_symboltable->parent = current_ST;
 			data->nested_symboltable->name = data->name;
 			current_ST = $$.created;
+			*/
 		}
 		else if (flag==1){
 			if(current_name!="for")
@@ -1378,6 +1607,7 @@ if
 	{
 		flag=1;
 		$$.temp = current_ST;
+		/*
 		$$.created = new symboltable;
 		stack_ST.pb($$.created);
 		symboldata *data = new symboldata;
@@ -1391,6 +1621,7 @@ if
 		data->nested_symboltable->parent = current_ST;
 		data->nested_symboltable->name = data->name;
 		current_ST = $$.created;
+		*/
 	}
 	;
 
@@ -1399,6 +1630,7 @@ else
 	{
 		flag=1;
 		$$.temp = current_ST;
+		/*
 		$$.created = new symboltable;
 		stack_ST.pb($$.created);
 		symboldata *data = new symboldata;
@@ -1412,6 +1644,7 @@ else
 		data->nested_symboltable->parent = current_ST;
 		data->nested_symboltable->name = data->name;
 		current_ST = $$.created;
+		*/	
 	}
 	;
 
@@ -1454,6 +1687,7 @@ P
 	:
 	{
 		$$.temp = current_ST;
+		/*
 		$$.created = new symboltable;
 		stack_ST.pb($$.created);
 		symboldata *data = new symboldata;
@@ -1467,6 +1701,7 @@ P
 		data->nested_symboltable->parent = current_ST;
 		data->nested_symboltable->name = data->name;
 		current_ST = $$.created;
+		*/
 		flag=1;
 	}
 	;
@@ -1550,12 +1785,26 @@ translation_unit
 	| translation_unit external_declaration
 	;
 
+hunny
+	:
+	{
+		tell=1;
+	}
+	;
+
 external_declaration
 	: function_definition compound_statement
 	{
+		Quad.emit(named,"","func_ends","");
 		current_ST = hunny;
+		tell=0;
 	}
 	| declaration
+	{	
+		if(tell==1)
+			Quad.emit(named,"","func_ends","");
+		tell=0;
+	}
 	;
 
 
@@ -1566,17 +1815,15 @@ function_definition
 		flag=1;
 		hunny = current_ST;
 		symboldata *funcdata=current_ST->lookup($2->name);
-
+		named = $2->name;
 		//if not NULL do typecheck here
 		if(funcdata==NULL){
-			//cout<<"was null\n";
 			funcdata->nested_symboltable->defined = 1;
 			funcdata->nested_symboltable->parent = &globalst;
 			current_ST->insert(funcdata);
 			current_ST->Symboltable[funcdata->name]= funcdata;
 		}
 		else{
-			//cout<<"not null\n";
 			funcdata->nested_symboltable->parent = &globalst;
 			if(funcdata->nested_symboltable->defined == 1){
 				bhej = funcdata->nested_symboltable->name.c_str();
@@ -1597,8 +1844,21 @@ function_definition
 			funcdata->type.base_t = type_pointer;
 		funcdata->size=0;
 		funcdata->offset=current_ST->offset;
+		symboldata *ret_val=new symboldata;
+		ret_val->name = "RETURN_VAL";
+		ret_val->type.b_type = $1;
+		ret_val->type.pc = my_dec->pc;
+		ret_val->offset = funcdata->nested_symboltable->offset;
+		if($1==type_int)
+			ret_val->size = 4;
 
+		if(my_dec->pc)
+			ret_val->type.base_t = type_pointer;
+
+		funcdata->nested_symboltable->insert(ret_val);
+		funcdata->nested_symboltable->Symboltable[ret_val->name]= ret_val;
 		current_ST = funcdata->nested_symboltable;
+
 	}
 	;
 
@@ -1606,6 +1866,7 @@ declaration_list
 	: declaration
 	| declaration_list declaration
 	;
+
 
 %%
 int id=0;
@@ -1697,7 +1958,7 @@ PARSE_TREE create_tnode(char * na, char *ana){
 void print(symboltable *table){
 	cout<<"----------------"<<table->name<<"------------"<<endl;
 	//cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"base_t\t"<<endl;
-		cout<<"name,"<<"type"<<","<<"size"<<","<<"offset"<<","<<"base_t"<<endl;
+		cout<<"name,"<<"type"<<","<<"size"<<","<<"offset"<<","<<"base_t"<<","<<"b_type"<<","<<"return_type"<<endl;
 
 	for(auto t:table->order_symbol){
 				
@@ -1716,6 +1977,12 @@ void print(symboltable *table){
 		}
 		else if(t->type.b_type==type_function){
 			cout<<"function,";
+		}
+		else if(t->type.b_type==type_struct){
+			cout<<"struct,";
+		}
+		else if(t->type.b_type==type_array){
+			cout<<"array,";
 		}
 		else{
 			
@@ -1738,7 +2005,7 @@ void print(symboltable *table){
 			cout<<"\t"<<"\t";
 		}
 		*/
-		cout<<t->size<<","<<t->offset<<","<<t->type.base_t<<",";
+		cout<<t->size<<","<<t->offset<<","<<t->type.base_t<<","<<t->type.b_type<<","<<t->type.return_type<<",";
 		
 		
 		
@@ -1851,7 +2118,71 @@ expression* type_check(expression* t1, expression* t2, string op){
 		}
 		if(op=="="){
 			//cout<<"type    "<<t1->b_type<<","<<t1->base_t<<"   "<<t2->b_type<<","<<t2->base_t<<endl;
-			if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
+
+			if(t1->b_type==type_function && t2->b_type==type_function){
+				yyerror("cannot assign function to function");
+			}
+			else if(t2->b_type==type_function){
+				//cout<<"in func comparision\n";
+				if(t1->pc!=t2->pc){
+					yyerror("cannot assign function");
+					//cout<<"out1 func comparision\n"; 
+					return NULL;	
+				}
+				else if( t1->pc == 0 && t1->b_type != t2->return_type ){
+					yyerror("cannot assign function"); 
+					//cout<<"out2 func comparision\n";
+					return NULL;	
+				}
+				else if( t1->pc == 0 && t1->b_type == t2->return_type ){
+					res->pc=t1->pc;
+					res->base_t=t1->base_t;
+					res->b_type = t1->b_type;
+					//cout<<"out3 func comparision\n";
+					return res;
+				}
+				else if(t1->base_t != t2->return_type ){
+					yyerror("cannot assign function"); 
+					//cout<<"out4 func comparision\n";
+					return NULL;	
+				}
+				else {
+					res->pc=t1->pc;
+					res->base_t=t1->base_t;
+					res->b_type = t1->b_type;
+					//cout<<"out5 func comparision\n";
+					return res;
+				}
+
+			}
+			else if(t1->b_type == type_array && t2->b_type!=type_array){
+				if(t1->base_t == t2->b_type && t1->pc==t2->pc){
+					res->pc=t2->pc;
+					res->base_t=t2->base_t;
+					res->b_type = t2->b_type;
+					return res;
+				}
+			}
+			else if(t1->b_type != type_array && t2->b_type==type_array){
+				if(t2->base_t == t1->b_type && t1->pc==t2->pc){
+					res->pc=t1->pc;
+					res->base_t=t1->base_t;
+					res->b_type = t1->b_type;
+					return res;
+				}
+			}
+			else if(t1->b_type == type_array && t2->b_type==type_array){
+				if(t2->base_t == t1->b_type && t1->pc==t2->pc){
+					res->pc=t1->pc;
+					res->base_t=t1->base_t;
+					res->b_type = t1->base_t;
+					return res;
+				}
+			}
+
+
+
+			else if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
 				res=t1;
 				return res; 
 				
@@ -1874,28 +2205,26 @@ expression* type_check(expression* t1, expression* t2, string op){
 			}
 			yyerror("cannot apply operation");// error cannot apply operation 
 			return NULL;
-		}
-		
-
-		
+		}	
 	
 }
-
 int main()
 {
     yydebug = 0;
     flag=0;
     globe=0;
+    tell=0;
     error_exists = 0;
+    counter_temp=0;
     current_ST=&(globalst);
     bool failure = yyparse();  
     //int sz = Quad.a1.size();
     //cout<<"number if statements--->>"<<sz<<endl;
-    //For(i,0,sz){
+    // for(int i=0;i<sz;i++){
     //    cout<<i<<": "; Quad.a1[i].print();
-    //}
-    /*
-    cout<<"----------------SYMBOL_TABLE----------------"<<endl;
+   // }
+    
+   /* cout<<"----------------SYMBOL_TABLE----------------"<<endl;
 
     current_ST->print();
     cout<<"--------------------------------------------"<<endl;
