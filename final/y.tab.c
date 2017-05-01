@@ -634,33 +634,33 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint16 yyrline[] =
 {
        0,   112,   112,   120,   127,   144,   147,   148,   151,   155,
-     166,   180,   189,   201,   205,   206,   210,   211,   215,   218,
-     222,   225,   272,   275,   278,   284,   290,   296,   305,   315,
-     328,   331,   338,   345,   360,   366,   371,   376,   380,   384,
-     388,   392,   396,   403,   406,   415,   418,   425,   431,   440,
-     443,   449,   458,   461,   467,   476,   479,   497,   515,   532,
-     552,   555,   572,   592,   595,   604,   607,   616,   619,   628,
-     631,   640,   643,   652,   655,   659,   662,   742,   749,   752,
-     755,   758,   761,   764,   767,   770,   773,   776,   782,   785,
-     791,   796,   797,   888,   892,   893,   894,   895,   899,   900,
-     901,   902,   903,   904,   908,   913,   933,   939,   944,   945,
-     946,   947,   948,   949,   953,   957,   960,   961,   965,   969,
-     973,   977,   978,   979,   980,   981,   982,   983,   984,   987,
-    1015,  1016,  1016,  1021,  1025,  1026,  1030,  1031,  1035,  1036,
-    1102,  1106,  1107,  1108,  1109,  1113,  1118,  1125,  1126,  1127,
-    1131,  1135,  1136,  1137,  1138,  1142,  1143,  1147,  1148,  1152,
-    1157,  1170,  1175,  1176,  1177,  1178,  1179,  1180,  1181,  1182,
-    1183,  1184,  1189,  1369,  1411,  1415,  1416,  1417,  1421,  1427,
-    1428,  1433,  1434,  1442,  1447,  1454,  1466,  1467,  1471,  1472,
-    1476,  1477,  1481,  1482,  1483,  1487,  1488,  1489,  1490,  1491,
-    1492,  1493,  1494,  1495,  1496,  1497,  1498,  1499,  1500,  1501,
-    1502,  1503,  1504,  1505,  1506,  1507,  1511,  1512,  1513,  1517,
-    1518,  1519,  1520,  1524,  1528,  1529,  1533,  1534,  1538,  1542,
-    1543,  1546,  1549,  1552,  1556,  1561,  1562,  1563,  1567,  1596,
-    1597,  1597,  1606,  1607,  1615,  1618,  1624,  1625,  1632,  1655,
-    1678,  1678,  1696,  1709,  1714,  1736,  1736,  1751,  1751,  1752,
-    1775,  1775,  1779,  1779,  1784,  1784,  1793,  1794,  1795,  1796,
-    1797,  1806,  1810,  1811,  1822,  1828,  1838,  1839,  1892,  1893
+     171,   190,   199,   211,   215,   216,   220,   221,   225,   229,
+     233,   236,   285,   288,   291,   297,   303,   309,   318,   330,
+     343,   348,   355,   362,   384,   390,   395,   400,   404,   408,
+     412,   416,   420,   427,   479,   488,   491,   498,   504,   513,
+     516,   522,   531,   534,   540,   549,   552,   570,   588,   605,
+     625,   628,   645,   665,   668,   677,   680,   689,   692,   701,
+     704,   713,   716,   725,   728,   732,   735,   824,   831,   834,
+     837,   840,   843,   846,   849,   852,   855,   858,   864,   867,
+     873,   878,   879,   984,   988,   989,   990,   991,   995,   996,
+     997,   998,   999,  1000,  1004,  1009,  1029,  1035,  1040,  1041,
+    1042,  1043,  1044,  1045,  1049,  1053,  1056,  1057,  1061,  1065,
+    1069,  1073,  1074,  1075,  1076,  1077,  1078,  1079,  1080,  1083,
+    1111,  1112,  1112,  1117,  1121,  1122,  1126,  1127,  1131,  1132,
+    1198,  1202,  1203,  1204,  1205,  1209,  1214,  1221,  1222,  1223,
+    1227,  1231,  1232,  1233,  1234,  1238,  1239,  1243,  1244,  1248,
+    1253,  1266,  1271,  1272,  1278,  1279,  1280,  1281,  1282,  1283,
+    1284,  1285,  1290,  1479,  1521,  1525,  1526,  1527,  1531,  1537,
+    1538,  1543,  1544,  1552,  1557,  1564,  1581,  1582,  1586,  1587,
+    1591,  1592,  1596,  1597,  1598,  1602,  1603,  1604,  1605,  1606,
+    1607,  1608,  1609,  1610,  1611,  1612,  1613,  1614,  1615,  1616,
+    1617,  1618,  1619,  1620,  1621,  1622,  1626,  1627,  1628,  1632,
+    1633,  1634,  1635,  1639,  1643,  1644,  1648,  1649,  1653,  1657,
+    1658,  1661,  1664,  1667,  1671,  1676,  1677,  1678,  1682,  1711,
+    1712,  1712,  1721,  1722,  1730,  1733,  1739,  1740,  1747,  1770,
+    1793,  1793,  1811,  1824,  1829,  1851,  1851,  1866,  1866,  1867,
+    1890,  1890,  1894,  1894,  1899,  1899,  1908,  1909,  1910,  1911,
+    1912,  1921,  1925,  1926,  1937,  1943,  1953,  1954,  2008,  2009
 };
 #endif
 
@@ -2153,19 +2153,24 @@ yyreduce:
     {
 		(yyval.exp_info)=new expression;
 		//$$->loc= Quad.gentmp();
-		(yyval.exp_info)->loc = current_ST->gentemp(type_int, type_void, 0);
+		(yyval.exp_info)->loc = current_ST->gentemp(type_int, type_int, 0);
 		(yyval.exp_info)->b_type = type_int;
+
+		symbolvalue *inival = new symbolvalue;
+		inival->setval((yyvsp[0].intval));
+		symboldata *datatemp = current_ST->lookup((yyval.exp_info)->loc);
+		datatemp->initial_value = inival;
 		string tm;
 		stringstream gurki;
 		gurki<<(yyvsp[0].intval);
 		gurki>>tm;
 		Quad.emit((yyval.exp_info)->loc,tm,"ASSIGN","=");
 	}
-#line 2165 "y.tab.c" /* yacc.c:1646  */
+#line 2170 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 166 "grammar.y" /* yacc.c:1646  */
+#line 171 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		//$$->loc= Quad.gentmp();
@@ -2174,14 +2179,19 @@ yyreduce:
 		gurki<<(yyvsp[0].doubleval);
 		gurki>>tm;
 		(yyval.exp_info)->loc = current_ST->gentemp(type_float, type_void, 0);
+		symbolvalue *inival = new symbolvalue;
+		inival->setval((yyvsp[0].doubleval));
+		symboldata *datatemp = current_ST->lookup((yyval.exp_info)->loc);
+		datatemp->initial_value = inival;
+
 		Quad.emit((yyval.exp_info)->loc,tm,"ASSIGN","=");
 		(yyval.exp_info)->b_type = type_double;
 	}
-#line 2181 "y.tab.c" /* yacc.c:1646  */
+#line 2191 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 180 "grammar.y" /* yacc.c:1646  */
+#line 190 "grammar.y" /* yacc.c:1646  */
     {
 		/*$$=new expression;
 		$$->base_t=type_char;
@@ -2191,11 +2201,11 @@ yyreduce:
 		Quad.emit($$->loc, $1 ,"ASSIGN");
 		*/
 	}
-#line 2195 "y.tab.c" /* yacc.c:1646  */
+#line 2205 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 189 "grammar.y" /* yacc.c:1646  */
+#line 199 "grammar.y" /* yacc.c:1646  */
     {
 		/*$$=new expression;
 		$$->base_t=type_char;
@@ -2205,51 +2215,54 @@ yyreduce:
 		Quad.emit($$->loc, $1,"ASSIGN");
 		*/
 	}
-#line 2209 "y.tab.c" /* yacc.c:1646  */
+#line 2219 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 215 "grammar.y" /* yacc.c:1646  */
+#line 225 "grammar.y" /* yacc.c:1646  */
     {
+		//cout<<"here   primary "<<$1->loc<<endl;
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2217 "y.tab.c" /* yacc.c:1646  */
+#line 2228 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 218 "grammar.y" /* yacc.c:1646  */
+#line 229 "grammar.y" /* yacc.c:1646  */
     {
 		(yyvsp[-3].exp_info)->array_list.push_back((yyvsp[-1].exp_info)->loc);
 		(yyval.exp_info)=(yyvsp[-3].exp_info);
 	}
-#line 2226 "y.tab.c" /* yacc.c:1646  */
+#line 2237 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 222 "grammar.y" /* yacc.c:1646  */
+#line 233 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[-2].exp_info);
 	}
-#line 2234 "y.tab.c" /* yacc.c:1646  */
+#line 2245 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 225 "grammar.y" /* yacc.c:1646  */
+#line 236 "grammar.y" /* yacc.c:1646  */
     {
+		////cout<<"here arg list\n";
 		(yyval.exp_info)=(yyvsp[-3].exp_info);
 		string function_name=(yyvsp[-3].exp_info)->loc;
 		symboltable *functionsymbol=globalst.lookup(function_name)->nested_symboltable;
 		vector<parameter*> arglist=*((yyvsp[-1].parameter_list));
 		vector<symboldata*> parameterlist=functionsymbol->order_symbol;
 		if(arglist.size()!=functionsymbol->arg_tot){
-			//yyerror("function not called in right way");
+			////cout<<"\n\n worng fun called\n "<<arglist.size() <<"  "<<functionsymbol->arg_tot<<"\n\n\n";
+			yyerror("function not called in right way");
 		}
 
 		else{
 			For(i,0,arglist.size()){
 				if(parameterlist[i]->type.b_type == type_function){
 					if(!(arglist[i]->type.base_t==parameterlist[i]->type.return_type && arglist[i]->type.pc==parameterlist[i]->type.pc))
-						yyerror("wrong input arguement given");
+						yyerror("1 wrong input arguement given");
 				}
 			}
 		}
@@ -2260,7 +2273,7 @@ yyreduce:
 
 			if(arglist[i]->type.b_type!=parameterlist[i]->type.b_type){
 				if(arglist[i]->type.base_t!=parameterlist[i]->type.b_type)
-					yyerror("wrong input arguement given");
+					yyerror("2 wrong input arguement given");
 
 				//string temp=Quad.gentmp();
 				string temp= current_ST->gentemp(parameterlist[i]->type.b_type,parameterlist[i]->type.base_t,parameterlist[i]->type.pc);
@@ -2282,72 +2295,73 @@ yyreduce:
 
 
 	}
-#line 2286 "y.tab.c" /* yacc.c:1646  */
+#line 2299 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 272 "grammar.y" /* yacc.c:1646  */
+#line 285 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[-2].exp_info);
 	}
-#line 2294 "y.tab.c" /* yacc.c:1646  */
+#line 2307 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 275 "grammar.y" /* yacc.c:1646  */
+#line 288 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[-2].exp_info);
 	}
-#line 2302 "y.tab.c" /* yacc.c:1646  */
+#line 2315 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 278 "grammar.y" /* yacc.c:1646  */
+#line 291 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc=Quad.gentmp();
 		Quad.emit((yyval.exp_info)->loc,(yyvsp[-1].exp_info)->loc,"ASSIGN","=");
 		Quad.emit((yyvsp[-1].exp_info)->loc,(yyvsp[-1].exp_info)->loc,"+","1");
 	}
-#line 2313 "y.tab.c" /* yacc.c:1646  */
+#line 2326 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 284 "grammar.y" /* yacc.c:1646  */
+#line 297 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc=Quad.gentmp();
 		Quad.emit((yyval.exp_info)->loc,(yyvsp[-1].exp_info)->loc,"ASSIGN","=");
 		Quad.emit((yyvsp[-1].exp_info)->loc,(yyvsp[-1].exp_info)->loc,"+","1");
 	}
-#line 2324 "y.tab.c" /* yacc.c:1646  */
+#line 2337 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 290 "grammar.y" /* yacc.c:1646  */
+#line 303 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->b_type=(yyvsp[-4].symboltypei)->b_type;
 		(yyval.exp_info)->pc=(yyvsp[-4].symboltypei)->pc;
 		(yyval.exp_info)->base_t=(yyvsp[-4].symboltypei)->base_t;
 	}
-#line 2335 "y.tab.c" /* yacc.c:1646  */
+#line 2348 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 296 "grammar.y" /* yacc.c:1646  */
+#line 309 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->b_type=(yyvsp[-5].symboltypei)->b_type;
 		(yyval.exp_info)->pc=(yyvsp[-5].symboltypei)->pc;
 		(yyval.exp_info)->base_t=(yyvsp[-5].symboltypei)->base_t;
 	}
-#line 2346 "y.tab.c" /* yacc.c:1646  */
+#line 2359 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 305 "grammar.y" /* yacc.c:1646  */
+#line 318 "grammar.y" /* yacc.c:1646  */
     {
+		//cout<<"in assign express "<<$1->loc<<endl;
 		parameter *temp=new parameter;
 		temp->name=(yyvsp[0].exp_info)->loc;
 		temp->type.b_type=(yyvsp[0].exp_info)->b_type;
@@ -2356,12 +2370,13 @@ yyreduce:
 		temp->type.pc=(yyvsp[0].exp_info)->pc;
 		(yyval.parameter_list)=new vector<parameter*>;
 		(yyval.parameter_list)->pb(temp);
+
 	}
-#line 2361 "y.tab.c" /* yacc.c:1646  */
+#line 2376 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 315 "grammar.y" /* yacc.c:1646  */
+#line 330 "grammar.y" /* yacc.c:1646  */
     {
 		parameter *temp=new parameter;
 		temp->name=(yyvsp[0].exp_info)->loc;
@@ -2372,19 +2387,21 @@ yyreduce:
 		(yyval.parameter_list)=(yyvsp[-2].parameter_list);
 		(yyval.parameter_list)->pb(temp);
 	}
-#line 2376 "y.tab.c" /* yacc.c:1646  */
+#line 2391 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 328 "grammar.y" /* yacc.c:1646  */
+#line 343 "grammar.y" /* yacc.c:1646  */
     {
+		
 		(yyval.exp_info)=(yyvsp[0].exp_info);
+		
 	}
-#line 2384 "y.tab.c" /* yacc.c:1646  */
+#line 2401 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 331 "grammar.y" /* yacc.c:1646  */
+#line 348 "grammar.y" /* yacc.c:1646  */
     {
 		Quad.emit((yyvsp[0].exp_info)->loc,(yyvsp[0].exp_info)->loc,"+","1");
 		(yyval.exp_info)= new expression;
@@ -2392,11 +2409,11 @@ yyreduce:
 		(yyval.exp_info)->b_type = (yyvsp[0].exp_info)->b_type; (yyval.exp_info)->base_t=(yyvsp[0].exp_info)->base_t; (yyval.exp_info)->pc=(yyvsp[0].exp_info)->pc;
 		Quad.emit((yyval.exp_info)->loc,(yyvsp[0].exp_info)->loc,"ASSIGN","=");
 	}
-#line 2396 "y.tab.c" /* yacc.c:1646  */
+#line 2413 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 338 "grammar.y" /* yacc.c:1646  */
+#line 355 "grammar.y" /* yacc.c:1646  */
     {
 		Quad.emit((yyvsp[0].exp_info)->loc,(yyvsp[0].exp_info)->loc,"-","1");
 		(yyval.exp_info)= new expression;
@@ -2404,140 +2421,196 @@ yyreduce:
 		(yyval.exp_info)->b_type = (yyvsp[0].exp_info)->b_type; (yyval.exp_info)->base_t=(yyvsp[0].exp_info)->base_t; (yyval.exp_info)->pc=(yyvsp[0].exp_info)->pc;
 		Quad.emit((yyval.exp_info)->loc,(yyvsp[0].exp_info)->loc,"ASSIGN","=");
 	}
-#line 2408 "y.tab.c" /* yacc.c:1646  */
+#line 2425 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 345 "grammar.y" /* yacc.c:1646  */
+#line 362 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)= new expression;
-		(yyval.exp_info)->loc=current_ST->gentemp((yyvsp[0].exp_info)->b_type,(yyvsp[0].exp_info)->base_t,(yyvsp[0].exp_info)->pc);
-		(yyval.exp_info)->b_type = (yyvsp[0].exp_info)->b_type; (yyval.exp_info)->base_t=(yyvsp[0].exp_info)->base_t; (yyval.exp_info)->pc=(yyvsp[0].exp_info)->pc;
 		if((yyvsp[-1].exp_info)->loc[0] == '&'){
+			(yyval.exp_info)->loc = current_ST->gentemp(type_pointer,(yyvsp[0].exp_info)->b_type,1);
 			(yyval.exp_info)->b_type = type_pointer; (yyval.exp_info)->base_t=(yyvsp[0].exp_info)->b_type; (yyval.exp_info)->pc=1;
+			////cout<<"\n\n  "<<$$->loc<<"    "<<$2->loc<<"\n\n";
 			Quad.emit((yyval.exp_info)->loc,(yyvsp[0].exp_info)->loc,"REFERENCE",""); 
+
 		}
 		else if((yyvsp[-1].exp_info)->loc[0] == '*'){
-			(yyval.exp_info)->b_type = (yyvsp[0].exp_info)->base_t; (yyval.exp_info)->base_t=(yyvsp[0].exp_info)->b_type; (yyval.exp_info)->pc=0; 
+			(yyval.exp_info) = new expression; 
+			(yyval.exp_info)->loc = current_ST->gentemp((yyvsp[0].exp_info)->base_t,(yyvsp[0].exp_info)->base_t,(yyvsp[0].exp_info)->pc -1);
+            (yyval.exp_info)->fold=1;
+            (yyval.exp_info)->folder = new string((yyvsp[0].exp_info)->loc);
+            Quad.emit((yyval.exp_info)->loc,(yyvsp[0].exp_info)->loc,"DEREFERENCE","");
 		}
 		else{
-			Quad.emit((yyval.exp_info)->loc,"",(yyvsp[-1].exp_info)->loc,(yyvsp[0].exp_info)->loc);
+			(yyval.exp_info)->loc=current_ST->gentemp((yyvsp[0].exp_info)->b_type,(yyvsp[0].exp_info)->base_t,(yyvsp[0].exp_info)->pc);
+			(yyval.exp_info)->b_type = (yyvsp[0].exp_info)->b_type; (yyval.exp_info)->base_t=(yyvsp[0].exp_info)->base_t; (yyval.exp_info)->pc=(yyvsp[0].exp_info)->pc;
+			Quad.emit((yyval.exp_info)->loc,(yyvsp[0].exp_info)->loc,"UN_MI","");
 		}
 	}
-#line 2428 "y.tab.c" /* yacc.c:1646  */
+#line 2452 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 360 "grammar.y" /* yacc.c:1646  */
+#line 384 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->b_type= type_int;
 		(yyval.exp_info)->loc=current_ST->gentemp(type_int,type_void,0);
 		Quad.emit((yyval.exp_info)->loc,"","sizeof",(yyvsp[0].exp_info)->loc);
 	}
-#line 2439 "y.tab.c" /* yacc.c:1646  */
+#line 2463 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 366 "grammar.y" /* yacc.c:1646  */
+#line 390 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->b_type= type_int;
 		
 	}
-#line 2449 "y.tab.c" /* yacc.c:1646  */
+#line 2473 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 371 "grammar.y" /* yacc.c:1646  */
+#line 395 "grammar.y" /* yacc.c:1646  */
     {
 	}
-#line 2456 "y.tab.c" /* yacc.c:1646  */
+#line 2480 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 376 "grammar.y" /* yacc.c:1646  */
+#line 400 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc="&";
 	}
-#line 2465 "y.tab.c" /* yacc.c:1646  */
+#line 2489 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 380 "grammar.y" /* yacc.c:1646  */
+#line 404 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc="*";
 	}
-#line 2474 "y.tab.c" /* yacc.c:1646  */
+#line 2498 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 384 "grammar.y" /* yacc.c:1646  */
+#line 408 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc="+";
 	}
-#line 2483 "y.tab.c" /* yacc.c:1646  */
+#line 2507 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 388 "grammar.y" /* yacc.c:1646  */
+#line 412 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc="-";
 	}
-#line 2492 "y.tab.c" /* yacc.c:1646  */
+#line 2516 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 392 "grammar.y" /* yacc.c:1646  */
+#line 416 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc="~";
 	}
-#line 2501 "y.tab.c" /* yacc.c:1646  */
+#line 2525 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 396 "grammar.y" /* yacc.c:1646  */
+#line 420 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->loc="!";
 	}
-#line 2510 "y.tab.c" /* yacc.c:1646  */
+#line 2534 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 403 "grammar.y" /* yacc.c:1646  */
+#line 427 "grammar.y" /* yacc.c:1646  */
     {
-		(yyval.exp_info)=(yyvsp[0].exp_info);
+		symboldata *var=current_ST->lookup((yyvsp[0].exp_info)->loc);
+		int size = var->type.array_list.size();
+		int i,j;
+		string result,temp;
+		if(size && (yyvsp[0].exp_info)->array_list.size()){
+			//cout<<"in cast"<<$1->loc<<endl<<endl;
+			;	
+			var=current_ST->lookup((yyvsp[0].exp_info)->loc);
+			string new_str,old_str,xxx,t;
+
+			old_str = (yyvsp[0].exp_info)->array_list[size - 1];
+			t = current_ST->gentemp(type_int,type_int,0);
+			xxx = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(t,var->type.array_list[size - 1],"ASSIGN","=");
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(new_str, (yyvsp[0].exp_info)->array_list[size - 1],"ASSIGN","=");
+			old_str = new_str;
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			for(i=size-2;i>=0;i--){
+				Quad.emit(new_str,(yyvsp[0].exp_info)->array_list[i],"*",t);
+				Quad.emit(t,t,"*",var->type.array_list[i]);
+				
+				Quad.emit(xxx,new_str,"+",old_str);
+				old_str = xxx;
+			}
+			stringstream temp1;
+			temp1<<(yyvsp[0].exp_info)->loc<<"["<<old_str<<"]";
+			
+			temp1>>temp;
+			xxx = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(old_str, old_str, "*", "4");
+			Quad.emit(xxx,(yyvsp[0].exp_info)->loc,"ARR_ARG",old_str);
+			expression *ppp = new expression;
+			ppp->loc = xxx;
+			if((yyvsp[0].exp_info)->b_type!=type_function){
+				ppp->b_type = (yyvsp[0].exp_info)->base_t;
+			}
+			else{
+				ppp->b_type = (yyvsp[0].exp_info)->return_type;
+			}
+			ppp->pc = (yyvsp[0].exp_info)->pc;
+			(yyval.exp_info) = ppp;
+		}
+
+		else{
+			(yyval.exp_info)=(yyvsp[0].exp_info);
+		}
+			//cout<<"out cast"<<$1->loc<<endl<<endl;
+
+		
 	}
-#line 2518 "y.tab.c" /* yacc.c:1646  */
+#line 2591 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 406 "grammar.y" /* yacc.c:1646  */
+#line 479 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->b_type=(yyvsp[-2].symboltypei)->b_type;
 		(yyval.exp_info)->pc=(yyvsp[-2].symboltypei)->pc;
 		(yyval.exp_info)->base_t=(yyvsp[-2].symboltypei)->base_t;
 	}
-#line 2529 "y.tab.c" /* yacc.c:1646  */
+#line 2602 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 415 "grammar.y" /* yacc.c:1646  */
+#line 488 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2537 "y.tab.c" /* yacc.c:1646  */
+#line 2610 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 418 "grammar.y" /* yacc.c:1646  */
+#line 491 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "*");
 		//$$->loc = Quad.gentmp();
@@ -2545,101 +2618,101 @@ yyreduce:
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "*", (yyvsp[0].exp_info)->loc);
 
 	}
-#line 2549 "y.tab.c" /* yacc.c:1646  */
+#line 2622 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 425 "grammar.y" /* yacc.c:1646  */
+#line 498 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "/");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc=current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "/", (yyvsp[0].exp_info)->loc);
 	}
-#line 2560 "y.tab.c" /* yacc.c:1646  */
+#line 2633 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 431 "grammar.y" /* yacc.c:1646  */
+#line 504 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "%");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc=current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "%", (yyvsp[0].exp_info)->loc);
 	}
-#line 2571 "y.tab.c" /* yacc.c:1646  */
+#line 2644 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 440 "grammar.y" /* yacc.c:1646  */
+#line 513 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2579 "y.tab.c" /* yacc.c:1646  */
+#line 2652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 443 "grammar.y" /* yacc.c:1646  */
+#line 516 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "+");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "+", (yyvsp[0].exp_info)->loc);
 	}
-#line 2590 "y.tab.c" /* yacc.c:1646  */
+#line 2663 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 449 "grammar.y" /* yacc.c:1646  */
+#line 522 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "-");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "-", (yyvsp[0].exp_info)->loc);
 	}
-#line 2601 "y.tab.c" /* yacc.c:1646  */
+#line 2674 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 458 "grammar.y" /* yacc.c:1646  */
+#line 531 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2609 "y.tab.c" /* yacc.c:1646  */
+#line 2682 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 461 "grammar.y" /* yacc.c:1646  */
+#line 534 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "<<");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "<<", (yyvsp[0].exp_info)->loc);
 	}
-#line 2620 "y.tab.c" /* yacc.c:1646  */
+#line 2693 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 467 "grammar.y" /* yacc.c:1646  */
+#line 540 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), ">>");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, ">>", (yyvsp[0].exp_info)->loc);
 	}
-#line 2631 "y.tab.c" /* yacc.c:1646  */
+#line 2704 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 476 "grammar.y" /* yacc.c:1646  */
+#line 549 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2639 "y.tab.c" /* yacc.c:1646  */
+#line 2712 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 479 "grammar.y" /* yacc.c:1646  */
+#line 552 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "<");
 		//$$->loc = Quad.gentmp();
@@ -2658,11 +2731,11 @@ yyreduce:
 		Quad.emit((yyval.exp_info)->loc, "1", "ASSIGN", "=");
 
 	}
-#line 2662 "y.tab.c" /* yacc.c:1646  */
+#line 2735 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 497 "grammar.y" /* yacc.c:1646  */
+#line 570 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), ">");
 		//$$->loc = Quad.gentmp();
@@ -2681,11 +2754,11 @@ yyreduce:
 		Quad.emit((yyval.exp_info)->loc, "1", "ASSIGN", "=");
 
 	}
-#line 2685 "y.tab.c" /* yacc.c:1646  */
+#line 2758 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 515 "grammar.y" /* yacc.c:1646  */
+#line 588 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "<=");
 		//$$->loc = Quad.gentmp();
@@ -2703,11 +2776,11 @@ yyreduce:
 		Quad.emit(res," ", "GOTO", " ");
 		Quad.emit((yyval.exp_info)->loc, "1", "ASSIGN", "=");
 	}
-#line 2707 "y.tab.c" /* yacc.c:1646  */
+#line 2780 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 532 "grammar.y" /* yacc.c:1646  */
+#line 605 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), ">=");
 		//$$->loc = Quad.gentmp();
@@ -2725,19 +2798,19 @@ yyreduce:
 		Quad.emit(res," ", "GOTO", " ");
 		Quad.emit((yyval.exp_info)->loc, "1", "ASSIGN", "=");
 	}
-#line 2729 "y.tab.c" /* yacc.c:1646  */
+#line 2802 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 552 "grammar.y" /* yacc.c:1646  */
+#line 625 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2737 "y.tab.c" /* yacc.c:1646  */
+#line 2810 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 555 "grammar.y" /* yacc.c:1646  */
+#line 628 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "==");
 		//$$->loc = Quad.gentmp();
@@ -2755,11 +2828,11 @@ yyreduce:
 		Quad.emit(res," ", "GOTO", " ");
 		Quad.emit((yyval.exp_info)->loc, "1", "ASSIGN", "=");
 	}
-#line 2759 "y.tab.c" /* yacc.c:1646  */
+#line 2832 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 572 "grammar.y" /* yacc.c:1646  */
+#line 645 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "!=");
 		//$$->loc = Quad.gentmp();
@@ -2777,122 +2850,122 @@ yyreduce:
 		Quad.emit(res," ", "GOTO", " ");
 		Quad.emit((yyval.exp_info)->loc, "1", "ASSIGN", "=");
 	}
-#line 2781 "y.tab.c" /* yacc.c:1646  */
+#line 2854 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 592 "grammar.y" /* yacc.c:1646  */
+#line 665 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2789 "y.tab.c" /* yacc.c:1646  */
+#line 2862 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 595 "grammar.y" /* yacc.c:1646  */
+#line 668 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "&");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "&", (yyvsp[0].exp_info)->loc);
 	}
-#line 2800 "y.tab.c" /* yacc.c:1646  */
+#line 2873 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 604 "grammar.y" /* yacc.c:1646  */
+#line 677 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2808 "y.tab.c" /* yacc.c:1646  */
+#line 2881 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 607 "grammar.y" /* yacc.c:1646  */
+#line 680 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "^");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "^", (yyvsp[0].exp_info)->loc);
 	}
-#line 2819 "y.tab.c" /* yacc.c:1646  */
+#line 2892 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 616 "grammar.y" /* yacc.c:1646  */
+#line 689 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2827 "y.tab.c" /* yacc.c:1646  */
+#line 2900 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 619 "grammar.y" /* yacc.c:1646  */
+#line 692 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "|");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "!", (yyvsp[0].exp_info)->loc);
 	}
-#line 2838 "y.tab.c" /* yacc.c:1646  */
+#line 2911 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 628 "grammar.y" /* yacc.c:1646  */
+#line 701 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2846 "y.tab.c" /* yacc.c:1646  */
+#line 2919 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 631 "grammar.y" /* yacc.c:1646  */
+#line 704 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "&&");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "&&", (yyvsp[0].exp_info)->loc);
 	}
-#line 2857 "y.tab.c" /* yacc.c:1646  */
+#line 2930 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 640 "grammar.y" /* yacc.c:1646  */
+#line 713 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2865 "y.tab.c" /* yacc.c:1646  */
+#line 2938 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 643 "grammar.y" /* yacc.c:1646  */
+#line 716 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), "||");
 		//$$->loc = Quad.gentmp();
 		(yyval.exp_info)->loc = current_ST->gentemp((yyval.exp_info)->b_type,(yyval.exp_info)->base_t,(yyval.exp_info)->pc);
 		Quad.emit((yyval.exp_info)->loc, (yyvsp[-2].exp_info)->loc, "||", (yyvsp[0].exp_info)->loc);
 	}
-#line 2876 "y.tab.c" /* yacc.c:1646  */
+#line 2949 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 652 "grammar.y" /* yacc.c:1646  */
+#line 725 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2884 "y.tab.c" /* yacc.c:1646  */
+#line 2957 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 659 "grammar.y" /* yacc.c:1646  */
+#line 732 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 2892 "y.tab.c" /* yacc.c:1646  */
+#line 2965 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 662 "grammar.y" /* yacc.c:1646  */
+#line 735 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=type_check((yyvsp[-2].exp_info), (yyvsp[0].exp_info), *(yyvsp[-1].pstring));
 
@@ -2901,9 +2974,9 @@ yyreduce:
 		int size2 = (yyvsp[0].exp_info)->array_list.size();
 		int i,j;
 		string result,temp;
-		//cout<<"size2 "<<$3->array_list.size()<<"   "<<$3->loc<<endl;
+		////cout<<"size2 "<<$3->array_list.size()<<"   "<<$3->loc<<endl;
 		//-------for array-------------
-		if(size && !size2){
+		if((size && !size2)){
 			string new_str,old_str,xxx,t;
 
 			old_str = (yyvsp[-2].exp_info)->array_list[size - 1];
@@ -2928,7 +3001,14 @@ yyreduce:
 				old_str = xxx;
 			}
 			Quad.emit(old_str, old_str, "*", "4");
-			Quad.emit((yyvsp[-2].exp_info)->loc, old_str, "ARR_RES", *(yyvsp[-1].pstring));
+			Quad.emit((yyvsp[-2].exp_info)->loc, (yyvsp[0].exp_info)->loc, "ARR_RES", old_str);
+		}
+		else if((yyvsp[-2].exp_info)->array_list.size()){
+			;
+			string new_str,old_str,xxx,t;
+			old_str = (yyvsp[-2].exp_info)->array_list[0];
+			Quad.emit(old_str, old_str, "*", "4");
+			Quad.emit((yyvsp[-2].exp_info)->loc, (yyvsp[0].exp_info)->loc, "ARR_RES", old_str);
 		}
 		else if(size2 && !size){
 			var=current_ST->lookup((yyvsp[0].exp_info)->loc);
@@ -2940,11 +3020,9 @@ yyreduce:
 			//xxx = Quad.gentmp();
 			xxx = current_ST->gentemp(type_int,type_int,0);
 			Quad.emit(t,var->type.array_list[size2 - 1],"ASSIGN","=");
-			//new_str = Quad.gentmp();
 			new_str = current_ST->gentemp(type_int,type_int,0);
 			Quad.emit(new_str, (yyvsp[0].exp_info)->array_list[size2 - 1],"ASSIGN","=");
 			old_str = new_str;
-			//new_str = Quad.gentmp();
 			new_str = current_ST->gentemp(type_int,type_int,0);
 			for(i=size2-2;i>=0;i--){
 				Quad.emit(new_str,(yyvsp[0].exp_info)->array_list[i],"*",t);
@@ -2964,132 +3042,136 @@ yyreduce:
 			Quad.emit((yyvsp[-2].exp_info)->loc, xxx, "ASSIGN", *(yyvsp[-1].pstring));
 
 		}
+		else if((yyvsp[-2].exp_info)->fold){
+			Quad.emit(*((yyvsp[-2].exp_info)->folder),(yyvsp[0].exp_info)->loc,"L_DEREFERENCE","");
+		}
+
 		else{
 			result = (yyvsp[-2].exp_info)->loc;
-			Quad.emit(result, (yyvsp[0].exp_info)->loc, "ASSIGN", *(yyvsp[-1].pstring));
+			Quad.emit(result, (yyvsp[0].exp_info)->loc, "ASSIGN", "=");
 		}
 
 	}
-#line 2974 "y.tab.c" /* yacc.c:1646  */
+#line 3056 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 743 "grammar.y" /* yacc.c:1646  */
+#line 825 "grammar.y" /* yacc.c:1646  */
     {	
 		(yyval.pstring) = new string;
 		*(yyval.pstring) = "=";
 		//*$$ ="=";
 		
 	}
-#line 2985 "y.tab.c" /* yacc.c:1646  */
+#line 3067 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 749 "grammar.y" /* yacc.c:1646  */
+#line 831 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="*=";
 	}
-#line 2993 "y.tab.c" /* yacc.c:1646  */
+#line 3075 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 752 "grammar.y" /* yacc.c:1646  */
+#line 834 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="/=";
 	}
-#line 3001 "y.tab.c" /* yacc.c:1646  */
+#line 3083 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 755 "grammar.y" /* yacc.c:1646  */
+#line 837 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="%=";
 	}
-#line 3009 "y.tab.c" /* yacc.c:1646  */
+#line 3091 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 758 "grammar.y" /* yacc.c:1646  */
+#line 840 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="+=";
 	}
-#line 3017 "y.tab.c" /* yacc.c:1646  */
+#line 3099 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 761 "grammar.y" /* yacc.c:1646  */
+#line 843 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="-=";
 	}
-#line 3025 "y.tab.c" /* yacc.c:1646  */
+#line 3107 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 764 "grammar.y" /* yacc.c:1646  */
+#line 846 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="<<=";
 	}
-#line 3033 "y.tab.c" /* yacc.c:1646  */
+#line 3115 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
-#line 767 "grammar.y" /* yacc.c:1646  */
+#line 849 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)=">>=";
 	}
-#line 3041 "y.tab.c" /* yacc.c:1646  */
+#line 3123 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
-#line 770 "grammar.y" /* yacc.c:1646  */
+#line 852 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="&=";
 	}
-#line 3049 "y.tab.c" /* yacc.c:1646  */
+#line 3131 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
-#line 773 "grammar.y" /* yacc.c:1646  */
+#line 855 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="^=";
 	}
-#line 3057 "y.tab.c" /* yacc.c:1646  */
+#line 3139 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
-#line 776 "grammar.y" /* yacc.c:1646  */
+#line 858 "grammar.y" /* yacc.c:1646  */
     {
 		*(yyval.pstring)="|=";
 	}
-#line 3065 "y.tab.c" /* yacc.c:1646  */
+#line 3147 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
-#line 782 "grammar.y" /* yacc.c:1646  */
+#line 864 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 3073 "y.tab.c" /* yacc.c:1646  */
+#line 3155 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
-#line 785 "grammar.y" /* yacc.c:1646  */
+#line 867 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[-2].exp_info);
 	}
-#line 3081 "y.tab.c" /* yacc.c:1646  */
+#line 3163 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
-#line 791 "grammar.y" /* yacc.c:1646  */
+#line 873 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=(yyvsp[0].exp_info);
 	}
-#line 3089 "y.tab.c" /* yacc.c:1646  */
+#line 3171 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
-#line 798 "grammar.y" /* yacc.c:1646  */
+#line 880 "grammar.y" /* yacc.c:1646  */
     {
 		basic_type type_current = (yyvsp[-2].b_type);
 		int size_now=-1;
@@ -3111,10 +3193,13 @@ yyreduce:
         if(type_current==type_long){
         	size_now=SZ_DB;
         }
+        if(type_current==type_pointer){
+        	size_now=SZ_PTR;
+        }
         vector<decc*> lst=*((yyvsp[-1].decvec));
         for(vector<decc*>::iterator it=lst.begin();it!=lst.end();it++)
         {
-        	//cout<<"inside now"<<endl;
+        	////cout<<"inside now"<<endl;
             decc *my_dec = *it;
             symboldata *var=current_ST->Symboltable[my_dec->name];
 
@@ -3123,19 +3208,30 @@ yyreduce:
             	var->nested_symboltable=NULL;
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
-            	if(my_dec->pc > 0){
-            		var->type.b_type = type_pointer;
-            	}
             	var->type.b_type = type_current;
+            	var->size = size_now;
+            	if(my_dec->pc > 0){
+            		var->type.base_t = type_current;
+            		var->type.b_type=type_pointer;
+            		var->size = SZ_PTR;
+            	}
+            	
+            	
             	if(my_dec->array_list.size()){
+            		var->size = size_now;
             		var->type.b_type = type_array;
             		var->type.base_t = type_current;
             		var->type.array_list = my_dec->array_list;
+            		for(auto p:my_dec->array_list){
+            			symboldata *tmpdata=current_ST->lookup(p);
+            			int value = tmpdata->initial_value->intval;
+            			var->size *= value;
+            		}
             	}
             	var->offset = current_ST->offset;
             	//for(string p:my_dec->array_list )
             	//	size_now*=p;
-            	var->size = size_now;
+            	
             	if(my_dec->initial_value!=NULL){
             		
             		expression *hunny = new expression;
@@ -3159,7 +3255,7 @@ yyreduce:
             		var->type.base_t = type_pointer;
             	var->type.return_type = type_current;	
             	if(my_dec->alist.size()){
-            		//cout<<"helllo"<<endl;
+            		////cout<<"helllo"<<endl;
             		var->type.base_t = type_array;
             		var->type.alist = my_dec->alist;
             	}
@@ -3180,103 +3276,103 @@ yyreduce:
 
 
 	}
-#line 3184 "y.tab.c" /* yacc.c:1646  */
+#line 3280 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 896 "grammar.y" /* yacc.c:1646  */
+#line 992 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type) = (yyvsp[0].b_type);
 	}
-#line 3192 "y.tab.c" /* yacc.c:1646  */
+#line 3288 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 909 "grammar.y" /* yacc.c:1646  */
+#line 1005 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.decvec) = new vector<decc *>;
 		(yyval.decvec)->pb((yyvsp[0].declarationi));
 	}
-#line 3201 "y.tab.c" /* yacc.c:1646  */
+#line 3297 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 914 "grammar.y" /* yacc.c:1646  */
+#line 1010 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.decvec)=(yyvsp[-2].decvec);
 		(yyval.decvec)->pb((yyvsp[0].declarationi));
 	}
-#line 3210 "y.tab.c" /* yacc.c:1646  */
+#line 3306 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 934 "grammar.y" /* yacc.c:1646  */
+#line 1030 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi)->initial_value = (yyvsp[0].exp_info);
 		(yyval.declarationi) = (yyvsp[-2].declarationi);
 
 	}
-#line 3220 "y.tab.c" /* yacc.c:1646  */
+#line 3316 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 939 "grammar.y" /* yacc.c:1646  */
+#line 1035 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi) = (yyvsp[0].declarationi);
 	}
-#line 3228 "y.tab.c" /* yacc.c:1646  */
+#line 3324 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 114:
-#line 954 "grammar.y" /* yacc.c:1646  */
+#line 1050 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_void;
 	}
-#line 3236 "y.tab.c" /* yacc.c:1646  */
+#line 3332 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 115:
-#line 957 "grammar.y" /* yacc.c:1646  */
+#line 1053 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_char;
 	}
-#line 3244 "y.tab.c" /* yacc.c:1646  */
+#line 3340 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 962 "grammar.y" /* yacc.c:1646  */
+#line 1058 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_int;
 	}
-#line 3252 "y.tab.c" /* yacc.c:1646  */
+#line 3348 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 118:
-#line 966 "grammar.y" /* yacc.c:1646  */
+#line 1062 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_long;
 	}
-#line 3260 "y.tab.c" /* yacc.c:1646  */
+#line 3356 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 119:
-#line 970 "grammar.y" /* yacc.c:1646  */
+#line 1066 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_float;
 	}
-#line 3268 "y.tab.c" /* yacc.c:1646  */
+#line 3364 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 120:
-#line 974 "grammar.y" /* yacc.c:1646  */
+#line 1070 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.b_type)=type_double;
 	}
-#line 3276 "y.tab.c" /* yacc.c:1646  */
+#line 3372 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 129:
-#line 987 "grammar.y" /* yacc.c:1646  */
+#line 1083 "grammar.y" /* yacc.c:1646  */
     {	
 		if(flag==0){
 			(yyval.curls).temp = current_ST;
@@ -3301,26 +3397,26 @@ yyreduce:
 			(yyval.curls).temp = current_ST;
 		}
 	}
-#line 3305 "y.tab.c" /* yacc.c:1646  */
+#line 3401 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 131:
-#line 1016 "grammar.y" /* yacc.c:1646  */
+#line 1112 "grammar.y" /* yacc.c:1646  */
     {current_name = *((yyvsp[0].pstring));}
-#line 3311 "y.tab.c" /* yacc.c:1646  */
+#line 3407 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 132:
-#line 1017 "grammar.y" /* yacc.c:1646  */
+#line 1113 "grammar.y" /* yacc.c:1646  */
     {
 
 		current_ST=(yyvsp[-3].curls).temp;
 	}
-#line 3320 "y.tab.c" /* yacc.c:1646  */
+#line 3416 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 139:
-#line 1037 "grammar.y" /* yacc.c:1646  */
+#line 1133 "grammar.y" /* yacc.c:1646  */
     {
 		basic_type type_current = (yyvsp[-2].b_type);
 		int size_now=-1;
@@ -3386,65 +3482,75 @@ yyreduce:
         }
 
 	}
-#line 3390 "y.tab.c" /* yacc.c:1646  */
+#line 3486 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 145:
-#line 1114 "grammar.y" /* yacc.c:1646  */
+#line 1210 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.decvec)=new vector<decc *>;
 		(yyval.decvec)->pb((yyvsp[0].declarationi));
 	}
-#line 3399 "y.tab.c" /* yacc.c:1646  */
+#line 3495 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 146:
-#line 1118 "grammar.y" /* yacc.c:1646  */
+#line 1214 "grammar.y" /* yacc.c:1646  */
     {
 		(yyvsp[-2].decvec)->pb((yyvsp[0].declarationi));
 		(yyval.decvec)=(yyvsp[-2].decvec);
 	}
-#line 3408 "y.tab.c" /* yacc.c:1646  */
+#line 3504 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 159:
-#line 1153 "grammar.y" /* yacc.c:1646  */
+#line 1249 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi) = (yyvsp[0].declarationi);
 		(yyval.declarationi)->pc = (yyvsp[-1].intval);
 	}
-#line 3417 "y.tab.c" /* yacc.c:1646  */
+#line 3513 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 160:
-#line 1157 "grammar.y" /* yacc.c:1646  */
+#line 1253 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi) = (yyvsp[0].declarationi);
 		(yyval.declarationi)->pc = 0;
 	}
-#line 3426 "y.tab.c" /* yacc.c:1646  */
+#line 3522 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 161:
-#line 1171 "grammar.y" /* yacc.c:1646  */
+#line 1267 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi)=new decc;
 		(yyval.declarationi)->name=*((yyvsp[0].pstring));
 	}
-#line 3435 "y.tab.c" /* yacc.c:1646  */
+#line 3531 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 163:
+#line 1273 "grammar.y" /* yacc.c:1646  */
+    {	
+		(yyval.declarationi)=(yyvsp[-2].declarationi);
+		(yyval.declarationi)->b_type = type_array;
+
+	}
+#line 3541 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 171:
-#line 1185 "grammar.y" /* yacc.c:1646  */
+#line 1286 "grammar.y" /* yacc.c:1646  */
     {
 		(yyvsp[-3].declarationi)->array_list.pb((yyvsp[-1].exp_info)->loc);
 		(yyval.declarationi) = (yyvsp[-3].declarationi);
 	}
-#line 3444 "y.tab.c" /* yacc.c:1646  */
+#line 3550 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 172:
-#line 1190 "grammar.y" /* yacc.c:1646  */
+#line 1291 "grammar.y" /* yacc.c:1646  */
     {
 		
 		(yyval.declarationi)=(yyvsp[-3].declarationi);
@@ -3452,14 +3558,16 @@ yyreduce:
 		named=(yyvsp[-3].declarationi)->name;
 		(yyval.declarationi)->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup((yyval.declarationi)->name);
+
+
 		Quad.emit((yyvsp[-3].declarationi)->name,"","func_begin","");
 		if(funcdata!=NULL){
-			
 			if(funcdata->nested_symboltable==NULL){
+				//cout<<"\n\n\n haw 1\n\n\n";
 				funcdata->nested_symboltable = new symboltable;
 			}
 			else if(funcdata->nested_symboltable!=NULL&&funcdata->nested_symboltable->declared==1){
-
+			;
 			}
 			else if(funcdata->nested_symboltable!=NULL && funcdata->nested_symboltable->defined==1){
 				bhej = funcdata->nested_symboltable->name.c_str();
@@ -3483,8 +3591,8 @@ yyreduce:
 			current_ST->insert(funcdata);
 			current_ST->Symboltable[funcdata->name]= funcdata;
 
-
 			for(auto it: *(yyvsp[-1].parameter_list)){
+
 				//cout<<"inside now"<<endl;
 				parameter *my_dec = it;
 
@@ -3511,6 +3619,7 @@ yyreduce:
 
 	            symboldata *var=funcdata->nested_symboltable->lookup(my_dec->name);
 	            if(var == NULL){
+	            	//cout<<"here null\n\n\n";
 	            	var = new symboldata;
 	            	var->nested_symboltable=NULL;
 	            	var->name = my_dec->name;
@@ -3518,6 +3627,11 @@ yyreduce:
 	            	if(my_dec->type.alist.size()){
 	            		var->type.base_t = type_array;
 	            		var->type.alist = my_dec->type.alist;
+	            	}
+	            	else if(my_dec->type.b_type==type_array){
+	            	//	cout<<"heresasas";
+	            		var->type.b_type = type_array;
+	            		size_now=0;
 	            	}
 	            	var->offset = funcdata->nested_symboltable->offset;
 	            	for(int q:my_dec->type.alist )
@@ -3539,8 +3653,8 @@ yyreduce:
 		}
 
 		else{
-			if((*(yyvsp[-1].parameter_list)).size()==(funcdata->nested_symboltable->order_symbol).size()){
 
+			if((*(yyvsp[-1].parameter_list)).size()==(funcdata->nested_symboltable->order_symbol).size()){
 				vector<symboltype> param,symb;
 				for(auto it:*(yyvsp[-1].parameter_list))
 					param.pb(it->type);
@@ -3560,9 +3674,10 @@ yyreduce:
 					funcdata->nested_symboltable->name = (yyvsp[-3].declarationi)->name;
 
 					current_ST->Symboltable[funcdata->name]= funcdata;
-
+					funcdata->nested_symboltable->arg_tot = 0;
 
 					for(auto it: *(yyvsp[-1].parameter_list)){
+						funcdata->nested_symboltable->arg_tot +=1;
 						//cout<<"inside now"<<endl;
 						parameter *my_dec = it;
 
@@ -3624,11 +3739,11 @@ yyreduce:
 		Quad.emit((yyvsp[-3].declarationi)->name,"","func_ends","");
 
 	}
-#line 3628 "y.tab.c" /* yacc.c:1646  */
+#line 3743 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 173:
-#line 1370 "grammar.y" /* yacc.c:1646  */
+#line 1480 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.declarationi)=(yyvsp[-2].declarationi);
 		tell=1;
@@ -3670,58 +3785,63 @@ yyreduce:
 		if(tell==0)
 		Quad.emit((yyvsp[-2].declarationi)->name,"","func_ends","");
 	}
-#line 3674 "y.tab.c" /* yacc.c:1646  */
+#line 3789 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 177:
-#line 1418 "grammar.y" /* yacc.c:1646  */
+#line 1528 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.intval)=1 + (yyvsp[0].intval);
 	}
-#line 3682 "y.tab.c" /* yacc.c:1646  */
+#line 3797 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 178:
-#line 1422 "grammar.y" /* yacc.c:1646  */
+#line 1532 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.intval)=1;
 	}
-#line 3690 "y.tab.c" /* yacc.c:1646  */
+#line 3805 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 182:
-#line 1435 "grammar.y" /* yacc.c:1646  */
+#line 1545 "grammar.y" /* yacc.c:1646  */
     {
 
 		(yyval.parameter_list) = (yyvsp[0].parameter_list);
 	}
-#line 3699 "y.tab.c" /* yacc.c:1646  */
+#line 3814 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 183:
-#line 1443 "grammar.y" /* yacc.c:1646  */
+#line 1553 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.parameter_list)=new vector<parameter *>;
 		(yyval.parameter_list)->pb((yyvsp[0].param));
 	}
-#line 3708 "y.tab.c" /* yacc.c:1646  */
+#line 3823 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 184:
-#line 1447 "grammar.y" /* yacc.c:1646  */
+#line 1557 "grammar.y" /* yacc.c:1646  */
     {
 		(yyvsp[-2].parameter_list)->pb((yyvsp[0].param));
 		(yyval.parameter_list)=(yyvsp[-2].parameter_list);
 	}
-#line 3717 "y.tab.c" /* yacc.c:1646  */
+#line 3832 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 185:
-#line 1455 "grammar.y" /* yacc.c:1646  */
+#line 1565 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.param) = new parameter;
 		(yyval.param)->name = (yyvsp[0].declarationi)->name;
-		(yyval.param)->type.b_type = (yyvsp[-1].b_type); 
+		if((yyvsp[0].declarationi)->b_type == type_array){
+			(yyval.param)->type.base_t = (yyvsp[-1].b_type);
+			(yyval.param)->type.b_type = type_array;
+		}
+		else
+			(yyval.param)->type.b_type = (yyvsp[-1].b_type); 
 		if((yyvsp[0].declarationi)->pc){
 			(yyval.param)->type.b_type = type_pointer;
 			(yyval.param)->type.base_t = (yyvsp[-1].b_type);
@@ -3729,51 +3849,51 @@ yyreduce:
 		}
 		
 	}
-#line 3733 "y.tab.c" /* yacc.c:1646  */
+#line 3853 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 230:
-#line 1543 "grammar.y" /* yacc.c:1646  */
+#line 1658 "grammar.y" /* yacc.c:1646  */
     {
 		Quad.backpatch((yyvsp[0].exp_info)->nextlist, Quad.nextinstr);
 	}
-#line 3741 "y.tab.c" /* yacc.c:1646  */
+#line 3861 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 231:
-#line 1546 "grammar.y" /* yacc.c:1646  */
+#line 1661 "grammar.y" /* yacc.c:1646  */
     {
 		Quad.backpatch((yyvsp[0].exp_info)->nextlist, Quad.nextinstr);
 	}
-#line 3749 "y.tab.c" /* yacc.c:1646  */
+#line 3869 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 232:
-#line 1549 "grammar.y" /* yacc.c:1646  */
+#line 1664 "grammar.y" /* yacc.c:1646  */
     {
 		Quad.backpatch((yyvsp[0].exp_info)->nextlist, Quad.nextinstr);
 	}
-#line 3757 "y.tab.c" /* yacc.c:1646  */
+#line 3877 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 233:
-#line 1552 "grammar.y" /* yacc.c:1646  */
+#line 1667 "grammar.y" /* yacc.c:1646  */
     {
 		Quad.backpatch((yyvsp[0].exp_info)->nextlist, Quad.nextinstr);
 
 	}
-#line 3766 "y.tab.c" /* yacc.c:1646  */
+#line 3886 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 234:
-#line 1556 "grammar.y" /* yacc.c:1646  */
+#line 1671 "grammar.y" /* yacc.c:1646  */
     {
 	}
-#line 3773 "y.tab.c" /* yacc.c:1646  */
+#line 3893 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 238:
-#line 1567 "grammar.y" /* yacc.c:1646  */
+#line 1682 "grammar.y" /* yacc.c:1646  */
     {	
 		if(flag==0){
 			(yyval.curls).temp = current_ST;
@@ -3800,62 +3920,62 @@ yyreduce:
 			(yyval.curls).temp = current_ST;
 		}
 	}
-#line 3804 "y.tab.c" /* yacc.c:1646  */
+#line 3924 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 240:
-#line 1597 "grammar.y" /* yacc.c:1646  */
+#line 1712 "grammar.y" /* yacc.c:1646  */
     {current_name = "cmpd";}
-#line 3810 "y.tab.c" /* yacc.c:1646  */
+#line 3930 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 241:
-#line 1598 "grammar.y" /* yacc.c:1646  */
+#line 1713 "grammar.y" /* yacc.c:1646  */
     {
 		current_ST=(yyvsp[-2].curls).temp;
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)->nextlist = (yyvsp[-1].exp_info)->nextlist;
 	}
-#line 3820 "y.tab.c" /* yacc.c:1646  */
+#line 3940 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 243:
-#line 1607 "grammar.y" /* yacc.c:1646  */
+#line 1722 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		Quad.backpatch((yyvsp[-2].exp_info)->nextlist,(yyvsp[-1].exp_info)->instr);
 		(yyval.exp_info)->nextlist=(yyvsp[0].exp_info)->nextlist;
 	}
-#line 3830 "y.tab.c" /* yacc.c:1646  */
+#line 3950 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 244:
-#line 1615 "grammar.y" /* yacc.c:1646  */
+#line 1730 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 	}
-#line 3838 "y.tab.c" /* yacc.c:1646  */
+#line 3958 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 245:
-#line 1618 "grammar.y" /* yacc.c:1646  */
+#line 1733 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 	}
-#line 3846 "y.tab.c" /* yacc.c:1646  */
+#line 3966 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 247:
-#line 1625 "grammar.y" /* yacc.c:1646  */
+#line 1740 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.exp_info)=new expression;
 		(yyval.exp_info)=(yyvsp[-1].exp_info);
 	}
-#line 3855 "y.tab.c" /* yacc.c:1646  */
+#line 3975 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 248:
-#line 1633 "grammar.y" /* yacc.c:1646  */
+#line 1748 "grammar.y" /* yacc.c:1646  */
     {
 		flag=1;
 		(yyval.curls).temp = current_ST;
@@ -3875,11 +3995,11 @@ yyreduce:
 		current_ST = $$.created;
 		*/
 	}
-#line 3879 "y.tab.c" /* yacc.c:1646  */
+#line 3999 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 249:
-#line 1656 "grammar.y" /* yacc.c:1646  */
+#line 1771 "grammar.y" /* yacc.c:1646  */
     {
 		flag=1;
 		(yyval.curls).temp = current_ST;
@@ -3899,17 +4019,17 @@ yyreduce:
 		current_ST = $$.created;
 		*/	
 	}
-#line 3903 "y.tab.c" /* yacc.c:1646  */
+#line 4023 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 250:
-#line 1678 "grammar.y" /* yacc.c:1646  */
+#line 1793 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-7].curls).temp;}
-#line 3909 "y.tab.c" /* yacc.c:1646  */
+#line 4029 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 251:
-#line 1678 "grammar.y" /* yacc.c:1646  */
+#line 1793 "grammar.y" /* yacc.c:1646  */
     {
 		// cout<<"hello"<<endl;
 
@@ -3928,11 +4048,11 @@ yyreduce:
 		(yyval.exp_info)->nextlist = merge((yyval.exp_info)->nextlist, (yyvsp[-1].exp_info)->nextlist);
 		(yyval.exp_info)->nextlist = merge((yyval.exp_info)->nextlist, (yyvsp[0].exp_info)->nextlist);
 	}
-#line 3932 "y.tab.c" /* yacc.c:1646  */
+#line 4052 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 252:
-#line 1696 "grammar.y" /* yacc.c:1646  */
+#line 1811 "grammar.y" /* yacc.c:1646  */
     {
 		//cout<<"world"<<endl;
 		Quad.backpatch((yyvsp[-3].exp_info)->nextlist,Quad.nextinstr); 
@@ -3946,11 +4066,11 @@ yyreduce:
 		(yyval.exp_info)->nextlist = merge((yyvsp[0].exp_info)->nextlist, (yyvsp[-1].exp_info)->nextlist);
 
 	}
-#line 3950 "y.tab.c" /* yacc.c:1646  */
+#line 4070 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 254:
-#line 1714 "grammar.y" /* yacc.c:1646  */
+#line 1829 "grammar.y" /* yacc.c:1646  */
     {
 		(yyval.curls).temp = current_ST;
 		/*
@@ -3970,17 +4090,17 @@ yyreduce:
 		*/
 		flag=1;
 	}
-#line 3974 "y.tab.c" /* yacc.c:1646  */
+#line 4094 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 255:
-#line 1736 "grammar.y" /* yacc.c:1646  */
+#line 1851 "grammar.y" /* yacc.c:1646  */
     {current_name="while"; }
-#line 3980 "y.tab.c" /* yacc.c:1646  */
+#line 4100 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 256:
-#line 1736 "grammar.y" /* yacc.c:1646  */
+#line 1851 "grammar.y" /* yacc.c:1646  */
     {
 		current_ST = (yyvsp[-7].curls).temp;
 		string tmp2;
@@ -3996,23 +4116,23 @@ yyreduce:
 		(yyval.exp_info)=new expression;
 
 	}
-#line 4000 "y.tab.c" /* yacc.c:1646  */
+#line 4120 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 257:
-#line 1751 "grammar.y" /* yacc.c:1646  */
+#line 1866 "grammar.y" /* yacc.c:1646  */
     {current_name="do_while";}
-#line 4006 "y.tab.c" /* yacc.c:1646  */
+#line 4126 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 258:
-#line 1751 "grammar.y" /* yacc.c:1646  */
+#line 1866 "grammar.y" /* yacc.c:1646  */
     {current_ST = (yyvsp[-6].curls).temp;}
-#line 4012 "y.tab.c" /* yacc.c:1646  */
+#line 4132 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 259:
-#line 1753 "grammar.y" /* yacc.c:1646  */
+#line 1868 "grammar.y" /* yacc.c:1646  */
     {//1  2  3  4                    5  6                    7 8  9          10 11 12 13
 		current_ST = (yyvsp[-11].curls).temp;
 		Quad.emit("","","GOTO","");
@@ -4035,89 +4155,90 @@ yyreduce:
         (yyval.exp_info) = new expression;
         (yyval.exp_info)->nextlist = (yyvsp[-7].exp_info)->falselist;
 	}
-#line 4039 "y.tab.c" /* yacc.c:1646  */
+#line 4159 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 260:
-#line 1775 "grammar.y" /* yacc.c:1646  */
+#line 1890 "grammar.y" /* yacc.c:1646  */
     {cout<<"";}
-#line 4045 "y.tab.c" /* yacc.c:1646  */
+#line 4165 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 261:
-#line 1776 "grammar.y" /* yacc.c:1646  */
+#line 1891 "grammar.y" /* yacc.c:1646  */
     {	//cout<<"here 4\n";
 		current_ST = (yyvsp[-5].curls).temp;
 	}
-#line 4053 "y.tab.c" /* yacc.c:1646  */
+#line 4173 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 262:
-#line 1779 "grammar.y" /* yacc.c:1646  */
+#line 1894 "grammar.y" /* yacc.c:1646  */
     {cout<<"";}
-#line 4059 "y.tab.c" /* yacc.c:1646  */
+#line 4179 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 263:
-#line 1780 "grammar.y" /* yacc.c:1646  */
+#line 1895 "grammar.y" /* yacc.c:1646  */
     {	
 		//cout<<"here 5\n";
 		current_ST = (yyvsp[-5].curls).temp;
 	}
-#line 4068 "y.tab.c" /* yacc.c:1646  */
+#line 4188 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 264:
-#line 1784 "grammar.y" /* yacc.c:1646  */
+#line 1899 "grammar.y" /* yacc.c:1646  */
     {cout<<"";}
-#line 4074 "y.tab.c" /* yacc.c:1646  */
+#line 4194 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 265:
-#line 1785 "grammar.y" /* yacc.c:1646  */
+#line 1900 "grammar.y" /* yacc.c:1646  */
     {
 		//cout<<"here 6\n";
 		current_ST = (yyvsp[-6].curls).temp;
 	}
-#line 4083 "y.tab.c" /* yacc.c:1646  */
+#line 4203 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 270:
-#line 1798 "grammar.y" /* yacc.c:1646  */
+#line 1913 "grammar.y" /* yacc.c:1646  */
     {
 		symboldata *funcdata = globalst.lookup(current_ST->name);
 		//cout<<"\n\n\n"<<current_ST->name<<"\n\n\n";
 		Quad.emit((yyvsp[-1].exp_info)->loc,"", "RETURN","");
 	}
-#line 4093 "y.tab.c" /* yacc.c:1646  */
+#line 4213 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 274:
-#line 1823 "grammar.y" /* yacc.c:1646  */
+#line 1938 "grammar.y" /* yacc.c:1646  */
     {
 		Quad.emit(named,"","func_ends","");
 		current_ST = hunny;
 		tell=0;
 	}
-#line 4103 "y.tab.c" /* yacc.c:1646  */
+#line 4223 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 275:
-#line 1829 "grammar.y" /* yacc.c:1646  */
+#line 1944 "grammar.y" /* yacc.c:1646  */
     {	
 		if(tell==1)
 			Quad.emit(named,"","func_ends","");
 		tell=0;
 	}
-#line 4113 "y.tab.c" /* yacc.c:1646  */
+#line 4233 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 277:
-#line 1840 "grammar.y" /* yacc.c:1646  */
+#line 1955 "grammar.y" /* yacc.c:1646  */
     {
 		flag=1;
 		hunny = current_ST;
 		symboldata *funcdata=current_ST->lookup((yyvsp[0].declarationi)->name);
+		//Fcout<<"hello everyone "<<funcdata->name <<funcdata->nested_symboltable->arg_tot<<endl<<endl;
 		named = (yyvsp[0].declarationi)->name;
 		//if not NULL do typecheck here
 		if(funcdata==NULL){
@@ -4163,11 +4284,11 @@ yyreduce:
 		current_ST = funcdata->nested_symboltable;
 
 	}
-#line 4167 "y.tab.c" /* yacc.c:1646  */
+#line 4288 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 4171 "y.tab.c" /* yacc.c:1646  */
+#line 4292 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -4395,7 +4516,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 1897 "grammar.y" /* yacc.c:1906  */
+#line 2013 "grammar.y" /* yacc.c:1906  */
 
 int id=0;
 
@@ -4486,61 +4607,58 @@ PARSE_TREE create_tnode(char * na, char *ana){
 void print(symboltable *table){
 	cout<<"----------------"<<table->name<<"------------"<<endl;
 	//cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"base_t\t"<<endl;
-		cout<<"name,"<<"type"<<","<<"size"<<","<<"offset"<<","<<"base_t"<<","<<"b_type"<<","<<"return_type"<<endl;
+		cout<<"name\t\t"<<"type"<<"\t"<<"size"<<"\t"<<"offset"<<"\t"<<"base_t"<<"\t"<<"b_type"<<"\t"<<"return_type"<<endl;
 
 	for(auto t:table->order_symbol){
-				
-		cout<<t->name<<",";
+		if(t->name=="RETURN_VAL")
+			cout<<"ret\t\t";
+			else
+		cout<<t->name<<"\t\t";
 		if(t->type.b_type==type_char){
-			cout<<"char,";
+			cout<<"char\t";
 		}
 		else if(t->type.b_type==type_int){
-			cout<<"int,";
+			cout<<"int\t";
 		}
 		else if(t->type.b_type==type_double){
-			cout<<"double,";
+			cout<<"double\t";
 		}
 		else if(t->type.b_type==type_float){
-			cout<<"float,";
+			cout<<"float\t";
 		}
 		else if(t->type.b_type==type_function){
-			cout<<"function,";
+			cout<<"func\t";
 		}
 		else if(t->type.b_type==type_struct){
-			cout<<"struct,";
+			cout<<"struct\t";
 		}
 		else if(t->type.b_type==type_array){
-			cout<<"array,";
+			cout<<"array\t";
+		}
+		else if(t->type.b_type==type_pointer){
+			cout<<"point\t";
 		}
 		else{
 			
 			if(t->type.b_type==type_char){
-				cout<<"char, ";
+				cout<<"char\t ";
 			}
 			else if(t->type.b_type==type_int){
-				cout<<"int, ";
+				cout<<"int\t ";
 			}
 			else if(t->type.b_type==type_double){
-				cout<<"double, ";
+				cout<<"double\t ";
 			}
 		}
 
-		/*
-		if(t->type.base_t==type_pointer){
-			For(i,0,t->type.pc){
-				cout<<"*";
-			}
-			cout<<"\t"<<"\t";
-		}
-		*/
-		cout<<t->size<<","<<t->offset<<","<<t->type.base_t<<","<<t->type.b_type<<","<<t->type.return_type<<",";
+		
+		cout<<t->size<<"\t"<<t->offset<<"\t"<<t->type.base_t<<"\t"<<t->type.b_type<<"\t"<<t->type.return_type<<"\t";
 		
 		
 		
 		cout<<endl;
 	}
 }
-
 expression* type_check(expression* t1, expression* t2, string op){
 		expression* res;
 		res=new expression;
@@ -4582,30 +4700,50 @@ expression* type_check(expression* t1, expression* t2, string op){
 		}
 		if(op=="+" || op == "-"){
 			if(t1->b_type == t2->b_type){
+				//cout << "hello world 1\n\n\n";
 				if(t2->base_t == type_pointer || t1->b_type == type_char || t1->pc!=0){
-					yyerror("cannot apply operation");// error cannot apply operation 
+					yyerror("1 cannot apply operation ");// error cannot apply operation 
 					return NULL;
 				}
 				res->b_type=t1->b_type;
+				res->base_t = t2->base_t;
+				res->pc = t1->pc;
 				return res;
 			}
 			if(t1->b_type == type_int){
+				//cout << "hello world2\n\n\n";
 				res->b_type=t2->b_type;
 				res->base_t= t2->base_t;
 				res->pc=t2->pc;
 				return res;
 			}
 			if(t2->b_type == type_int){
+				//cout << "hello world3\n\n\n";
 				res->b_type=t1->b_type;
 				res->base_t=t1->base_t;
 				res->pc=t1->pc;
 				return res;
 			}
 			if((t1->b_type == type_double && t2->b_type==type_float) || (t2->b_type==type_double && t1->b_type == type_float)){
+				//cout << "hello world4\n\n\n";
 				res->b_type= type_double;
 				return res;
 			}
-			yyerror("cannot apply operation");// error cannot apply operation 
+
+			else if(t1->b_type == type_array && t1->b_type == t2->b_type && t1->base_t == t2->base_t){
+				//cout << "hello world5\n\n\n";
+				res->b_type=t1->base_t;
+				res->base_t = t1->base_t;
+				//cout << "hello world\n\n\n";
+				return res;
+			}
+			else if(t1->b_type == type_array && t1->base_t == t2->b_type && t1->b_type == type_int){
+				//cout << "hello world6\n\n\n";
+				res->b_type=t1->base_t;
+				return res;
+			}
+
+			yyerror("2 cannot apply operation");// error cannot apply operation 
 					return NULL;
 
 		}
@@ -4643,9 +4781,9 @@ expression* type_check(expression* t1, expression* t2, string op){
 			
 			res->b_type= t1->b_type;
 			return res;
-		}
+		}	
 		if(op=="="){
-			//cout<<"type    "<<t1->b_type<<","<<t1->base_t<<"   "<<t2->b_type<<","<<t2->base_t<<endl;
+			//cout<<t1->b_type<<" "<<t1->base_t<<" "<<t1->pc<<" "<<t2->b_type<<" "<<t2->base_t<<" "<< t2->pc<<" \n\n\n";
 
 			if(t1->b_type==type_function && t2->b_type==type_function){
 				yyerror("cannot assign function to function");
@@ -4684,13 +4822,15 @@ expression* type_check(expression* t1, expression* t2, string op){
 
 			}
 			else if(t1->b_type == type_array && t2->b_type!=type_array){
-				if(t1->base_t == t2->b_type && t1->pc==t2->pc){
+				//cout<<"hello \n";
+				if(t1->base_t == t2->b_type ){
 					res->pc=t2->pc;
 					res->base_t=t2->base_t;
 					res->b_type = t2->b_type;
 					return res;
 				}
 			}
+
 			else if(t1->b_type != type_array && t2->b_type==type_array){
 				if(t2->base_t == t1->b_type && t1->pc==t2->pc){
 					res->pc=t1->pc;
@@ -4700,20 +4840,40 @@ expression* type_check(expression* t1, expression* t2, string op){
 				}
 			}
 			else if(t1->b_type == type_array && t2->b_type==type_array){
-				if(t2->base_t == t1->b_type && t1->pc==t2->pc){
+				if(t2->base_t == t1->base_t && t1->pc==t2->pc){
 					res->pc=t1->pc;
 					res->base_t=t1->base_t;
-					res->b_type = t1->base_t;
+					res->b_type = t1->b_type;
 					return res;
 				}
 			}
+			else if(t1->b_type == type_array && t1->base_t==type_int){
+				res->b_type = t2->b_type;
+				return res;
+			}
 
 
+			else if(t1->b_type==t2->b_type && (t1->b_type==type_int || t1->b_type==type_float)){
+				res->b_type = t1->b_type;
+				return res;
+			}
 
+			else if(t1->b_type==t2->b_type && t1->b_type==type_pointer && (t1->base_t==t2->base_t )){
+				res->b_type = t1->base_t;
+				res->base_t = t1->base_t;
+				return res;
+			}
+			
 			else if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
 				res=t1;
 				return res; 
 				
+			}
+			else if(t1->base_t==t2->base_t && (t1->base_t==type_float ) && t1->b_type==t2->base_t) {
+				res->base_t=t1->base_t;
+				res->b_type=t1->b_type;
+				res->pc=t1->pc;
+				return res;
 			}
 			else if(t1->base_t != t2->base_t ||  t1->pc!= t2->pc || t1->b_type==type_char || t2->b_type==type_char){
 				yyerror("cannot apply operation");// error cannot apply operation 
@@ -4746,13 +4906,14 @@ int main()
     counter_temp=0;
     current_ST=&(globalst);
     bool failure = yyparse();  
-    //int sz = Quad.a1.size();
+    /*
+    int sz = Quad.a1.size();
     //cout<<"number if statements--->>"<<sz<<endl;
-    // for(int i=0;i<sz;i++){
-    //    cout<<i<<": "; Quad.a1[i].print();
-   // }
+     for(int i=0;i<sz;i++){
+        cout<<i<<": "; Quad.a1[i].print();
+    }
     
-   /* cout<<"----------------SYMBOL_TABLE----------------"<<endl;
+    cout<<"----------------SYMBOL_TABLE----------------"<<endl;
 
     current_ST->print();
     cout<<"--------------------------------------------"<<endl;
@@ -4771,7 +4932,7 @@ int main()
         printf("failure\n");
     else
         printf("success\n");
-
+    
     //cout<<stack_ST.size(); 
     if(error_exists==0){
     	int sz=Quad.a1.size();
@@ -4781,6 +4942,15 @@ int main()
     }
     cout<<"error exists"<<error_exists<<endl;
     freopen("symbol_table.csv","w",stdout);
+    */
+    /* 
+    if(error_exists==0){
+    	int sz=Quad.a1.size();
+    	for(int i=0;i<sz;i++){
+    		cout<<i<<": "; Quad.a1[i].print();
+    	}
+    }
+
     if(error_exists==0){
 	    print(current_ST);
 	    cout<<endl;   

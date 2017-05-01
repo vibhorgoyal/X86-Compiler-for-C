@@ -206,9 +206,20 @@ void quad::print(){
 	else if(op=="PARAM"){
 		cout<<"PARAM "<<result<<endl;
 	}
+	else if(op=="UN_MI"){
+		cout<<result<<" =  -"<<arg1<<endl;
+	}
 	else if(op == "REFERENCE")
     {
         cout<<result<<" = &"<<arg1<<endl;
+    }
+    else if(op == "DEREFERENCE")
+    {
+        cout<<result<<" = *"<<arg1<<endl;
+    }
+    else if(op == "L_DEREFERENCE")
+    {
+    	cout << "*" << result << " = " << arg1 << "\n";
     }
 	else if(op=="CALL"){
 		cout<<arg2<<" = CALL "<<result<<" "<<arg1<<endl;
@@ -598,6 +609,12 @@ void quad_codes(quad q)
 		cout << "\tmovl\t%edx, %eax\n";
 		cout << "\tmovl\t%eax, " << to_printres << endl;
 	}
+	else if(q.op=="UN_MI")
+	{
+		cout << "\tmovl\t" << to_print1 << ", %eax\n";
+		cout << "\tnegl\t%eax\n";
+		cout << "\tmovl\t%eax, " << to_printres << "\n"; 
+	}
 	else if(q.op=="*")
 	{
 		if(q.arg1[0]>='0' && q.arg1[0]<='9')
@@ -744,6 +761,19 @@ void quad_codes(quad q)
 			cout << "\tmovq\t%rax, " << to_printres << endl;
 		}
 	}
+	else if(q.op=="DEREFERENCE")
+	{
+		cout << "\tmovq\t" << to_print1 << ", %rax\n";
+		cout << "\tmovq\t(%rax), %rdx\n";
+		cout << "\tmovq\t%rdx, " << to_printres << endl;
+	}
+	else if(q.op=="L_DEREFERENCE")
+	{
+		cout << "\tmovq\t" << to_printres << ", %rdx\n";
+		cout << "\tmovl\t" << to_print1 << ", %eax\n";
+		cout << "\tmovl\t%eax, (%rdx)\n";
+		//cout << "\tmovl\t%eax, " << to_printres <<"\n";
+	}
 	else if(q.op=="PARAM")
 	{
 		int size_of_param;
@@ -754,7 +784,7 @@ void quad_codes(quad q)
 			else if(local3->type.b_type==type_char)
 				size_of_param=1;
 			else
-				size_of_param=4;
+				size_of_param=8;
 		}
 		else
 		{
@@ -763,7 +793,7 @@ void quad_codes(quad q)
 			else if(global3->type.b_type==type_char)
 				size_of_param=1;
 			else
-				size_of_param=4;
+				size_of_param=8;
 		}
 		stringstream one;
 		if(q.result[0]=='.')

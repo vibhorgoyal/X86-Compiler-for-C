@@ -28,7 +28,7 @@ int main(){
     int m,n;
 
    
-	m = odd(10);
+	m = even(9);
 	printi(m);
 	
     return 0;

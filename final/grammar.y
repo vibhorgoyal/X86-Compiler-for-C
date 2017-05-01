@@ -155,8 +155,13 @@ constant
 	: I_CONSTANT{
 		$$=new expression;
 		//$$->loc= Quad.gentmp();
-		$$->loc = current_ST->gentemp(type_int, type_void, 0);
+		$$->loc = current_ST->gentemp(type_int, type_int, 0);
 		$$->b_type = type_int;
+
+		symbolvalue *inival = new symbolvalue;
+		inival->setval($1);
+		symboldata *datatemp = current_ST->lookup($$->loc);
+		datatemp->initial_value = inival;
 		string tm;
 		stringstream gurki;
 		gurki<<$1;
@@ -171,6 +176,11 @@ constant
 		gurki<<$1;
 		gurki>>tm;
 		$$->loc = current_ST->gentemp(type_float, type_void, 0);
+		symbolvalue *inival = new symbolvalue;
+		inival->setval($1);
+		symboldata *datatemp = current_ST->lookup($$->loc);
+		datatemp->initial_value = inival;
+
 		Quad.emit($$->loc,tm,"ASSIGN","=");
 		$$->b_type = type_double;
 	}
@@ -213,6 +223,7 @@ generic_association
 
 postfix_expression
 	: primary_expression{
+		//cout<<"here   primary "<<$1->loc<<endl;
 		$$=$1;
 	}
 	| postfix_expression '[' assignment_expression ']'{
@@ -223,20 +234,22 @@ postfix_expression
 		$$=$1;
 	}
 	| postfix_expression '(' argument_expression_list ')'{
+		////cout<<"here arg list\n";
 		$$=$1;
 		string function_name=$1->loc;
 		symboltable *functionsymbol=globalst.lookup(function_name)->nested_symboltable;
 		vector<parameter*> arglist=*($3);
 		vector<symboldata*> parameterlist=functionsymbol->order_symbol;
 		if(arglist.size()!=functionsymbol->arg_tot){
-			//yyerror("function not called in right way");
+			////cout<<"\n\n worng fun called\n "<<arglist.size() <<"  "<<functionsymbol->arg_tot<<"\n\n\n";
+			yyerror("function not called in right way");
 		}
 
 		else{
 			For(i,0,arglist.size()){
 				if(parameterlist[i]->type.b_type == type_function){
 					if(!(arglist[i]->type.base_t==parameterlist[i]->type.return_type && arglist[i]->type.pc==parameterlist[i]->type.pc))
-						yyerror("wrong input arguement given");
+						yyerror("1 wrong input arguement given");
 				}
 			}
 		}
@@ -247,7 +260,7 @@ postfix_expression
 
 			if(arglist[i]->type.b_type!=parameterlist[i]->type.b_type){
 				if(arglist[i]->type.base_t!=parameterlist[i]->type.b_type)
-					yyerror("wrong input arguement given");
+					yyerror("2 wrong input arguement given");
 
 				//string temp=Quad.gentmp();
 				string temp= current_ST->gentemp(parameterlist[i]->type.b_type,parameterlist[i]->type.base_t,parameterlist[i]->type.pc);
@@ -303,6 +316,7 @@ postfix_expression
 
 argument_expression_list
 	: assignment_expression{
+		//cout<<"in assign express "<<$1->loc<<endl;
 		parameter *temp=new parameter;
 		temp->name=$1->loc;
 		temp->type.b_type=$1->b_type;
@@ -311,6 +325,7 @@ argument_expression_list
 		temp->type.pc=$1->pc;
 		$$=new vector<parameter*>;
 		$$->pb(temp);
+
 	}
 	| argument_expression_list ',' assignment_expression{
 		parameter *temp=new parameter;
@@ -326,7 +341,9 @@ argument_expression_list
 
 unary_expression
 	: postfix_expression{
+		
 		$$=$1;
+		
 	}
 	| INC_OP unary_expression{
 		Quad.emit($2->loc,$2->loc,"+","1");
@@ -344,17 +361,24 @@ unary_expression
 	}
 	| unary_operator cast_expression{
 		$$= new expression;
-		$$->loc=current_ST->gentemp($2->b_type,$2->base_t,$2->pc);
-		$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
 		if($1->loc[0] == '&'){
+			$$->loc = current_ST->gentemp(type_pointer,$2->b_type,1);
 			$$->b_type = type_pointer; $$->base_t=$2->b_type; $$->pc=1;
+			////cout<<"\n\n  "<<$$->loc<<"    "<<$2->loc<<"\n\n";
 			Quad.emit($$->loc,$2->loc,"REFERENCE",""); 
+
 		}
 		else if($1->loc[0] == '*'){
-			$$->b_type = $2->base_t; $$->base_t=$2->b_type; $$->pc=0; 
+			$$ = new expression; 
+			$$->loc = current_ST->gentemp($2->base_t,$2->base_t,$2->pc -1);
+            $$->fold=1;
+            $$->folder = new string($2->loc);
+            Quad.emit($$->loc,$2->loc,"DEREFERENCE","");
 		}
 		else{
-			Quad.emit($$->loc,"",$1->loc,$2->loc);
+			$$->loc=current_ST->gentemp($2->b_type,$2->base_t,$2->pc);
+			$$->b_type = $2->b_type; $$->base_t=$2->base_t; $$->pc=$2->pc;
+			Quad.emit($$->loc,$2->loc,"UN_MI","");
 		}
 	}
 	| SIZEOF unary_expression{
@@ -401,7 +425,56 @@ unary_operator
 
 cast_expression
 	: unary_expression{
-		$$=$1;
+		symboldata *var=current_ST->lookup($1->loc);
+		int size = var->type.array_list.size();
+		int i,j;
+		string result,temp;
+		if(size && $1->array_list.size()){
+			//cout<<"in cast"<<$1->loc<<endl<<endl;
+			;	
+			var=current_ST->lookup($1->loc);
+			string new_str,old_str,xxx,t;
+
+			old_str = $1->array_list[size - 1];
+			t = current_ST->gentemp(type_int,type_int,0);
+			xxx = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(t,var->type.array_list[size - 1],"ASSIGN","=");
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(new_str, $1->array_list[size - 1],"ASSIGN","=");
+			old_str = new_str;
+			new_str = current_ST->gentemp(type_int,type_int,0);
+			for(i=size-2;i>=0;i--){
+				Quad.emit(new_str,$1->array_list[i],"*",t);
+				Quad.emit(t,t,"*",var->type.array_list[i]);
+				
+				Quad.emit(xxx,new_str,"+",old_str);
+				old_str = xxx;
+			}
+			stringstream temp1;
+			temp1<<$1->loc<<"["<<old_str<<"]";
+			
+			temp1>>temp;
+			xxx = current_ST->gentemp(type_int,type_int,0);
+			Quad.emit(old_str, old_str, "*", "4");
+			Quad.emit(xxx,$1->loc,"ARR_ARG",old_str);
+			expression *ppp = new expression;
+			ppp->loc = xxx;
+			if($1->b_type!=type_function){
+				ppp->b_type = $1->base_t;
+			}
+			else{
+				ppp->b_type = $1->return_type;
+			}
+			ppp->pc = $1->pc;
+			$$ = ppp;
+		}
+
+		else{
+			$$=$1;
+		}
+			//cout<<"out cast"<<$1->loc<<endl<<endl;
+
+		
 	}
 	| '(' type_name ')' cast_expression{
 		$$=new expression;
@@ -667,9 +740,9 @@ assignment_expression
 		int size2 = $3->array_list.size();
 		int i,j;
 		string result,temp;
-		//cout<<"size2 "<<$3->array_list.size()<<"   "<<$3->loc<<endl;
+		////cout<<"size2 "<<$3->array_list.size()<<"   "<<$3->loc<<endl;
 		//-------for array-------------
-		if(size && !size2){
+		if((size && !size2)){
 			string new_str,old_str,xxx,t;
 
 			old_str = $1->array_list[size - 1];
@@ -694,7 +767,14 @@ assignment_expression
 				old_str = xxx;
 			}
 			Quad.emit(old_str, old_str, "*", "4");
-			Quad.emit($1->loc, old_str, "ARR_RES", *$2);
+			Quad.emit($1->loc, $3->loc, "ARR_RES", old_str);
+		}
+		else if($1->array_list.size()){
+			;
+			string new_str,old_str,xxx,t;
+			old_str = $1->array_list[0];
+			Quad.emit(old_str, old_str, "*", "4");
+			Quad.emit($1->loc, $3->loc, "ARR_RES", old_str);
 		}
 		else if(size2 && !size){
 			var=current_ST->lookup($3->loc);
@@ -706,11 +786,9 @@ assignment_expression
 			//xxx = Quad.gentmp();
 			xxx = current_ST->gentemp(type_int,type_int,0);
 			Quad.emit(t,var->type.array_list[size2 - 1],"ASSIGN","=");
-			//new_str = Quad.gentmp();
 			new_str = current_ST->gentemp(type_int,type_int,0);
 			Quad.emit(new_str, $3->array_list[size2 - 1],"ASSIGN","=");
 			old_str = new_str;
-			//new_str = Quad.gentmp();
 			new_str = current_ST->gentemp(type_int,type_int,0);
 			for(i=size2-2;i>=0;i--){
 				Quad.emit(new_str,$3->array_list[i],"*",t);
@@ -730,9 +808,13 @@ assignment_expression
 			Quad.emit($1->loc, xxx, "ASSIGN", *$2);
 
 		}
+		else if($1->fold){
+			Quad.emit(*($1->folder),$3->loc,"L_DEREFERENCE","");
+		}
+
 		else{
 			result = $1->loc;
-			Quad.emit(result, $3->loc, "ASSIGN", *$2);
+			Quad.emit(result, $3->loc, "ASSIGN", "=");
 		}
 
 	}
@@ -816,10 +898,13 @@ declaration
         if(type_current==type_long){
         	size_now=SZ_DB;
         }
+        if(type_current==type_pointer){
+        	size_now=SZ_PTR;
+        }
         vector<decc*> lst=*($2);
         for(vector<decc*>::iterator it=lst.begin();it!=lst.end();it++)
         {
-        	//cout<<"inside now"<<endl;
+        	////cout<<"inside now"<<endl;
             decc *my_dec = *it;
             symboldata *var=current_ST->Symboltable[my_dec->name];
 
@@ -828,19 +913,30 @@ declaration
             	var->nested_symboltable=NULL;
             	var->name = my_dec->name;
             	var->type.pc = my_dec->pc;
-            	if(my_dec->pc > 0){
-            		var->type.b_type = type_pointer;
-            	}
             	var->type.b_type = type_current;
+            	var->size = size_now;
+            	if(my_dec->pc > 0){
+            		var->type.base_t = type_current;
+            		var->type.b_type=type_pointer;
+            		var->size = SZ_PTR;
+            	}
+            	
+            	
             	if(my_dec->array_list.size()){
+            		var->size = size_now;
             		var->type.b_type = type_array;
             		var->type.base_t = type_current;
             		var->type.array_list = my_dec->array_list;
+            		for(auto p:my_dec->array_list){
+            			symboldata *tmpdata=current_ST->lookup(p);
+            			int value = tmpdata->initial_value->intval;
+            			var->size *= value;
+            		}
             	}
             	var->offset = current_ST->offset;
             	//for(string p:my_dec->array_list )
             	//	size_now*=p;
-            	var->size = size_now;
+            	
             	if(my_dec->initial_value!=NULL){
             		
             		expression *hunny = new expression;
@@ -864,7 +960,7 @@ declaration
             		var->type.base_t = type_pointer;
             	var->type.return_type = type_current;	
             	if(my_dec->alist.size()){
-            		//cout<<"helllo"<<endl;
+            		////cout<<"helllo"<<endl;
             		var->type.base_t = type_array;
             		var->type.alist = my_dec->alist;
             	}
@@ -1163,7 +1259,7 @@ declarator
 Z
 	:
 	{
-		//cout<<"hello"<<endl;
+		////cout<<"hello"<<endl;
 	}
 	;
 direct_declarator
@@ -1174,6 +1270,11 @@ direct_declarator
 	}
 	| '(' declarator ')'
 	| direct_declarator '[' ']'
+	{	
+		$$=$1;
+		$$->b_type = type_array;
+
+	}
 	| direct_declarator '[' '*' ']'
 	| direct_declarator '[' STATIC type_qualifier_list assignment_expression ']'
 	| direct_declarator '[' STATIC assignment_expression ']'
@@ -1194,14 +1295,16 @@ direct_declarator
 		named=$1->name;
 		$$->b_type = type_function;
 		symboldata *funcdata=current_ST->lookup($$->name);
+
+
 		Quad.emit($1->name,"","func_begin","");
 		if(funcdata!=NULL){
-			
 			if(funcdata->nested_symboltable==NULL){
+				//cout<<"\n\n\n haw 1\n\n\n";
 				funcdata->nested_symboltable = new symboltable;
 			}
 			else if(funcdata->nested_symboltable!=NULL&&funcdata->nested_symboltable->declared==1){
-
+			;
 			}
 			else if(funcdata->nested_symboltable!=NULL && funcdata->nested_symboltable->defined==1){
 				bhej = funcdata->nested_symboltable->name.c_str();
@@ -1225,8 +1328,8 @@ direct_declarator
 			current_ST->insert(funcdata);
 			current_ST->Symboltable[funcdata->name]= funcdata;
 
-
 			for(auto it: *$3){
+
 				//cout<<"inside now"<<endl;
 				parameter *my_dec = it;
 
@@ -1253,6 +1356,7 @@ direct_declarator
 
 	            symboldata *var=funcdata->nested_symboltable->lookup(my_dec->name);
 	            if(var == NULL){
+	            	//cout<<"here null\n\n\n";
 	            	var = new symboldata;
 	            	var->nested_symboltable=NULL;
 	            	var->name = my_dec->name;
@@ -1260,6 +1364,11 @@ direct_declarator
 	            	if(my_dec->type.alist.size()){
 	            		var->type.base_t = type_array;
 	            		var->type.alist = my_dec->type.alist;
+	            	}
+	            	else if(my_dec->type.b_type==type_array){
+	            	//	cout<<"heresasas";
+	            		var->type.b_type = type_array;
+	            		size_now=0;
 	            	}
 	            	var->offset = funcdata->nested_symboltable->offset;
 	            	for(int q:my_dec->type.alist )
@@ -1281,8 +1390,8 @@ direct_declarator
 		}
 
 		else{
-			if((*$3).size()==(funcdata->nested_symboltable->order_symbol).size()){
 
+			if((*$3).size()==(funcdata->nested_symboltable->order_symbol).size()){
 				vector<symboltype> param,symb;
 				for(auto it:*$3)
 					param.pb(it->type);
@@ -1302,9 +1411,10 @@ direct_declarator
 					funcdata->nested_symboltable->name = $1->name;
 
 					current_ST->Symboltable[funcdata->name]= funcdata;
-
+					funcdata->nested_symboltable->arg_tot = 0;
 
 					for(auto it: *$3){
+						funcdata->nested_symboltable->arg_tot +=1;
 						//cout<<"inside now"<<endl;
 						parameter *my_dec = it;
 
@@ -1455,7 +1565,12 @@ parameter_declaration
 	{
 		$$ = new parameter;
 		$$->name = $2->name;
-		$$->type.b_type = $1; 
+		if($2->b_type == type_array){
+			$$->type.base_t = $1;
+			$$->type.b_type = type_array;
+		}
+		else
+			$$->type.b_type = $1; 
 		if($2->pc){
 			$$->type.b_type = type_pointer;
 			$$->type.base_t = $1;
@@ -1841,6 +1956,7 @@ function_definition
 		flag=1;
 		hunny = current_ST;
 		symboldata *funcdata=current_ST->lookup($2->name);
+		//Fcout<<"hello everyone "<<funcdata->name <<funcdata->nested_symboltable->arg_tot<<endl<<endl;
 		named = $2->name;
 		//if not NULL do typecheck here
 		if(funcdata==NULL){
@@ -1984,61 +2100,58 @@ PARSE_TREE create_tnode(char * na, char *ana){
 void print(symboltable *table){
 	cout<<"----------------"<<table->name<<"------------"<<endl;
 	//cout<<"name"<<"\t"<<"\t"<<"type"<<"\t"<<"\t"<<"size"<<"\t"<<"\t"<<"offset"<<"\t"<<"base_t\t"<<endl;
-		cout<<"name,"<<"type"<<","<<"size"<<","<<"offset"<<","<<"base_t"<<","<<"b_type"<<","<<"return_type"<<endl;
+		cout<<"name\t\t"<<"type"<<"\t"<<"size"<<"\t"<<"offset"<<"\t"<<"base_t"<<"\t"<<"b_type"<<"\t"<<"return_type"<<endl;
 
 	for(auto t:table->order_symbol){
-				
-		cout<<t->name<<",";
+		if(t->name=="RETURN_VAL")
+			cout<<"ret\t\t";
+			else
+		cout<<t->name<<"\t\t";
 		if(t->type.b_type==type_char){
-			cout<<"char,";
+			cout<<"char\t";
 		}
 		else if(t->type.b_type==type_int){
-			cout<<"int,";
+			cout<<"int\t";
 		}
 		else if(t->type.b_type==type_double){
-			cout<<"double,";
+			cout<<"double\t";
 		}
 		else if(t->type.b_type==type_float){
-			cout<<"float,";
+			cout<<"float\t";
 		}
 		else if(t->type.b_type==type_function){
-			cout<<"function,";
+			cout<<"func\t";
 		}
 		else if(t->type.b_type==type_struct){
-			cout<<"struct,";
+			cout<<"struct\t";
 		}
 		else if(t->type.b_type==type_array){
-			cout<<"array,";
+			cout<<"array\t";
+		}
+		else if(t->type.b_type==type_pointer){
+			cout<<"point\t";
 		}
 		else{
 			
 			if(t->type.b_type==type_char){
-				cout<<"char, ";
+				cout<<"char\t ";
 			}
 			else if(t->type.b_type==type_int){
-				cout<<"int, ";
+				cout<<"int\t ";
 			}
 			else if(t->type.b_type==type_double){
-				cout<<"double, ";
+				cout<<"double\t ";
 			}
 		}
 
-		/*
-		if(t->type.base_t==type_pointer){
-			For(i,0,t->type.pc){
-				cout<<"*";
-			}
-			cout<<"\t"<<"\t";
-		}
-		*/
-		cout<<t->size<<","<<t->offset<<","<<t->type.base_t<<","<<t->type.b_type<<","<<t->type.return_type<<",";
+		
+		cout<<t->size<<"\t"<<t->offset<<"\t"<<t->type.base_t<<"\t"<<t->type.b_type<<"\t"<<t->type.return_type<<"\t";
 		
 		
 		
 		cout<<endl;
 	}
 }
-
 expression* type_check(expression* t1, expression* t2, string op){
 		expression* res;
 		res=new expression;
@@ -2080,30 +2193,50 @@ expression* type_check(expression* t1, expression* t2, string op){
 		}
 		if(op=="+" || op == "-"){
 			if(t1->b_type == t2->b_type){
+				//cout << "hello world 1\n\n\n";
 				if(t2->base_t == type_pointer || t1->b_type == type_char || t1->pc!=0){
-					yyerror("cannot apply operation");// error cannot apply operation 
+					yyerror("1 cannot apply operation ");// error cannot apply operation 
 					return NULL;
 				}
 				res->b_type=t1->b_type;
+				res->base_t = t2->base_t;
+				res->pc = t1->pc;
 				return res;
 			}
 			if(t1->b_type == type_int){
+				//cout << "hello world2\n\n\n";
 				res->b_type=t2->b_type;
 				res->base_t= t2->base_t;
 				res->pc=t2->pc;
 				return res;
 			}
 			if(t2->b_type == type_int){
+				//cout << "hello world3\n\n\n";
 				res->b_type=t1->b_type;
 				res->base_t=t1->base_t;
 				res->pc=t1->pc;
 				return res;
 			}
 			if((t1->b_type == type_double && t2->b_type==type_float) || (t2->b_type==type_double && t1->b_type == type_float)){
+				//cout << "hello world4\n\n\n";
 				res->b_type= type_double;
 				return res;
 			}
-			yyerror("cannot apply operation");// error cannot apply operation 
+
+			else if(t1->b_type == type_array && t1->b_type == t2->b_type && t1->base_t == t2->base_t){
+				//cout << "hello world5\n\n\n";
+				res->b_type=t1->base_t;
+				res->base_t = t1->base_t;
+				//cout << "hello world\n\n\n";
+				return res;
+			}
+			else if(t1->b_type == type_array && t1->base_t == t2->b_type && t1->b_type == type_int){
+				//cout << "hello world6\n\n\n";
+				res->b_type=t1->base_t;
+				return res;
+			}
+
+			yyerror("2 cannot apply operation");// error cannot apply operation 
 					return NULL;
 
 		}
@@ -2141,9 +2274,9 @@ expression* type_check(expression* t1, expression* t2, string op){
 			
 			res->b_type= t1->b_type;
 			return res;
-		}
+		}	
 		if(op=="="){
-			//cout<<"type    "<<t1->b_type<<","<<t1->base_t<<"   "<<t2->b_type<<","<<t2->base_t<<endl;
+			//cout<<t1->b_type<<" "<<t1->base_t<<" "<<t1->pc<<" "<<t2->b_type<<" "<<t2->base_t<<" "<< t2->pc<<" \n\n\n";
 
 			if(t1->b_type==type_function && t2->b_type==type_function){
 				yyerror("cannot assign function to function");
@@ -2182,13 +2315,15 @@ expression* type_check(expression* t1, expression* t2, string op){
 
 			}
 			else if(t1->b_type == type_array && t2->b_type!=type_array){
-				if(t1->base_t == t2->b_type && t1->pc==t2->pc){
+				//cout<<"hello \n";
+				if(t1->base_t == t2->b_type ){
 					res->pc=t2->pc;
 					res->base_t=t2->base_t;
 					res->b_type = t2->b_type;
 					return res;
 				}
 			}
+
 			else if(t1->b_type != type_array && t2->b_type==type_array){
 				if(t2->base_t == t1->b_type && t1->pc==t2->pc){
 					res->pc=t1->pc;
@@ -2198,20 +2333,40 @@ expression* type_check(expression* t1, expression* t2, string op){
 				}
 			}
 			else if(t1->b_type == type_array && t2->b_type==type_array){
-				if(t2->base_t == t1->b_type && t1->pc==t2->pc){
+				if(t2->base_t == t1->base_t && t1->pc==t2->pc){
 					res->pc=t1->pc;
 					res->base_t=t1->base_t;
-					res->b_type = t1->base_t;
+					res->b_type = t1->b_type;
 					return res;
 				}
 			}
+			else if(t1->b_type == type_array && t1->base_t==type_int){
+				res->b_type = t2->b_type;
+				return res;
+			}
 
 
+			else if(t1->b_type==t2->b_type && (t1->b_type==type_int || t1->b_type==type_float)){
+				res->b_type = t1->b_type;
+				return res;
+			}
 
+			else if(t1->b_type==t2->b_type && t1->b_type==type_pointer && (t1->base_t==t2->base_t )){
+				res->b_type = t1->base_t;
+				res->base_t = t1->base_t;
+				return res;
+			}
+			
 			else if(t1->b_type==t2->b_type && t1->base_t == t2->base_t &&  t1->pc== t2->pc ){
 				res=t1;
 				return res; 
 				
+			}
+			else if(t1->base_t==t2->base_t && (t1->base_t==type_float ) && t1->b_type==t2->base_t) {
+				res->base_t=t1->base_t;
+				res->b_type=t1->b_type;
+				res->pc=t1->pc;
+				return res;
 			}
 			else if(t1->base_t != t2->base_t ||  t1->pc!= t2->pc || t1->b_type==type_char || t2->b_type==type_char){
 				yyerror("cannot apply operation");// error cannot apply operation 
@@ -2244,13 +2399,14 @@ int main()
     counter_temp=0;
     current_ST=&(globalst);
     bool failure = yyparse();  
-    //int sz = Quad.a1.size();
+    /*
+    int sz = Quad.a1.size();
     //cout<<"number if statements--->>"<<sz<<endl;
-    // for(int i=0;i<sz;i++){
-    //    cout<<i<<": "; Quad.a1[i].print();
-   // }
+     for(int i=0;i<sz;i++){
+        cout<<i<<": "; Quad.a1[i].print();
+    }
     
-   /* cout<<"----------------SYMBOL_TABLE----------------"<<endl;
+    cout<<"----------------SYMBOL_TABLE----------------"<<endl;
 
     current_ST->print();
     cout<<"--------------------------------------------"<<endl;
@@ -2269,7 +2425,7 @@ int main()
         printf("failure\n");
     else
         printf("success\n");
-
+    
     //cout<<stack_ST.size(); 
     if(error_exists==0){
     	int sz=Quad.a1.size();
@@ -2279,6 +2435,15 @@ int main()
     }
     cout<<"error exists"<<error_exists<<endl;
     freopen("symbol_table.csv","w",stdout);
+    */
+    /* 
+    if(error_exists==0){
+    	int sz=Quad.a1.size();
+    	for(int i=0;i<sz;i++){
+    		cout<<i<<": "; Quad.a1[i].print();
+    	}
+    }
+
     if(error_exists==0){
 	    print(current_ST);
 	    cout<<endl;   

@@ -146,14 +146,14 @@ main:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$32, %rsp
-# t12 = 10
-	movl	$10, -12(%rbp)
+# t12 = 9
+	movl	$9, -12(%rbp)
 # PARAM t12
-# t13 = CALL odd 1
+# t13 = CALL even 1
 	movq	-12(%rbp), %rax
 	pushq	%rax
 	movq	%rax, %rdi
-	call	odd
+	call	even
 	movq	%rax, -16(%rbp)
 	addq	$4, %rsp
 # m = t13

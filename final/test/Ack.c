@@ -19,7 +19,6 @@ int ACK(int m,int n){
 int main(){
     int m,n;
     int x;
-    int eP;
     m=3;
     n=1;
     x=ACK(m,n);

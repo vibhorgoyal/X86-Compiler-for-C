@@ -165,14 +165,14 @@ main:
 	movq	%rsp, %rbp
 	subq	$48, %rsp
 # t16 = 3
-	movl	$3, -20(%rbp)
+	movl	$3, -16(%rbp)
 # m = t16
-	movl	-20(%rbp), %eax
+	movl	-16(%rbp), %eax
 	movl	%eax, -4(%rbp)
 # t17 = 1
-	movl	$1, -24(%rbp)
+	movl	$1, -20(%rbp)
 # n = t17
-	movl	-24(%rbp), %eax
+	movl	-20(%rbp), %eax
 	movl	%eax, -8(%rbp)
 # PARAM m
 # PARAM n
@@ -184,10 +184,10 @@ main:
 	pushq	%rax
 	movq	%rax, %rdi
 	call	ACK
-	movq	%rax, -28(%rbp)
+	movq	%rax, -24(%rbp)
 	addq	$8, %rsp
 # x = t18
-	movl	-28(%rbp), %eax
+	movl	-24(%rbp), %eax
 	movl	%eax, -12(%rbp)
 # PARAM x
 # t19 = CALL printi 1
@@ -195,12 +195,12 @@ main:
 	pushq	%rax
 	movq	%rax, %rdi
 	call	printi
-	movq	%rax, -32(%rbp)
+	movq	%rax, -28(%rbp)
 	addq	$4, %rsp
 # t20 = 0
-	movl	$0, -36(%rbp)
+	movl	$0, -32(%rbp)
 # RETURN t20
-	movq	-36(%rbp), %rax
+	movq	-32(%rbp), %rax
 	leave
 	ret
 # function main ends

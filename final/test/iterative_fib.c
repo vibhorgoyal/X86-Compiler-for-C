@@ -7,8 +7,9 @@ int readi(int *eP);
 
 
 int main(){
-    int n,i,res,a,b;
-    n=6;
+    int n,i,res,a,b,tmp;
+
+    n=readi(&tmp);
     a=0;
     b=1;
     for(i=2;i<=n;i++){

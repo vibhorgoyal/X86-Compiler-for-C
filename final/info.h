@@ -11,7 +11,7 @@ typedef vector<int> vi;
 #define SZ_INT	4
 #define SZ_DB	8
 
-#define SZ_PTR	4
+#define SZ_PTR	8
 #define SZ_FLOAT 4
 
 /*enum opcode{
@@ -138,6 +138,7 @@ public:
 	vector <string> array_list;
 	expression *initial_value;
 	basic_type b_type;
+	basic_type base_t;
 	decc(){
 		pc=0;
 		initial_value = NULL;
@@ -149,6 +150,7 @@ public:
 	list<int> truelist,falselist,nextlist;
 	int instr;
 	string loc;
+	string original_string;
 	basic_type b_type;
 	int pc;
 	basic_type base_t;
@@ -163,6 +165,7 @@ public:
 		pc = 0;
 		fold=0;
 		folder=NULL;
+		original_string = "";
 	}
 };
 
